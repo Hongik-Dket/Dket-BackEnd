@@ -1,5 +1,8 @@
 # Dket-BackEnd
 
+## ⚠️ Git Command Precautions
+반드시 루트 디렉토리(BackEnd)에서 git 명령어 사용!!
+
 ## 📌 Commit Convention
 - `feat`: 새로운 기능 추가  
 - `fix`: 버그 수정  
