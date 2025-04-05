@@ -1,7 +1,8 @@
 # Dket-BackEnd
 
 ## ⚠️ Git Command Precautions
-반드시 루트 디렉토리(BackEnd)에서 git 명령어 사용!!
+반드시 루트 디렉토리에서 git 명령어 사용!!
+spring/demo에서 사용하지 말 것
 
 ## 📌 Commit Convention
 - `feat`: 새로운 기능 추가  
