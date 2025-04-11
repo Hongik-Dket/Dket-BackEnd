@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -28,8 +29,8 @@ public class Event extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "organizer_id")
+    private User organizer;
 
     @Column(length = 50)
     private String title;
@@ -57,8 +58,8 @@ public class Event extends BaseEntity {
     @Column(columnDefinition = "VARCHAR(20)")
     private EventStatus eventStatus;
 
-    private LocalDate applyStartDate;
-    private LocalDate applyEndDate;
+    private LocalDateTime applyStart;
+    private LocalDateTime applyEnd;
 
     private String bannerUrl;
 

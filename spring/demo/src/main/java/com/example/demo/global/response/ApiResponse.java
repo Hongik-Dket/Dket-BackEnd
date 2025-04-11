@@ -20,7 +20,7 @@ public class ApiResponse<T> {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final T result;
 
-    public static <T> ApiResponse<T> of(BaseCode code, T result) {
+    public static <T> ApiResponse<T> onSuccess(BaseCode code, T result) {
         return new ApiResponse<>(true, code.getReasonHttpStatus().getCode(), code.getReasonHttpStatus().getMessage(), result);
     }
 

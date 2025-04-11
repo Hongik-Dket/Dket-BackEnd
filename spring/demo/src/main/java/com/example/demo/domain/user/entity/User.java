@@ -33,8 +33,8 @@ public class User extends BaseEntity {
 
     private LocalDateTime withdrawTime;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Event> events;
+    @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL)
+    private List<Event> organizedEvents;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Apply> applies;
@@ -42,7 +42,7 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Ticket> tickets;
 
-    public void addEvent(Event event) { this.events.add(event); }
+    public void addEvent(Event event) { this.organizedEvents.add(event); }
     public void addApply(Apply apply) { this.applies.add(apply); }
     public void addTicket(Ticket ticket) { this.tickets.add(ticket); }
 
