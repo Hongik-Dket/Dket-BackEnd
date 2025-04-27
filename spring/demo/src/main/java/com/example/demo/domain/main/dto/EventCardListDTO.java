@@ -11,14 +11,8 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrganizerHomeResponseDTO {
+public class EventCardListDTO {
 
-    private List<EventCardDTO> todayEvents;
-
-    private List<EventCardDTO> recentlyClosedApplyEvents;
-
-    private List<EventCardDTO> allEvents;
-
-    private List<EventCardDTO> endedEvents;
+    List<EventCardDTO> eventCardList;
 
 }

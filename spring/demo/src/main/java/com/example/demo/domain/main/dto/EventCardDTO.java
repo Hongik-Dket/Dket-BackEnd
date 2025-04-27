@@ -20,5 +20,6 @@ public class EventCardDTO {
     private LocalDate startDate;
     private LocalDate endDate;
     private EventStatus eventStatus;
+    private String imageUrl;
 
 }
