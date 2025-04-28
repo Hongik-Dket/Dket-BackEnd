@@ -36,6 +36,12 @@ public enum ErrorStatus implements BaseErrorCode {
 
     TICKET_INVALID_SEAT(HttpStatus.BAD_REQUEST, "TICKET_4001", "좌석 코드는 0 이상 999999 이하의 숫자여야 합니다."),
 
+    EVENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "EVENT_4001", "해당 공연을 찾을 수 없습니다."),
+    EVENT_ORGANIZER_MISMATCH(HttpStatus.BAD_REQUEST, "EVENT_4002", "해당 공연의 개최자가 아닙니다."),
+    EVENT_SESSION_MISMATCH(HttpStatus.BAD_REQUEST, "EVENT_4003", "해당 공연의 회차가 아닙니다."),
+
+    SESSION_NOT_FOUND(HttpStatus.BAD_REQUEST, "SESSION_4001", "해당 회차를 찾을 수 없습니다."),
+
     ;
 
     private final HttpStatus httpStatus;
