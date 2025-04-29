@@ -74,4 +74,6 @@ public class Event extends BaseEntity {
     public void addSession(Session session) { this.sessions.add(session); }
     public void addPhotoCard(PhotoCard photoCard) { this.photoCards.add(photoCard); }
 
+    public void setEventStatus(EventStatus eventStatus) { this.eventStatus = eventStatus; }
+
 }

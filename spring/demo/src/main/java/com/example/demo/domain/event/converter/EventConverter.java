@@ -1,11 +1,12 @@
 package com.example.demo.domain.event.converter;
 
-import com.example.demo.domain.event.dto.EventInfoDTO;
-import com.example.demo.domain.event.dto.SessionInfoDTO;
+import com.example.demo.domain.event.dto.request.EventUploadDTO;
+import com.example.demo.domain.event.dto.response.EventInfoDTO;
+import com.example.demo.domain.event.dto.response.SessionInfoDTO;
 import com.example.demo.domain.event.entity.Event;
 import com.example.demo.domain.event.entity.Session;
+import com.example.demo.domain.user.entity.User;
 
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class EventConverter {
@@ -42,6 +43,26 @@ public class EventConverter {
                 .applyCount(session.getApplyList().size())
                 .paidCount(session.getTicketList().size())
                 .attendeeCount(attendeeCount)
+                .build();
+    }
+
+    public static Event toEvent(EventUploadDTO eventUploadDTO, User user, String bannerUrl, String posterUrl) {
+        return Event.builder()
+                .organizer(user)
+                .title(eventUploadDTO.getTitle())
+                .ageLimit(eventUploadDTO.getAgeLimit())
+                .location(eventUploadDTO.getLocation())
+                .description(eventUploadDTO.getDescription())
+                .startDate(eventUploadDTO.getStartDate())
+                .endDate(eventUploadDTO.getEndDate())
+                .startTime(eventUploadDTO.getStartTime())
+                .endTime(eventUploadDTO.getEndTime())
+                .price(eventUploadDTO.getPrice())
+                .capacity(eventUploadDTO.getCapacity())
+                .applyStart(eventUploadDTO.getApplyStart())
+                .applyEnd(eventUploadDTO.getApplyEnd())
+                .bannerUrl(bannerUrl)
+                .posterUrl(posterUrl)
                 .build();
     }
 }

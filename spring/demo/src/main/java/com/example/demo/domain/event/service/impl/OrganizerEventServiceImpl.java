@@ -1,13 +1,16 @@
 package com.example.demo.domain.event.service.impl;
 
-import com.example.demo.domain.event.dto.SessionInfoDTO;
+import com.example.demo.domain.event.dto.request.EventUploadDTO;
+import com.example.demo.domain.event.dto.response.ResponseDTO;
+import com.example.demo.domain.event.dto.response.SessionInfoDTO;
 import com.example.demo.domain.event.entity.Event;
 import com.example.demo.domain.event.entity.Session;
+import com.example.demo.domain.event.enums.EventStatus;
 import com.example.demo.domain.event.repository.EventRepository;
-import com.example.demo.domain.event.dto.EventInfoDTO;
+import com.example.demo.domain.event.dto.response.EventInfoDTO;
 import com.example.demo.domain.event.repository.SessionRepository;
 import com.example.demo.domain.event.service.OrganizerEventService;
-import com.example.demo.domain.ticket.entity.Ticket;
+import com.example.demo.domain.event.service.S3UploadService;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.response.exception.CustomException;
@@ -18,8 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-import static com.example.demo.domain.event.converter.EventConverter.toEventInfoDTO;
-import static com.example.demo.domain.event.converter.EventConverter.toSessionInfoDTO;
+import static com.example.demo.domain.event.converter.EventConverter.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,6 +31,7 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
     private final UserService userService;
     private final EventRepository eventRepository;
     private final SessionRepository sessionRepository;
+    private final S3UploadService s3UploadService;
 
     @Override
     public EventInfoDTO getEventInfoForOrganizer(Long eventId) {
@@ -65,5 +68,33 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
                 .count();
 
         return toSessionInfoDTO(session, attendeeCount);
+    }
+
+    @Override
+    @Transactional
+    public ResponseDTO uploadEvent(EventUploadDTO request) {
+        User user = userService.getCurrentUser();
+
+        String bannerUrl = s3UploadService.saveFile(request.getBanner());
+        String posterUrl = s3UploadService.saveFile(request.getPoster());
+
+        Event event = toEvent(request, user, bannerUrl, posterUrl);
+
+        event.setEventStatus(EventStatus.APPLY_NOT_OPENED);
+
+        // Todo: 포토카드 IPFS 업로드
+
+        for (LocalDate date = request.getStartDate(); !date.isAfter(request.getEndDate()); date = date.plusDays(1)) {
+            Session session = Session.builder()
+                    .event(event)
+                    .date(date)
+                    .build();
+
+            event.addSession(session);
+        }
+
+        return ResponseDTO.builder()
+                .eventId(event.getId())
+                .build();
     }
 }

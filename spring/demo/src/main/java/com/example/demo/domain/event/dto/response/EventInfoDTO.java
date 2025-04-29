@@ -1,4 +1,4 @@
-package com.example.demo.domain.event.dto;
+package com.example.demo.domain.event.dto.response;
 
 import com.example.demo.domain.event.enums.AgeLimit;
 import com.example.demo.domain.event.enums.EventStatus;
