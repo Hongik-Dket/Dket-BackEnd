@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -34,13 +35,16 @@ public class User extends BaseEntity {
     private LocalDateTime withdrawTime;
 
     @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL)
-    private List<Event> organizedEvents;
+    @Builder.Default
+    private List<Event> organizedEvents = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Apply> applies;
+    @Builder.Default
+    private List<Apply> applies =  new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Ticket> tickets;
+    @Builder.Default
+    private List<Ticket> tickets = new ArrayList<>();
 
     public void addEvent(Event event) { this.organizedEvents.add(event); }
     public void addApply(Apply apply) { this.applies.add(apply); }

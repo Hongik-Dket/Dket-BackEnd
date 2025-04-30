@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -66,12 +67,16 @@ public class Event extends BaseEntity {
     private String posterUrl;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
-    private List<Session> sessions;
+    @Builder.Default
+    private List<Session> sessions = new ArrayList<>();
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
-    private List<PhotoCard> photoCards;
+    @Builder.Default
+    private List<PhotoCard> photoCards = new ArrayList<>();
 
     public void addSession(Session session) { this.sessions.add(session); }
     public void addPhotoCard(PhotoCard photoCard) { this.photoCards.add(photoCard); }
+
+    public void setEventStatus(EventStatus eventStatus) { this.eventStatus = eventStatus; }
 
 }
