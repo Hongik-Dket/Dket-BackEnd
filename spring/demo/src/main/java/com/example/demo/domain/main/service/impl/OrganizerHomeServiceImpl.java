@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.demo.domain.main.converter.MainConverter.toEventCardListDTO;
@@ -91,21 +92,21 @@ public class OrganizerHomeServiceImpl implements OrganizerHomeService {
     public EventCardListDTO getAllEventsForOrganizer() {
         User user = userService.getCurrentUser();
 
-        Page<Event> events = eventRepository.findByOrganizerAndEventStatusNot(
+        Page<Event> activeEvents = eventRepository.findByOrganizerAndEventStatusNot(
                 user, EventStatus.ENDED,
                 PageRequest.of(0, Integer.MAX_VALUE, Sort.by("startDate").ascending())
         );
 
-        List<Event> eventList = events.getContent();
-
-        events = eventRepository.findByOrganizerAndEventStatus(
+        Page<Event> endedEvents = eventRepository.findByOrganizerAndEventStatus(
                 user, EventStatus.ENDED,
                 PageRequest.of(0, Integer.MAX_VALUE, Sort.by("endDate").descending())
         );
 
-        eventList.addAll(events.getContent());
+        List<Event> allEvents = new ArrayList<>();
+        allEvents.addAll(activeEvents.getContent());
+        allEvents.addAll(endedEvents.getContent());
 
-        return toEventCardListDTO(eventList);
+        return toEventCardListDTO(allEvents);
     }
 
 }
