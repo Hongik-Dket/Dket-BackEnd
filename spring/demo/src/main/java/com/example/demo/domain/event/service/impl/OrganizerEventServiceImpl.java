@@ -18,8 +18,10 @@ import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static com.example.demo.domain.event.converter.EventConverter.*;
 
@@ -72,15 +74,17 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
 
     @Override
     @Transactional
-    public ResponseDTO uploadEvent(EventUploadDTO request) {
+    public ResponseDTO uploadEvent(
+            EventUploadDTO request, MultipartFile banner, MultipartFile poster, List<MultipartFile> photocardList) {
         User user = userService.getCurrentUser();
 
-        String bannerUrl = s3UploadService.saveFile(request.getBanner());
-        String posterUrl = s3UploadService.saveFile(request.getPoster());
+        String bannerUrl = s3UploadService.saveFile(banner);
+        String posterUrl = s3UploadService.saveFile(poster);
 
         Event event = toEvent(request, user, bannerUrl, posterUrl);
 
         event.setEventStatus(EventStatus.APPLY_NOT_OPENED);
+        eventRepository.save(event);
 
         // Todo: 포토카드 IPFS 업로드
 
@@ -92,6 +96,8 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
 
             event.addSession(session);
         }
+
+        user.addEvent(event);
 
         return ResponseDTO.builder()
                 .eventId(event.getId())

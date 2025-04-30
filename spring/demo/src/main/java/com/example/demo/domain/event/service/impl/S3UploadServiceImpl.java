@@ -30,7 +30,11 @@ public class S3UploadServiceImpl implements S3UploadService {
         String uniqueFileName = generateUniqueFileName(multipartFile.getOriginalFilename());
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
-        metadata.setContentType(multipartFile.getContentType());
+
+        String contentType = multipartFile.getContentType();
+        if (contentType == null)
+            contentType = "application/octet-stream";
+        metadata.setContentType(contentType);
 
         try {
             amazonS3.putObject(bucket, uniqueFileName, multipartFile.getInputStream(), metadata);

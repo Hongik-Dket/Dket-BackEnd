@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -30,7 +31,8 @@ public class PhotoCard {
     private String ipfsUrl;
 
     @OneToMany(mappedBy = "photoCard")
-    private List<Ticket> tickets;
+    @Builder.Default
+    private List<Ticket> tickets = new ArrayList<>();
 
     public void addTicket(Ticket ticket) { this.tickets.add(ticket); }
 }

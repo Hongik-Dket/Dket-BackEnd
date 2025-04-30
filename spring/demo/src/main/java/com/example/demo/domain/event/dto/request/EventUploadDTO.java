@@ -30,8 +30,5 @@ public class EventUploadDTO {
     private int capacity;
     private LocalDateTime applyStart;
     private LocalDateTime applyEnd;
-    private MultipartFile banner;
-    private MultipartFile poster;
-    private List<MultipartFile> photocardList;
 
 }

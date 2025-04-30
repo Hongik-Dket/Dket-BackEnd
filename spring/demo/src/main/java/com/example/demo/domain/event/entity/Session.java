@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -32,8 +33,10 @@ public class Session {
     private String contractAddress;
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
-    private List<Apply> applyList;
+    @Builder.Default
+    private List<Apply> applyList = new ArrayList<>();
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
-    private List<Ticket> ticketList;
+    @Builder.Default
+    private List<Ticket> ticketList = new ArrayList<>();
 }
