@@ -1,3 +1,5 @@
+import 'express-async-errors';
+
 import express from 'express';
 import http from 'http'; 
 import dotenv from 'dotenv';
@@ -7,14 +9,16 @@ import { response } from './config/response.js';
 import { BaseError } from './config/error.js';
 import { status } from './config/response.status.js';
 
-import {organizerRouter} from './src/organizer/organizer.route.js';
-import {buyerRouter} from './src/buyer/buyer.route.js';
+import { organizerRouter } from './src/organizer/organizer.route.js';
+// import { buyerRouter } from './src/buyer/buyer.route.js';
 
 
 dotenv.config();
 
 const app = express();
 const server = http.createServer(app);  // HTTP 서버 생성
+
+app.set('port', process.env.PORT || 3000);
 
 // 서버 설정
 app.use(cors());
@@ -23,8 +27,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // 라우터 설정
-app.use('/organizer', organizerRouter);
-app.use('/buyer', buyerRouter);
+app.use('/api/organizer', organizerRouter);
+// app.use('/api/buyer', buyerRouter);
 
 // 404 처리
 app.use((req, res, next) => {
@@ -45,4 +49,9 @@ app.use((err, req, res, next) => {
     } else {
         return res.send(response(status.INTERNAL_SERVER_ERROR));
     }
+});
+
+// 서버 시작
+server.listen(app.get('port'), () => {
+    console.log(`Server is running on port ${app.get('port')}`);
 });

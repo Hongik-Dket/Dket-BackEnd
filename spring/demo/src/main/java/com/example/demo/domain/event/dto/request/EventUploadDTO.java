@@ -1,6 +1,7 @@
 package com.example.demo.domain.event.dto.request;
 
 import com.example.demo.domain.event.enums.AgeLimit;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +27,7 @@ public class EventUploadDTO {
     private LocalDate endDate;
     private LocalTime startTime;
     private LocalTime endTime;
-    private int price;
+    private int priceKrw;
     private int capacity;
     private LocalDateTime applyStart;
     private LocalDateTime applyEnd;

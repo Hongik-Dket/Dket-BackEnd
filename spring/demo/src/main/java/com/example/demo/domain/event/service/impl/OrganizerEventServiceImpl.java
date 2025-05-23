@@ -13,6 +13,7 @@ import com.example.demo.domain.event.service.OrganizerEventService;
 import com.example.demo.domain.event.service.S3UploadService;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.UserService;
+import com.example.demo.global.infra.blockchain.BlockchainService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.demo.domain.event.converter.EventConverter.*;
@@ -34,6 +36,7 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
     private final EventRepository eventRepository;
     private final SessionRepository sessionRepository;
     private final S3UploadService s3UploadService;
+    private final BlockchainService blockchainService;
 
     @Override
     public EventInfoDTO getEventInfoForOrganizer(Long eventId) {
@@ -87,6 +90,8 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
         eventRepository.save(event);
 
         // Todo: 포토카드 IPFS 업로드
+        List<String> photoCardURIS = new ArrayList<>();
+        photoCardURIS.add(posterUrl);
 
         for (LocalDate date = request.getStartDate(); !date.isAfter(request.getEndDate()); date = date.plusDays(1)) {
             Session session = Session.builder()
@@ -98,6 +103,8 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
         }
 
         user.addEvent(event);
+
+        blockchainService.createEventOnChain(event, photoCardURIS);
 
         return ResponseDTO.builder()
                 .eventId(event.getId())
