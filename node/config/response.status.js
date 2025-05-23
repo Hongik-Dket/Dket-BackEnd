@@ -16,6 +16,9 @@ export const status = {
     NOT_FOUND: { status: StatusCodes.NOT_FOUND, "isSuccess": false, "code": "COMMON005", "message": "페이지를 찾을 수 없습니다." },
     PARAMETER_IS_WRONG: { status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "COMMON006", "message": "잘못된 파라미터입니다." },
 
+    BLOCKCHAIN_TRANSACTION_FAILED: {status: StatusCodes.INTERNAL_SERVER_ERROR, "isSuccess": false, "code": "BLOCKCHAIN001", "message": "블록체인 트랜잭션 발생에 실패했습니다." },
+    FAIL_GET_ETH_PRICE: {status: StatusCodes.INTERNAL_SERVER_ERROR, "isSuccess": false, "code": "BLOCKCHAIN002", "message": "API에서 올바른 ETH 가격을 받지 못했습니다." },
+    INVALID_PRICE: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "BLOCKCHAIN003", "message": "krwAmount는 유효한 숫자여야 합니다." },
     
 
 };

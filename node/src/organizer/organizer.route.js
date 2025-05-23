@@ -1,11 +1,11 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
-import { addEvent, addSession } from './organizer.controller.js';
+import { createEvent } from './organizer.controller.js';
 
 export const organizerRouter = express.Router();
 
 // Event 등록
-organizerRouter.post('/event', asyncHandler(addEvent));
+organizerRouter.post('/event', asyncHandler(createEvent));
 
 // Session 등록
-organizerRouter.post('/session', asyncHandler(addSession));
+// organizerRouter.post('/session', asyncHandler(createSession));
