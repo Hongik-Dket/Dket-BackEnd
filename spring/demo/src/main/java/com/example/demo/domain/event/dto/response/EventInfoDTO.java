@@ -27,7 +27,7 @@ public class EventInfoDTO {
     private LocalTime startTime;
     private LocalTime endTime;
     private AgeLimit ageLimit;
-    private int price;
+    private int priceKrw;
     private LocalDateTime applyStart;
     private LocalDateTime applyEnd;
     private int capacity;

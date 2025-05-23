@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -51,7 +52,7 @@ public class Event extends BaseEntity {
     private LocalTime startTime;
     private LocalTime endTime;
 
-    private int price;
+    private int priceKrw;
 
     private int capacity;
 
@@ -66,6 +67,11 @@ public class Event extends BaseEntity {
 
     private String posterUrl;
 
+    private String txHash;
+
+    @Column(nullable = true)
+    private BigInteger priceWei;
+
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Session> sessions = new ArrayList<>();
@@ -78,5 +84,10 @@ public class Event extends BaseEntity {
     public void addPhotoCard(PhotoCard photoCard) { this.photoCards.add(photoCard); }
 
     public void setEventStatus(EventStatus eventStatus) { this.eventStatus = eventStatus; }
+
+    public void setOnChainInfo(String txHash, BigInteger priceWei) {
+        this.txHash = txHash;
+        this.priceWei = priceWei;
+    }
 
 }

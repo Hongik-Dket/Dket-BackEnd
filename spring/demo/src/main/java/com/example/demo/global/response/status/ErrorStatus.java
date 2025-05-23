@@ -44,6 +44,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IMAGE_5001", "이미지 업로드에 실패하였습니다."),
 
+    BLOCKCHAIN_REQUEST_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "BLOCKCHAIN_5001", "Node.js 서버 요청에 실패하였습니다."),
+
+
     ;
 
     private final HttpStatus httpStatus;
