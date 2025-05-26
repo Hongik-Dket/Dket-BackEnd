@@ -1,6 +1,5 @@
 package com.example.demo.global.infra.scheduling;
 
-import com.example.demo.domain.apply.entity.Apply;
 import com.example.demo.domain.event.entity.Event;
 import com.example.demo.domain.event.enums.EventStatus;
 import com.example.demo.domain.event.repository.EventRepository;
@@ -34,7 +33,6 @@ public class SchedulingService {
             JobDetail jobDetail = buildJobDetail(jobName, jobClass, jobData);
             Trigger trigger = buildJobTrigger(time);
 
-            System.out.println(jobName);
             scheduler.scheduleJob(jobDetail, trigger);
         } catch (SchedulerException e) {
             handleSchedulerException(e);
