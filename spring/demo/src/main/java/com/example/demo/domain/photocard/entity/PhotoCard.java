@@ -2,6 +2,7 @@ package com.example.demo.domain.photocard.entity;
 
 import com.example.demo.domain.event.entity.Event;
 import com.example.demo.domain.ticket.entity.Ticket;
+import com.example.demo.global.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PhotoCard {
+public class PhotoCard extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

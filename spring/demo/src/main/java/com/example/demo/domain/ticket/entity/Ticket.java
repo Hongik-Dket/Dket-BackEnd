@@ -2,6 +2,7 @@ package com.example.demo.domain.ticket.entity;
 
 import com.example.demo.domain.photocard.entity.PhotoCard;
 import com.example.demo.domain.event.entity.Session;
+import com.example.demo.global.base.BaseEntity;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import com.example.demo.domain.user.entity.User;
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Ticket {
+public class Ticket extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

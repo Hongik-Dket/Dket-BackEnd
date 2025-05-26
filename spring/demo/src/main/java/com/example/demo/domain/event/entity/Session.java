@@ -2,6 +2,7 @@ package com.example.demo.domain.event.entity;
 
 import com.example.demo.domain.apply.entity.Apply;
 import com.example.demo.domain.ticket.entity.Ticket;
+import com.example.demo.global.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +18,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Session {
+public class Session extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -46,6 +46,12 @@ public enum ErrorStatus implements BaseErrorCode {
 
     BLOCKCHAIN_REQUEST_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "BLOCKCHAIN_5001", "Node.js 서버 요청에 실패하였습니다."),
 
+    JOB_EXECUTION_FAILED(HttpStatus.BAD_REQUEST, "JOB_4001", "Job 실행에 실패했습니다."),
+    JOB_STORE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "JOB_5001", "Job 저장에 실패했습니다."),
+    JOB_UNKNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "JOB_5002", "알 수 없는 Job 에러가 발생했습니다."),
+    JOB_CANCEL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "JOB_5003", "Job 취소에 실패했습니다."),
+    INVALID_JOB_CLASS(HttpStatus.BAD_REQUEST, "JOB_4002", "유효한 Job Class가 아닙니다."),
+
 
     ;
 

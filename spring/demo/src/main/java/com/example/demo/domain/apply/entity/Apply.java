@@ -34,4 +34,5 @@ public class Apply extends BaseEntity {
     @Column(columnDefinition = "VARCHAR(15)")
     private ApplyStatus applyStatus;
 
+    public void setApplyStatus(ApplyStatus applyStatus) { this.applyStatus = applyStatus; }
 }
