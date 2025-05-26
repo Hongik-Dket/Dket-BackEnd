@@ -14,6 +14,8 @@ import com.example.demo.domain.event.service.S3UploadService;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.infra.blockchain.BlockchainService;
+import com.example.demo.global.infra.scheduling.SchedulingService;
+import com.example.demo.global.infra.scheduling.jobs.event.OpenApplyJob;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,7 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
     private final EventRepository eventRepository;
     private final SessionRepository sessionRepository;
     private final S3UploadService s3UploadService;
+    private final SchedulingService schedulingService;
     private final BlockchainService blockchainService;
 
     @Override
@@ -104,6 +107,7 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
 
         user.addEvent(event);
 
+        schedulingService.scheduleEventJob(event, OpenApplyJob.class);
         blockchainService.createEventOnChain(event, photoCardURIS);
 
         return ResponseDTO.builder()
