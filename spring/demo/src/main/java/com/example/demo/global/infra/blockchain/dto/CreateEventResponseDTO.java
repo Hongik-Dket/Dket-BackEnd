@@ -10,16 +10,16 @@ import java.math.BigInteger;
 @AllArgsConstructor
 @ToString
 public class CreateEventResponseDTO {
-    private boolean isSuccess;
-    private String code;
-    private String message;
-    private Result result;
+    boolean isSuccess;
+    String code;
+    String message;
+    Result result;
 
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Result {
-        private String txHash;
-        private BigInteger priceWei;
+        String txHash;
+        BigInteger priceWei;
     }
 }

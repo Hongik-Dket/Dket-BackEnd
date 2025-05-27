@@ -1,6 +1,6 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
-import { createEvent } from './organizer.controller.js';
+import { createEvent, createSession } from './organizer.controller.js';
 
 export const organizerRouter = express.Router();
 
@@ -8,4 +8,4 @@ export const organizerRouter = express.Router();
 organizerRouter.post('/event', asyncHandler(createEvent));
 
 // Session 등록
-// organizerRouter.post('/session', asyncHandler(createSession));
+organizerRouter.post('/session', asyncHandler(createSession));
