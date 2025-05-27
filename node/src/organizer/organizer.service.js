@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import dotenv from 'dotenv';
 dotenv.config();
+import axios from 'axios';
 
 import abis from '../../abis.json' with { type: 'json' };
 import { contractAddress } from '../../config/smartcontract.js';
@@ -28,12 +29,12 @@ export const recordEventOnChain = async ({
 
     try {
         const tx = await contract.createEvent(
-        eventId,
-        organizerAddress,
-        title,
-        maxWinners,
-        priceWei,
-        photoCardURIs
+            eventId,
+            organizerAddress,
+            title,
+            maxWinners,
+            priceWei,
+            photoCardURIs
         );
 
         // 블록에 기록될 때까지 대기
@@ -47,3 +48,41 @@ export const recordEventOnChain = async ({
         throw new BaseError(status.BLOCKCHAIN_TRANSACTION_FAILED);
     }
 };
+
+export const recondSessionOnChain = async ({
+    eventId,
+    sessionId,
+    applications
+}) => {
+    try {
+        const createTx = await contract.createSession(
+            eventId,
+            sessionId,
+            applications
+        );
+    
+        await createTx.wait();
+
+        return;
+
+    } catch (err) {
+        console.error('Smart contract call failed:', err);
+        throw new BaseError(status.BLOCKCHAIN_TRANSACTION_FAILED);
+    }
+}
+
+export function listenToSessionDrawn() {
+    contract.on('WinnersDrawn', async (sessionId, winners) => {
+        console.log('Session Drawn: ', sessionId.toString());
+  
+        try {
+            await axios.post(process.env.SPRING_CALLBACK_URL, {
+                sessionId: sessionId.toString(),
+                winners,
+            });
+        } catch (err) {
+            console.error('Smart contract call failed:', err);
+        throw new BaseError(status.REQUEST_SPRING_FAILED);
+        }
+    });
+}

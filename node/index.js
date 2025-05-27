@@ -11,6 +11,7 @@ import { status } from './config/response.status.js';
 
 import { organizerRouter } from './src/organizer/organizer.route.js';
 // import { buyerRouter } from './src/buyer/buyer.route.js';
+import { listenToSessionDrawn } from './src/organizer/organizer.service.js';
 
 
 dotenv.config();
@@ -54,4 +55,5 @@ app.use((err, req, res, next) => {
 // 서버 시작
 server.listen(app.get('port'), () => {
     console.log(`Server is running on port ${app.get('port')}`);
+    listenToSessionDrawn(); 
 });

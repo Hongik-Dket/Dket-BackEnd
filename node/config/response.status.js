@@ -20,5 +20,7 @@ export const status = {
     FAIL_GET_ETH_PRICE: {status: StatusCodes.INTERNAL_SERVER_ERROR, "isSuccess": false, "code": "BLOCKCHAIN002", "message": "API에서 올바른 ETH 가격을 받지 못했습니다." },
     INVALID_PRICE: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "BLOCKCHAIN003", "message": "krwAmount는 유효한 숫자여야 합니다." },
     
+    REQUEST_SPRING_FAILED: {status: StatusCodes.INTERNAL_SERVER_ERROR, "isSuccess": false, "code": "SPRING001", "message": "spring 서버 요청에 실패했습니다."},
+    
 
 };
