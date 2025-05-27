@@ -10,6 +10,7 @@ import { status } from "../../config/response.status.js";
 
 import * as dto from "./organizer.dto.js";
 import { convertKRWToETH } from "../common/exchange.service.js";
+import { openPublicSale } from './organizer.controller.js';
 
 // 프로바이더 및 서명자 설정 (예: 환경변수 기반)
 const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
@@ -85,4 +86,17 @@ export function listenToSessionDrawn() {
         throw new BaseError(status.REQUEST_SPRING_FAILED);
         }
     });
+}
+
+export const openPublicSaleOnChain = async ({ eventId }) => {
+    try {
+        const tx = await contract.openPublicSale(eventId);
+
+        await tx.wait();
+
+    } catch (err) {
+        console.error('Smart contract call failed:', err);
+        throw new BaseError(status.BLOCKCHAIN_TRANSACTION_FAILED);
+    }
+
 }

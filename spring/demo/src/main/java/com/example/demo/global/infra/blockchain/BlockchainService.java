@@ -8,6 +8,7 @@ import com.example.demo.domain.event.repository.SessionRepository;
 import com.example.demo.global.infra.blockchain.dto.CreateEventRequestDTO;
 import com.example.demo.global.infra.blockchain.dto.CreateEventResponseDTO;
 import com.example.demo.global.infra.blockchain.dto.CreateSessionRequestDTO;
+import com.example.demo.global.infra.blockchain.dto.OpenPublicSaleRequestDTO;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -77,5 +78,21 @@ public class BlockchainService {
                     .bodyToMono(Void.class)
                     .subscribe();
         }
+    }
+
+    public void openPublicSaleOnChain(Event event) {
+        OpenPublicSaleRequestDTO requestDTO = OpenPublicSaleRequestDTO.builder()
+                .eventId(event.getId())
+                .build();
+
+        webClient.post()
+                .uri("/api/organizer/open-public")
+                .bodyValue(requestDTO)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, response ->
+                        Mono.error(new CustomException(ErrorStatus.BLOCKCHAIN_REQUEST_FAILED))
+                )
+                .bodyToMono(Void.class)
+                .subscribe();
     }
 }

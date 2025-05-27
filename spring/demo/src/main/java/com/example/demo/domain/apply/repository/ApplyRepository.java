@@ -14,9 +14,11 @@ import java.util.List;
 public interface ApplyRepository extends JpaRepository<Apply, Long> {
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("UPDATE Apply a SET a.applyStatus = :newStatus WHERE a.applyStatus = :currentStatus")
-    int batchUpdateApplyStatus(@Param("currentStatus") ApplyStatus currentStatus,
-                               @Param("newStatus") ApplyStatus newStatus);
+    @Query("UPDATE Apply a SET a.applyStatus = :newStatus " +
+            "WHERE a.session.id = :sessionId AND a.applyStatus = :currentStatus")
+    int batchUpdateApplyStatusBySessionId(@Param("sessionId") Long sessionId,
+                                          @Param("currentStatus") ApplyStatus currentStatus,
+                                          @Param("newStatus") ApplyStatus newStatus);
 
     @Query("SELECT a.user.walletAddress FROM Apply a WHERE a.session.id = :sessionId")
     List<String> findWalletAddressesBySessionId(@Param("sessionId") Long sessionId);
@@ -38,5 +40,7 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
             @Param("walletAddresses") List<String> walletAddresses,
             @Param("newStatus") ApplyStatus newStatus
     );
+
+
 
 }

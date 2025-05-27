@@ -1,4 +1,4 @@
-import { recordEventOnChain, recondSessionOnChain } from "./organizer.service.js";
+import { recordEventOnChain, recondSessionOnChain, openPublicSaleOnChain } from "./organizer.service.js";
 import { status } from "../../config/response.status.js";
 import { response } from "../../config/response.js";
 import { BaseError } from "../../config/error.js";
@@ -56,6 +56,19 @@ export const createSession = async (req, res, next) => {
     console.log('Session creation requested');
 
     await recondSessionOnChain({eventId, sessionId, applications});
+
+    res.send(response(status.SUCCESS));
+}
+
+export const openPublicSale = async (req, res, next) => {
+    const { eventId } = req.body;
+
+    if (typeof eventId !== 'number')
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+
+    console.log('Open public sale');
+
+    await openPublicSaleOnChain({eventId});
 
     res.send(response(status.SUCCESS));
 }

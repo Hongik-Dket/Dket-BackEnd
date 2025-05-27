@@ -2,9 +2,11 @@ package com.example.demo.global.infra.scheduling.jobs.event;
 
 import com.example.demo.domain.apply.enums.ApplyStatus;
 import com.example.demo.domain.apply.repository.ApplyRepository;
+import com.example.demo.domain.apply.service.ApplyService;
 import com.example.demo.domain.event.entity.Event;
 import com.example.demo.domain.event.enums.EventStatus;
 import com.example.demo.domain.event.repository.EventRepository;
+import com.example.demo.global.infra.blockchain.BlockchainService;
 import com.example.demo.global.infra.scheduling.SchedulingService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
@@ -19,7 +21,8 @@ import org.springframework.stereotype.Component;
 public class OpenPublicJob implements Job {
 
     private final EventRepository eventRepository;
-    private final ApplyRepository applyRepository;
+    private final ApplyService applyService;
+    private final BlockchainService blockchainService;
     private final SchedulingService schedulingService;
 
     @Override
@@ -32,9 +35,8 @@ public class OpenPublicJob implements Job {
 
         event.setEventStatus(EventStatus.TICKETED);
 
-        applyRepository.batchUpdateApplyStatus(ApplyStatus.SELECTED, ApplyStatus.CANCELED);
-
-        // Todo: 온체인 선착순 판매 전환
+        blockchainService.openPublicSaleOnChain(event);
+        applyService.cancelWinnerTickets(event);
 
         schedulingService.scheduleEventJob(event, StartEventJob.class);
     }
