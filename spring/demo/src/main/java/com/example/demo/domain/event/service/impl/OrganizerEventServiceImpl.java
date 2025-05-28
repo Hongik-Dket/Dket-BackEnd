@@ -13,6 +13,7 @@ import com.example.demo.domain.event.service.OrganizerEventService;
 import com.example.demo.domain.event.service.S3UploadService;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.UserService;
+import com.example.demo.global.base.Constants;
 import com.example.demo.global.infra.blockchain.BlockchainService;
 import com.example.demo.global.infra.scheduling.SchedulingService;
 import com.example.demo.global.infra.scheduling.jobs.event.OpenApplyJob;
@@ -24,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,6 +87,8 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
             EventUploadDTO request, MultipartFile banner, MultipartFile poster, List<MultipartFile> photocardList) {
         User user = userService.getCurrentUser();
 
+        validateSchedule(request);
+
         String bannerUrl = s3UploadService.saveFile(banner);
         String posterUrl = s3UploadService.saveFile(poster);
 
@@ -113,5 +118,20 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
         return ResponseDTO.builder()
                 .eventId(event.getId())
                 .build();
+    }
+
+    private void validateSchedule(EventUploadDTO request) {
+        if (request.getApplyStart().isBefore(LocalDateTime.now()))
+            throw new CustomException(ErrorStatus.EVENT_INVALID_SCHEDULE);
+
+        if (!request.getApplyEnd().isAfter(request.getApplyStart()))
+            throw new CustomException(ErrorStatus.EVENT_INVALID_SCHEDULE);
+
+        if (request.getApplyEnd().plusDays(Constants.PAYMENT_DEADLINE).withHour(0).withMinute(0)
+                .isAfter(LocalDateTime.of(request.getStartDate(), LocalTime.of(0, 0))))
+            throw new CustomException(ErrorStatus.EVENT_INVALID_SCHEDULE);
+
+        if (request.getEndDate().isBefore(request.getStartDate()))
+            throw new CustomException(ErrorStatus.EVENT_INVALID_SCHEDULE);
     }
 }

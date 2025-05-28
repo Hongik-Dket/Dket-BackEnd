@@ -1,5 +1,6 @@
 package com.example.demo.global.response.status;
 
+import com.example.demo.global.base.Constants;
 import com.example.demo.global.response.code.BaseErrorCode;
 import com.example.demo.global.response.code.ErrorReasonDTO;
 import lombok.AllArgsConstructor;
@@ -39,6 +40,7 @@ public enum ErrorStatus implements BaseErrorCode {
     EVENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "EVENT_4001", "해당 공연을 찾을 수 없습니다."),
     EVENT_ORGANIZER_MISMATCH(HttpStatus.BAD_REQUEST, "EVENT_4002", "해당 공연의 개최자가 아닙니다."),
     EVENT_SESSION_MISMATCH(HttpStatus.BAD_REQUEST, "EVENT_4003", "해당 공연의 회차가 아닙니다."),
+    EVENT_INVALID_SCHEDULE(HttpStatus.BAD_REQUEST, "EVENT_4004", "잘못된 응모 기간 혹은 공연 기간입니다."),
 
     SESSION_NOT_FOUND(HttpStatus.BAD_REQUEST, "SESSION_4001", "해당 회차를 찾을 수 없습니다."),
 
