@@ -14,7 +14,8 @@ import com.example.demo.domain.event.service.S3UploadService;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.base.Constants;
-import com.example.demo.global.infra.blockchain.BlockchainService;
+import com.example.demo.global.infra.blockchain.service.DketNFTService;
+import com.example.demo.global.infra.blockchain.service.ExchangeService;
 import com.example.demo.global.infra.scheduling.SchedulingService;
 import com.example.demo.global.infra.scheduling.jobs.event.OpenApplyJob;
 import com.example.demo.global.response.exception.CustomException;
@@ -24,6 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -42,7 +45,8 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
     private final SessionRepository sessionRepository;
     private final S3UploadService s3UploadService;
     private final SchedulingService schedulingService;
-    private final BlockchainService blockchainService;
+    private final DketNFTService dketNFTService;
+    private final ExchangeService exchangeService;
 
     @Override
     public EventInfoDTO getEventInfoForOrganizer(Long eventId) {
@@ -55,7 +59,6 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
             throw new CustomException(ErrorStatus.EVENT_ORGANIZER_MISMATCH);
 
         return toEventInfoDTO(event);
-
     }
 
     @Override
@@ -91,8 +94,9 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
 
         String bannerUrl = s3UploadService.saveFile(banner);
         String posterUrl = s3UploadService.saveFile(poster);
+        BigInteger priceWei = exchangeService.convertKrwToWei(BigDecimal.valueOf(request.getPriceKrw()));
 
-        Event event = toEvent(request, user, bannerUrl, posterUrl);
+        Event event = toEvent(request, user, bannerUrl, posterUrl, priceWei);
 
         event.setEventStatus(EventStatus.APPLY_NOT_OPENED);
         eventRepository.save(event);
@@ -113,7 +117,7 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
         user.addEvent(event);
 
         schedulingService.scheduleEventJob(event, OpenApplyJob.class);
-        blockchainService.createEventOnChain(event, photoCardURIS);
+        event.setTxHash(dketNFTService.recordEventOnChain(event));
 
         return ResponseDTO.builder()
                 .eventId(event.getId())

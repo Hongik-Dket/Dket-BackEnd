@@ -69,7 +69,6 @@ public class Event extends BaseEntity {
 
     private String txHash;
 
-    @Column(nullable = true)
     private BigInteger priceWei;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
@@ -84,10 +83,6 @@ public class Event extends BaseEntity {
     public void addPhotoCard(PhotoCard photoCard) { this.photoCards.add(photoCard); }
 
     public void setEventStatus(EventStatus eventStatus) { this.eventStatus = eventStatus; }
-
-    public void setOnChainInfo(String txHash, BigInteger priceWei) {
-        this.txHash = txHash;
-        this.priceWei = priceWei;
-    }
+    public void setTxHash(String txHash) { this.txHash = txHash; }
 
 }

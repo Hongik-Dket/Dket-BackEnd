@@ -7,6 +7,7 @@ import com.example.demo.domain.event.entity.Event;
 import com.example.demo.domain.event.entity.Session;
 import com.example.demo.domain.user.entity.User;
 
+import java.math.BigInteger;
 import java.util.stream.Collectors;
 
 public class EventConverter {
@@ -46,7 +47,7 @@ public class EventConverter {
                 .build();
     }
 
-    public static Event toEvent(EventUploadDTO eventUploadDTO, User user, String bannerUrl, String posterUrl) {
+    public static Event toEvent(EventUploadDTO eventUploadDTO, User user, String bannerUrl, String posterUrl, BigInteger priceWei) {
         return Event.builder()
                 .organizer(user)
                 .title(eventUploadDTO.getTitle())
@@ -63,6 +64,7 @@ public class EventConverter {
                 .applyEnd(eventUploadDTO.getApplyEnd())
                 .bannerUrl(bannerUrl)
                 .posterUrl(posterUrl)
+                .priceWei(priceWei)
                 .build();
     }
 }
