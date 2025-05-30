@@ -15,6 +15,7 @@ import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.base.Constants;
 import com.example.demo.global.infra.blockchain.service.DketNFTService;
+import com.example.demo.global.infra.blockchain.service.ExchangeService;
 import com.example.demo.global.infra.scheduling.SchedulingService;
 import com.example.demo.global.infra.scheduling.jobs.event.OpenApplyJob;
 import com.example.demo.global.response.exception.CustomException;
@@ -45,6 +46,7 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
     private final S3UploadService s3UploadService;
     private final SchedulingService schedulingService;
     private final DketNFTService dketNFTService;
+    private final ExchangeService exchangeService;
 
     @Override
     public EventInfoDTO getEventInfoForOrganizer(Long eventId) {
@@ -92,7 +94,7 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
 
         String bannerUrl = s3UploadService.saveFile(banner);
         String posterUrl = s3UploadService.saveFile(poster);
-        BigInteger priceWei = convertKrwToWei(request.getPriceKrw());
+        BigInteger priceWei = exchangeService.convertKrwToWei(BigDecimal.valueOf(request.getPriceKrw()));
 
         Event event = toEvent(request, user, bannerUrl, posterUrl, priceWei);
 
@@ -135,10 +137,5 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
 
         if (request.getEndDate().isBefore(request.getStartDate()))
             throw new CustomException(ErrorStatus.EVENT_INVALID_SCHEDULE);
-    }
-
-    // Todo: 원화 -> wei 환전
-    private BigInteger convertKrwToWei(int krw) {
-        return new BigInteger("" + krw);
     }
 }

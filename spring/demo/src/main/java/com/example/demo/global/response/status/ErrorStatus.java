@@ -46,6 +46,7 @@ public enum ErrorStatus implements BaseErrorCode {
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IMAGE_5001", "이미지 업로드에 실패하였습니다."),
 
     BLOCKCHAIN_TRANSACTION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "BLOCKCHAIN_5001", "블록체인 트랜잭션 발생에 실패하였습니다."),
+    BLOCKCHAIN_GET_ETH_PRICE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "BLOCKCHAIN_5002", "이더리움 가격을 조회하는데 실패하였습니다."),
 
     JOB_EXECUTION_FAILED(HttpStatus.BAD_REQUEST, "JOB_4001", "Job 실행에 실패했습니다."),
     JOB_STORE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "JOB_5001", "Job 저장에 실패했습니다."),
