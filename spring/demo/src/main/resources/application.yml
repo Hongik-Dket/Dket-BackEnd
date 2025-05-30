@@ -45,10 +45,6 @@ cloud:
       accessKey: ${AWS_ACCESS_KEY_ID}
       secretKey: ${AWS_SECRET_ACCESS_KEY}
 
-blockchain:
-  api:
-    base-url: http://localhost:3000
-
 web3:
   network-url: ${ETH_RPC_URL}
   private-key: ${ETH_PRIVATE_KEY}
