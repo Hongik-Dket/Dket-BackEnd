@@ -1,9 +1,9 @@
 package com.example.demo.domain.event.service;
 
-import com.example.demo.global.infra.blockchain.dto.SessionOnDrawnRequestDTO;
+import java.util.List;
 
 public interface SessionService {
 
-    void saveWinners(SessionOnDrawnRequestDTO request);
+    void saveWinners(Long sessionId, List<String> winners);
 
 }

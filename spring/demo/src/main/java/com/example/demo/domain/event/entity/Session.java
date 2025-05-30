@@ -33,6 +33,8 @@ public class Session extends BaseEntity {
 
     private String contractAddress;
 
+    private String txHash;
+
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Apply> applyList = new ArrayList<>();
@@ -40,4 +42,6 @@ public class Session extends BaseEntity {
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Ticket> ticketList = new ArrayList<>();
+
+    public void setTxHash(String txHash) { this.txHash = txHash; }
 }
