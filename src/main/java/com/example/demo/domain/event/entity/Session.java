@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,10 +34,6 @@ public class Session extends BaseEntity {
     private String contractAddress;
 
     private String txHash;
-
-    private LocalDateTime applyEnd;
-
-    private LocalDateTime paymentDeadline;
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
     @Builder.Default
