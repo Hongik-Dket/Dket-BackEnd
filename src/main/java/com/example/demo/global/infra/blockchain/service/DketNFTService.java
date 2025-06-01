@@ -124,7 +124,7 @@ public class DketNFTService {
                 .subscribe(
                         event -> {
                             BigInteger sessionId = event.sessionId;
-                            drawWinners(sessionId);
+                            drawSession(sessionId);
                         },
                         error -> {
                             System.out.println(error.getMessage());
@@ -133,10 +133,10 @@ public class DketNFTService {
                 );
     }
 
-    private void drawWinners(BigInteger sessionId) {
+    private void drawSession(BigInteger sessionId) {
         try {
             Function function = new Function(
-                    "drawWinners",
+                    "drawSession",
                     List.of(new Uint256(sessionId)),
                     List.of()
             );
