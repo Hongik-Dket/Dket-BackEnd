@@ -109,6 +109,7 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
             Session session = Session.builder()
                     .event(event)
                     .date(date)
+                    .isDrawn(false)
                     .build();
 
             event.addSession(session);

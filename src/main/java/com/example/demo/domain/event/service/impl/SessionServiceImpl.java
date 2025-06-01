@@ -32,6 +32,9 @@ public class SessionServiceImpl implements SessionService {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
 
+        if (session.getIsDrawn())
+            throw new CustomException(ErrorStatus.SESSION_ALREADY_DRAWN);
+
         applyRepository.batchUpdateApplyStatusBySessionIdAndWalletAddresses(
                 session.getId(), winners, ApplyStatus.SELECTED);
 
@@ -43,5 +46,7 @@ public class SessionServiceImpl implements SessionService {
             event.setEventStatus(EventStatus.APPLY_CLOSED);
             schedulingService.scheduleEventJob(event, OpenPublicJob.class);
         }
+
+        session.setIsDrawn();
     }
 }
