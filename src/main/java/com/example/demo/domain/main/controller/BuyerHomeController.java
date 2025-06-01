@@ -42,4 +42,10 @@ public class BuyerHomeController {
     public ApiResponse<EventCardListDTO> getPurchasedEvents() {
         return ApiResponse.onSuccess(_OK, buyerHomeService.getPurchasedEvents());
     }
+
+    @Operation(summary = "구매자 - 전체 공연 조회")
+    @GetMapping("/all")
+    public ApiResponse<EventCardListDTO> getAllEvents() {
+        return ApiResponse.onSuccess(_OK, buyerHomeService.getAllEvents());
+    }
 }
