@@ -2,16 +2,18 @@ package com.example.demo.domain.main.service;
 
 import com.example.demo.domain.main.dto.BuyerHomeResponseDTO;
 import com.example.demo.domain.main.dto.EventCardListDTO;
+import org.springframework.data.domain.Pageable;
 
 public interface BuyerHomeService {
 
     BuyerHomeResponseDTO getHomeForBuyer();
 
-    EventCardListDTO getPopularEvents();
+    EventCardListDTO getPopularEventsForBuyer();
 
-    EventCardListDTO getAppliedEvents();
+    EventCardListDTO getAppliedEventsForBuyer();
 
-    EventCardListDTO getPurchasedEvents();
+    EventCardListDTO getPurchasedEventsForBuyer();
 
-    EventCardListDTO getAllEvents();
+    EventCardListDTO getEntireEventsForBuyer();
+    
 }
