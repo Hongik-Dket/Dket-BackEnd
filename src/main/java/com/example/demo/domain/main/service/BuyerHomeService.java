@@ -12,4 +12,6 @@ public interface BuyerHomeService {
     EventCardListDTO getAppliedEvents();
 
     EventCardListDTO getPurchasedEvents();
+
+    EventCardListDTO getAllEvents();
 }
