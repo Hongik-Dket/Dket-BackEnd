@@ -31,9 +31,9 @@ public class Session extends BaseEntity {
 
     private LocalDate date;
 
-    private String contractAddress;
-
     private String txHash;
+
+    private Boolean isDrawn;
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
     @Builder.Default
@@ -44,4 +44,5 @@ public class Session extends BaseEntity {
     private List<Ticket> ticketList = new ArrayList<>();
 
     public void setTxHash(String txHash) { this.txHash = txHash; }
+    public void setIsDrawn() { this.isDrawn = true; }
 }
