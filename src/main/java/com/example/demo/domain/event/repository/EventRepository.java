@@ -28,4 +28,25 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query("SELECT s.id FROM Session s WHERE s.event.id = :eventId")
     List<Long> findSessionIdsByEventId(@Param("eventId") Long eventId);
+
+    // 1. 인기 공연 조회 (응모 중인 공연 중 응모자 수 많은 순 + 응모 마감 빠른 순)
+    @Query("""
+        SELECT e FROM Event e
+        WHERE e.eventStatus = 'APPLY_OPEN'
+        ORDER BY (
+            SELECT COUNT(a) FROM Apply a
+            WHERE a.session.event = e
+        ) DESC, e.applyEnd ASC
+    """)
+    List<Event> findPopularEvents(Pageable pageable);
+
+    // 2. 전체 공연 조회 (시작일 빠른 순 + 종료 공연은 뒤에서 최근 종료 순)
+    @Query("""
+        SELECT e FROM Event e
+        ORDER BY
+            CASE WHEN e.eventStatus = 'ENDED' THEN 1 ELSE 0 END ASC,
+            e.startDate ASC,
+            e.endDate DESC
+    """)
+    List<Event> findAllSorted(Pageable pageable);
 }
