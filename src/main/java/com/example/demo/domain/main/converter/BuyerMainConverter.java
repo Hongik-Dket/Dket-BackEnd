@@ -31,12 +31,14 @@ public class BuyerMainConverter {
     public static BuyerHomeResponseDTO toBuyerHomeResponseDTO(
             List<Event> popularEvents,
             List<Event> appliedEvents,
-            List<Event> purchasedEvents
+            List<Event> purchasedEvents,
+            List<Event> entireEvents
     ) {
         return BuyerHomeResponseDTO.builder()
                 .popularEvents(toEventCardDTOList(popularEvents))
                 .appliedEvents(toEventCardDTOList(appliedEvents))
                 .purchasedEvents(toEventCardDTOList(purchasedEvents))
+                .entireEvents(toEventCardDTOList(entireEvents))
                 .build();
     }
 
