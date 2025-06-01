@@ -10,7 +10,9 @@ import java.util.stream.Collectors;
 
 public class BuyerMainConverter {
 
-    private static EventCardDTO toEventCardDTO(Event event) {
+    private static EventCardDTO toEventCardDTO(Event event, boolean usePoster) {
+        String imageUrl = usePoster ? event.getPosterUrl() : event.getBannerUrl();
+
         return EventCardDTO.builder()
                 .eventId(event.getId())
                 .title(event.getTitle())
@@ -18,13 +20,13 @@ public class BuyerMainConverter {
                 .startDate(event.getStartDate())
                 .endDate(event.getEndDate())
                 .eventStatus(event.getEventStatus())
-                .imageUrl(event.getPosterUrl())
+                .imageUrl(imageUrl)
                 .build();
     }
 
-    private static List<EventCardDTO> toEventCardDTOList(List<Event> events) {
+    private static List<EventCardDTO> toEventCardDTOList(List<Event> events, boolean usePoster) {
         return events.stream()
-                .map(BuyerMainConverter::toEventCardDTO)
+                .map(event -> toEventCardDTO(event, usePoster))
                 .collect(Collectors.toList());
     }
 
@@ -34,17 +36,15 @@ public class BuyerMainConverter {
             List<Event> purchasedEvents,
             List<Event> entireEvents
     ) {
-        return BuyerHomeResponseDTO.builder()
-                .popularEvents(toEventCardDTOList(popularEvents))
-                .appliedEvents(toEventCardDTOList(appliedEvents))
-                .purchasedEvents(toEventCardDTOList(purchasedEvents))
-                .entireEvents(toEventCardDTOList(entireEvents))
-                .build();
+        return new BuyerHomeResponseDTO(
+                toEventCardDTOList(popularEvents, true),
+                toEventCardDTOList(appliedEvents, true),
+                toEventCardDTOList(purchasedEvents, true),
+                toEventCardDTOList(entireEvents, true)
+        );
     }
 
     public static EventCardListDTO toEventCardListDTO(List<Event> events) {
-        return EventCardListDTO.builder()
-                .eventCardList(toEventCardDTOList(events))
-                .build();
+        return new EventCardListDTO(toEventCardDTOList(events, false));
     }
 }
