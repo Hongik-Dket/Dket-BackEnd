@@ -19,4 +19,6 @@ public class BuyerHomeResponseDTO {
 
     private List<EventCardDTO> purchasedEvents;
 
+    private List<EventCardDTO> entireEvents;
+
 }
