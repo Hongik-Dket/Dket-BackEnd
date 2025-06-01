@@ -30,29 +30,25 @@ public class BuyerHomeController {
 
     @Operation(summary = "구매자 - 인기 공연 조회")
     @GetMapping("/popular")
-    public ApiResponse<EventCardListDTO> getPopularEvents(
-            @PageableDefault(size = 20, sort = "applyEnd", direction = Sort.Direction.ASC) Pageable pageable) {
-        return ApiResponse.onSuccess(_OK, buyerHomeService.getPopularEvents(pageable));
+    public ApiResponse<EventCardListDTO> getPopularEvents() {
+        return ApiResponse.onSuccess(_OK, buyerHomeService.getPopularEventsForBuyer());
     }
 
     @Operation(summary = "구매자 - 응모한 공연 조회")
     @GetMapping("/applied")
-    public ApiResponse<EventCardListDTO> getAppliedEvents(
-            @PageableDefault(size = 20, sort = "applyEnd", direction = Sort.Direction.ASC) Pageable pageable) {
-        return ApiResponse.onSuccess(_OK, buyerHomeService.getAppliedEvents(pageable));
+    public ApiResponse<EventCardListDTO> getAppliedEvents() {
+        return ApiResponse.onSuccess(_OK, buyerHomeService.getAppliedEventsForBuyer());
     }
 
     @Operation(summary = "구매자 - 구매한 공연 조회")
     @GetMapping("/purchased")
-    public ApiResponse<EventCardListDTO> getPurchasedEvents(
-            @PageableDefault(size = 20, sort = "startDate", direction = Sort.Direction.ASC) Pageable pageable) {
-        return ApiResponse.onSuccess(_OK, buyerHomeService.getPurchasedEvents(pageable));
+    public ApiResponse<EventCardListDTO> getPurchasedEvents() {
+        return ApiResponse.onSuccess(_OK, buyerHomeService.getPurchasedEventsForBuyer());
     }
 
     @Operation(summary = "구매자 - 전체 공연 조회")
-    @GetMapping("/all")
-    public ApiResponse<EventCardListDTO> getAllEvents(
-            @PageableDefault(size = 20) Pageable pageable) {
-        return ApiResponse.onSuccess(_OK, buyerHomeService.getEntireEvents(pageable));
+    @GetMapping("/entire")
+    public ApiResponse<EventCardListDTO> getEntireEvents() {
+        return ApiResponse.onSuccess(_OK, buyerHomeService.getEntireEventsForBuyer());
     }
 }
