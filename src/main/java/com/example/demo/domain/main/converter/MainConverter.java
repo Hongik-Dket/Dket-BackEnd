@@ -1,6 +1,7 @@
 package com.example.demo.domain.main.converter;
 
 import com.example.demo.domain.event.entity.Event;
+import com.example.demo.domain.main.dto.BuyerHomeResponseDTO;
 import com.example.demo.domain.main.dto.EventCardDTO;
 import com.example.demo.domain.main.dto.EventCardListDTO;
 import com.example.demo.domain.main.dto.OrganizerHomeResponseDTO;
@@ -59,4 +60,18 @@ public class MainConverter {
                 .build();
     }
 
+    // 구매자 홈 기능
+    public static BuyerHomeResponseDTO toBuyerHomeResponseDTO(
+            List<Event> popularEvents,
+            List<Event> appliedEvents,
+            List<Event> purchasedEvents,
+            List<Event> entireEvents
+    ) {
+        return new BuyerHomeResponseDTO(
+                toEventCardDTOList(popularEvents, true),
+                toEventCardDTOList(appliedEvents, true),
+                toEventCardDTOList(purchasedEvents, true),
+                toEventCardDTOList(entireEvents, true)
+        );
+    }
 }
