@@ -1,11 +1,9 @@
 package com.example.demo.domain.main.service.impl;
 
-import com.example.demo.domain.apply.enums.ApplyStatus;
 import com.example.demo.domain.apply.repository.ApplyRepository;
 import com.example.demo.domain.event.entity.Event;
-import com.example.demo.domain.event.enums.EventStatus;
 import com.example.demo.domain.event.repository.EventRepository;
-import com.example.demo.domain.main.converter.BuyerMainConverter;
+import com.example.demo.domain.main.converter.MainConverter;
 import com.example.demo.domain.main.dto.BuyerHomeResponseDTO;
 import com.example.demo.domain.main.dto.EventCardListDTO;
 import com.example.demo.domain.main.service.BuyerHomeService;
@@ -13,15 +11,12 @@ import com.example.demo.domain.ticket.repository.TicketRepository;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.time.LocalDateTime;
+
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -51,7 +46,7 @@ public class BuyerHomeServiceImpl implements BuyerHomeService {
         // 4. 전체 공연: 공연일 빠른 순 → 종료된 공연은 뒤로
         List<Event> entireEvents = eventRepository.findAllSorted(top10);
 
-        return BuyerMainConverter.toBuyerHomeResponseDTO(popularEvents, appliedEvents, purchasedEvents, entireEvents);
+        return MainConverter.toBuyerHomeResponseDTO(popularEvents, appliedEvents, purchasedEvents, entireEvents);
 
     }
 
@@ -59,26 +54,26 @@ public class BuyerHomeServiceImpl implements BuyerHomeService {
     public EventCardListDTO getPopularEventsForBuyer() {
         Pageable top20 = PageRequest.of(0, 20);
         List<Event> events = eventRepository.findPopularEvents(top20);
-        return BuyerMainConverter.toEventCardListDTO(events);
+        return MainConverter.toEventCardListDTO(events);
     }
 
     @Override
     public EventCardListDTO getAppliedEventsForBuyer() {
         User buyer = userService.getCurrentUser();
         List<Event> events = applyRepository.findAppliedEventsByBuyer(buyer.getId(), Pageable.unpaged());
-        return BuyerMainConverter.toEventCardListDTO(events);
+        return MainConverter.toEventCardListDTO(events);
     }
 
     @Override
     public EventCardListDTO getPurchasedEventsForBuyer() {
         User buyer = userService.getCurrentUser();
         List<Event> events = ticketRepository.findPurchasedEventsByBuyer(buyer.getId(), Pageable.unpaged());
-        return BuyerMainConverter.toEventCardListDTO(events);
+        return MainConverter.toEventCardListDTO(events);
     }
 
     @Override
     public EventCardListDTO getEntireEventsForBuyer() {
         List<Event> events = eventRepository.findAllSorted(Pageable.unpaged());
-        return BuyerMainConverter.toEventCardListDTO(events);
+        return MainConverter.toEventCardListDTO(events);
     }
 }
