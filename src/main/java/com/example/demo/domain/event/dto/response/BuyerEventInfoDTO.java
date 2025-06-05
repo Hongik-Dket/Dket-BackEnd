@@ -22,7 +22,7 @@ public class BuyerEventInfoDTO {
     private String description;
     private String location;
     private AgeLimit ageLimit;
-    private int price; // priceKrw 그대로 가져와도 됨
+    private int priceKrw;
 
     private LocalDateTime applyStart;
     private LocalDateTime applyEnd;
@@ -38,5 +38,5 @@ public class BuyerEventInfoDTO {
 
     private EventStatus eventStatus;
 
-    private List<BuyerSessionDTO> sessionList;
+    private List<BuyerSessionInfoDTO> sessionList;
 }
