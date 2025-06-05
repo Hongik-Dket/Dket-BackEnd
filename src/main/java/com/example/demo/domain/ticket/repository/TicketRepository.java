@@ -1,7 +1,9 @@
 package com.example.demo.domain.ticket.repository;
 
 import com.example.demo.domain.event.entity.Event;
+import com.example.demo.domain.event.entity.Session;
 import com.example.demo.domain.ticket.entity.Ticket;
+import com.example.demo.domain.user.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
@@ -22,4 +25,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
             t.session.event.endDate DESC
     """)
     List<Event> findPurchasedEventsByBuyer(@Param("buyerId") Long buyerId, Pageable pageable);
+
+    Optional<Ticket> findByUserAndSession(User user, Session session);
 }
