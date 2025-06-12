@@ -93,13 +93,14 @@ public class EventConverter {
                 .build();
     }
 
-    public static BuyerSessionInfoDTO toBuyerSessionInfoDTO(Session session, ApplyStatus applyStatus, Long ticketId) {
+    public static BuyerSessionInfoDTO toBuyerSessionInfoDTO(Session session, ApplyStatus applyStatus, Long ticketId, boolean buyable) {
         return BuyerSessionInfoDTO.builder()
                 .sessionId(session.getId())
                 .date(session.getDate())
                 .paidCount(session.getTicketList().size())
                 .applyStatus(applyStatus)
                 .ticketId(ticketId)
+                .buyable(buyable)
                 .build();
     }
 }
