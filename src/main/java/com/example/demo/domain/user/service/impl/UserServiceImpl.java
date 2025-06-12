@@ -23,4 +23,19 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
     }
 
+    @Override
+    public User loginWithWallet(String walletAddress) {
+        if (walletAddress == null || walletAddress.isBlank()) {
+            throw new CustomException(ErrorStatus.INVALID_INPUT);
+        }
+        if (!walletAddress.matches("^0x[a-fA-F0-9]{40}$")) {
+            throw new CustomException(ErrorStatus.INVALID_WALLET_ADDRESS);
+        }
+        return userRepository.findByWalletAddress(walletAddress)
+                .orElseGet(() -> {
+                    User newUser = new User();
+                    newUser.setWalletAddress(walletAddress);
+                    return userRepository.save(newUser);
+                });
+    }
 }

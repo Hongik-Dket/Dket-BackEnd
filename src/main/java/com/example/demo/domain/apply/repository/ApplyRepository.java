@@ -60,4 +60,6 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
     List<Event> findAppliedEventsByBuyer(@Param("buyerId") Long buyerId, Pageable pageable);
 
     Optional<Apply> findBySessionAndUser(Session session, User user);
+
+    boolean existsByUserIdAndSessionId(Long userId, Long sessionId);
 }
