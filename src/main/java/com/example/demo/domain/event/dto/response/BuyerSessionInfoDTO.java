@@ -13,12 +13,12 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BuyerSessionInfoDTO {
+    
     private Long sessionId;
     private LocalDate date;
-
     private int paidCount;
-
-    private ApplyStatus applyStatus; // 응모 상태: APPLIED, SELECTED, NOT_SELECTED, PAID, CANCELED, null
+    private ApplyStatus applyStatus;
     private Long ticketId;           // 존재하면 값, 없으면 null
+    private boolean buyable;
 
 }
