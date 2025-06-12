@@ -61,10 +61,10 @@ public class DketNFTService {
 
     public String recordEventOnChain(Event event) {
         try {
-            // Todo: IPFS 업로드 구현 후 수정 필요
-            List<String> photoCardList = event.getPhotoCards().stream()
-                    .map(photoCard -> photoCard.getIpfsUrl())
-                    .collect(Collectors.toList());
+            // Todo: 스마트컨트랙트 수정 예정
+//            List<String> photoCardList = event.getPhotoCards().stream()
+//                    .map(photoCard -> photoCard.getIpfsCid())
+//                    .collect(Collectors.toList());
 
             List<String> tmp = new ArrayList<>(List.of("test"));
 

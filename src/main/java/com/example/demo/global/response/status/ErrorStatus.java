@@ -57,6 +57,9 @@ public enum ErrorStatus implements BaseErrorCode {
     JOB_CANCEL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "JOB_5003", "Job 취소에 실패했습니다."),
     INVALID_JOB_CLASS(HttpStatus.BAD_REQUEST, "JOB_4002", "유효한 Job Class가 아닙니다."),
 
+    IPFS_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IPFS_5001", "IPFS 업로드에 실패했습니다."),
+
+
 
     ;
 
