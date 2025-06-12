@@ -8,6 +8,7 @@ import com.example.demo.domain.event.dto.response.BuyerEventInfoDTO;
 import com.example.demo.domain.event.dto.response.BuyerSessionInfoDTO;
 import com.example.demo.domain.event.entity.Event;
 import com.example.demo.domain.event.entity.Session;
+import com.example.demo.domain.event.enums.EventStatus;
 import com.example.demo.domain.event.repository.EventRepository;
 import com.example.demo.domain.event.repository.SessionRepository;
 import com.example.demo.domain.event.service.BuyerEventService;
@@ -38,39 +39,38 @@ public class BuyerEventServiceImpl implements BuyerEventService {
 
     @Override
     public BuyerEventInfoDTO getEventDetailForBuyer(Long eventId) {
-        User buyer = userService.getCurrentUser();  // 현재 로그인한 구매자
+        User user = userService.getCurrentUser();  // 현재 로그인한 구매자
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.EVENT_NOT_FOUND));
 
-        List<BuyerSessionInfoDTO> sessionDTOList = new ArrayList<>();
+        List<Session> sessions = event.getSessions();
 
-        for (Session session : event.getSessions()) {
-            // Apply 조회
-            Optional<Apply> apply = applyRepository.findBySessionAndUser(session, buyer);
+        List<BuyerSessionInfoDTO> sessionDTOs = sessions.stream().map(session -> {
+            // 해당 세션에 대해 유저의 응모 정보 가져오기
+            Apply apply = applyRepository.findBySessionAndUser(session, user).orElse(null);
+            ApplyStatus applyStatus = apply != null ? apply.getApplyStatus() : null;
 
-            ApplyStatus applyStatus = null;
-            Long ticketId = null;
+            // 해당 세션에 대해 유저의 티켓 정보 가져오기
+            Ticket ticket = ticketRepository.findByUserAndSession(user, session).orElse(null);
+            Long ticketId = ticket != null ? ticket.getId() : null;
 
-            if (apply.isPresent()) {
-                applyStatus = apply.get().getApplyStatus();
+            // 잔여 티켓 계산
+            int paidCount = session.getTicketList().size();
+            boolean buyable = event.getEventStatus() == EventStatus.TICKETED
+                    && (event.getCapacity() - paidCount > 0)
+                    && applyStatus != ApplyStatus.PAID;
 
-                // 티켓이 있는 경우
-                Optional<Ticket> ticket = ticketRepository.findByUserAndSession(buyer, session);
-                if (ticket.isPresent()) {
-                    ticketId = ticket.get().getId();
-                }
-            }
+            return BuyerSessionInfoDTO.builder()
+                    .sessionId(session.getId())
+                    .date(session.getDate())
+                    .paidCount(paidCount)
+                    .applyStatus(applyStatus)
+                    .ticketId(ticketId)
+                    .buyable(buyable)
+                    .build();
+        }).toList();
 
-            BuyerSessionInfoDTO sessionDTO = EventConverter.toBuyerSessionInfoDTO(
-                    session,
-                    applyStatus,
-                    ticketId
-            );
-
-            sessionDTOList.add(sessionDTO);
-        }
-
-        return EventConverter.toBuyerEventInfoDTO(event, sessionDTOList);
+        return EventConverter.toBuyerEventInfoDTO(event, sessionDTOs);
     }
 }
