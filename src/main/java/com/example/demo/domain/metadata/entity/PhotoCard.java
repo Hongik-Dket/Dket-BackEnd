@@ -28,12 +28,10 @@ public class PhotoCard extends BaseEntity {
     @JoinColumn(name = "event_id")
     private Event event;
 
-    @Column(length = 500)
-    private String ipfsCid;
+    private String cid;
 
     @OneToMany(mappedBy = "photoCard")
     @Builder.Default
-    private List<Ticket> tickets = new ArrayList<>();
+    private List<Metadata> metadataList = new ArrayList<>();
 
-    public void addTicket(Ticket ticket) { this.tickets.add(ticket); }
 }

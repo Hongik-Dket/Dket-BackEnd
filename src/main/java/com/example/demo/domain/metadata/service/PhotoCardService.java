@@ -22,7 +22,7 @@ public class PhotoCardService {
         for (MultipartFile image : images) {
             PhotoCard photoCard = PhotoCard.builder()
                     .event(event)
-                    .ipfsCid(pinataService.uploadSingleFile(image))
+                    .cid(pinataService.uploadPhotoCard(image))
                     .build();
 
             event.addPhotoCard(photoCard);

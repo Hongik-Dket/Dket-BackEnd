@@ -3,6 +3,7 @@ package com.example.demo.global.infra.blockchain.service;
 import com.example.demo.domain.event.entity.Event;
 import com.example.demo.domain.event.entity.Session;
 import com.example.demo.domain.event.service.SessionService;
+import com.example.demo.domain.metadata.service.MetadataService;
 import com.example.demo.global.infra.blockchain.contracts.DketNFT;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
@@ -39,6 +40,7 @@ public class DketNFTService {
 
     private final Web3j web3j;
     private final Credentials credentials;
+    private final MetadataService metadataService;
 
     @Value("${web3.contract-address}")
     private String contractAddress;
@@ -62,10 +64,6 @@ public class DketNFTService {
     public String recordEventOnChain(Event event) {
         try {
             // Todo: 스마트컨트랙트 수정 예정
-//            List<String> photoCardList = event.getPhotoCards().stream()
-//                    .map(photoCard -> photoCard.getIpfsCid())
-//                    .collect(Collectors.toList());
-
             List<String> tmp = new ArrayList<>(List.of("test"));
 
             var tx = dketNFT.createEvent(
@@ -124,7 +122,9 @@ public class DketNFTService {
                 .subscribe(
                         event -> {
                             BigInteger sessionId = event.sessionId;
+                            BigInteger randomWord = event.randomWord;
                             drawSession(sessionId);
+                            metadataService.createMetadata(sessionId, randomWord);
                         },
                         error -> {
                             System.out.println(error.getMessage());
