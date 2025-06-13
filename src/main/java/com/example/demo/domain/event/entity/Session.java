@@ -50,4 +50,6 @@ public class Session extends BaseEntity {
 
     public void setTxHash(String txHash) { this.txHash = txHash; }
     public void setIsDrawn() { this.isDrawn = true; }
+
+    public void addMetadata(Metadata metadata) { this.metadataList.add(metadata); }
 }

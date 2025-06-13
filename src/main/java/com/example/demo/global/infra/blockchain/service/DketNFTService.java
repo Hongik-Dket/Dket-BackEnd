@@ -63,16 +63,12 @@ public class DketNFTService {
 
     public String recordEventOnChain(Event event) {
         try {
-            // Todo: 스마트컨트랙트 수정 예정
-            List<String> tmp = new ArrayList<>(List.of("test"));
-
             var tx = dketNFT.createEvent(
                     BigInteger.valueOf(event.getId()),
                     event.getOrganizer().getWalletAddress(),
                     event.getTitle(),
                     BigInteger.valueOf(event.getCapacity()),
-                    event.getPriceWei(),
-                    tmp
+                    event.getPriceWei()
             ).send();
 
             return tx.getTransactionHash();

@@ -4,6 +4,7 @@ import com.example.demo.domain.event.entity.Session;
 import com.example.demo.domain.event.repository.SessionRepository;
 import com.example.demo.domain.metadata.entity.Metadata;
 import com.example.demo.domain.metadata.entity.PhotoCard;
+import com.example.demo.domain.metadata.repository.MetadataRepository;
 import com.example.demo.domain.metadata.repository.PhotoCardRepository;
 import com.example.demo.global.infra.ipfs.PinataService;
 import com.example.demo.global.response.exception.CustomException;
@@ -32,7 +33,9 @@ public class MetadataService {
 
     private final SessionRepository sessionRepository;
     private final PhotoCardRepository photoCardRepository;
+    private final MetadataRepository metadataRepository;
     private final PinataService pinataService;
+    private final MetadataCommandService metadataCommandService;
 
     @Transactional
     public void createMetadata(BigInteger sessionId, BigInteger randomWord) {
@@ -49,6 +52,8 @@ public class MetadataService {
         Map<Long, PhotoCard> photoCardMap = photoCardRepository.findAllByIdIn(photoCardIndicesList).stream()
                 .collect(Collectors.toMap(PhotoCard::getId, Function.identity()));
 
+        List<Metadata> metadataList = new ArrayList<>();
+
         for (int i = 0; i < capacity; i++) {
             String seatCode = convertSeatCode(seatList.get(i));
 
@@ -62,17 +67,30 @@ public class MetadataService {
                     .seatCode(seatCode)
                     .build();
 
-            metadata.setcid(uploadMetadata(metadata));
+            session.addMetadata(metadata);
+            metadataList.add(metadata);
         }
+
+        metadataRepository.saveAll(metadataList);
+
+        for (Metadata metadata : metadataList)
+            uploadMetadata(metadata.getId());
+
     }
 
-    private String uploadMetadata(Metadata metadata) {
+    private void uploadMetadata(Long metadataId) {
+        Metadata metadata = metadataRepository.findById(metadataId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.METADATA_NOT_FOUND));
+
         String json = convertToJson(metadata);
 
         try {
             InputStream jsonStream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
 
-            return pinataService.uploadJsonFile(jsonStream, "Ticket_metadata_" + metadata.getId() + ".json");
+            pinataService.uploadJsonFile(jsonStream, "Ticket_metadata_" + metadataId + ".json")
+                    .thenAccept(result -> {
+                        metadataCommandService.setMetadataCid(metadata, result);
+                    });
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new CustomException(ErrorStatus.IPFS_UPLOAD_FAILED);
@@ -137,7 +155,7 @@ public class MetadataService {
             }
             """.formatted(
                 "Dket NFT Ticket",
-                "This NFT represents a ticket for a event.",
+                "This NFT represents a ticket for the %s".formatted(metadata.getSession().getEvent().getTitle()),
                 metadata.getPhotoCard().getCid(), // 포토카드 CID
                 metadata.getSession().getEvent().getTitle(), // 공연 정보
                 metadata.getSession().getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),    // 날짜 정보

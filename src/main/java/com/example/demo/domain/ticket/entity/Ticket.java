@@ -28,7 +28,7 @@ public class Ticket extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "metadata_id")
     private Metadata metadata;
 

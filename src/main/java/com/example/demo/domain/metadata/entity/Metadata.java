@@ -1,7 +1,6 @@
 package com.example.demo.domain.metadata.entity;
 
 import com.example.demo.domain.event.entity.Session;
-import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.global.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -37,6 +36,6 @@ public class Metadata extends BaseEntity {
     @JoinColumn(name = "photo_card_id")
     private PhotoCard photoCard;
 
-    public void setcid(String cid) { this.cid = cid; }
+    public void setCid(String cid) { this.cid = cid; }
 
 }

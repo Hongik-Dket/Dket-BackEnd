@@ -48,7 +48,7 @@ cloud:
 web3:
   network-url: ${ETH_RPC_URL}
   private-key: ${ETH_PRIVATE_KEY}
-  contract-address: "0xbb95e843ea4ee8f10ee1174b80c3de8ff0087ecc"
+  contract-address: "0x7418635bcb21a99aedc8931bb3209fd95fa31fda"
 
 pinata:
   api-key: ${PINATA_API_KEY}

@@ -30,8 +30,4 @@ public class PhotoCard extends BaseEntity {
 
     private String cid;
 
-    @OneToMany(mappedBy = "photoCard")
-    @Builder.Default
-    private List<Metadata> metadataList = new ArrayList<>();
-
 }

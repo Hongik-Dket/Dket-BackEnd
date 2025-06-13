@@ -1,7 +1,5 @@
 package com.example.demo.global.infra.ipfs;
 
-import com.example.demo.domain.metadata.entity.Metadata;
-import com.example.demo.global.infra.awsS3.S3UploadService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +12,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -28,22 +28,27 @@ import java.util.Map;
 public class PinataService {
 
     private final PinataConfig pinataConfig;
-    private final S3UploadService s3UploadService;
 
     private static final String IPFS_HASH_KEY = "IpfsHash";
 
     public String uploadPhotoCard(MultipartFile file) {
         try {
-            String filename = s3UploadService.generateUniqueFileName(file.getOriginalFilename());
-            return uploadToPinata(file.getInputStream(), ContentType.DEFAULT_BINARY, filename);
+            return uploadToPinata(file.getInputStream(), ContentType.DEFAULT_BINARY, file.getOriginalFilename());
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new CustomException(ErrorStatus.IPFS_UPLOAD_FAILED);
         }
     }
 
-    public String uploadJsonFile(InputStream jsonStream, String fileName) {
-        return uploadToPinata(jsonStream, ContentType.APPLICATION_JSON, fileName);
+    @Async("pinataUploadExecutor")
+    public CompletableFuture<String> uploadJsonFile(InputStream jsonStream, String fileName) {
+        try {
+            String ipfsHash = uploadToPinata(jsonStream, ContentType.APPLICATION_JSON, fileName);
+            return CompletableFuture.completedFuture(ipfsHash);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new CustomException(ErrorStatus.IPFS_UPLOAD_FAILED);
+        }
     }
 
     private String uploadToPinata(InputStream stream, ContentType contentType, String fileName) {
