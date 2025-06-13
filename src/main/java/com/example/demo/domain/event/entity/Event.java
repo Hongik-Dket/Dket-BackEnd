@@ -1,6 +1,6 @@
 package com.example.demo.domain.event.entity;
 
-import com.example.demo.domain.photocard.entity.PhotoCard;
+import com.example.demo.domain.metadata.entity.PhotoCard;
 import com.example.demo.domain.event.enums.AgeLimit;
 import com.example.demo.domain.event.enums.EventStatus;
 import com.example.demo.global.base.BaseEntity;

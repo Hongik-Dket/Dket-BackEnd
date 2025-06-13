@@ -274,11 +274,6 @@
 				"internalType": "uint256",
 				"name": "_price",
 				"type": "uint256"
-			},
-			{
-				"internalType": "string[]",
-				"name": "_photoCardURIs",
-				"type": "string[]"
 			}
 		],
 		"name": "createEvent",
@@ -366,6 +361,11 @@
 				"internalType": "uint256",
 				"name": "sessionId",
 				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "uri",
+				"type": "string"
 			}
 		],
 		"name": "mintPublicTicket",
@@ -379,6 +379,11 @@
 				"internalType": "uint256",
 				"name": "sessionId",
 				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "uri",
+				"type": "string"
 			}
 		],
 		"name": "mintWinnerTicket",
@@ -624,6 +629,12 @@
 			},
 			{
 				"indexed": false,
+				"internalType": "string",
+				"name": "uri",
+				"type": "string"
+			},
+			{
+				"indexed": false,
 				"internalType": "bool",
 				"name": "isWinner",
 				"type": "bool"
@@ -847,11 +858,6 @@
 				"internalType": "address[]",
 				"name": "winners",
 				"type": "address[]"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "photoCardIndices",
-				"type": "uint256[]"
 			}
 		],
 		"stateMutability": "view",

@@ -1,4 +1,4 @@
-package com.example.demo.domain.photocard.entity;
+package com.example.demo.domain.metadata.entity;
 
 import com.example.demo.domain.event.entity.Event;
 import com.example.demo.domain.ticket.entity.Ticket;
@@ -28,12 +28,6 @@ public class PhotoCard extends BaseEntity {
     @JoinColumn(name = "event_id")
     private Event event;
 
-    @Column(length = 500)
-    private String ipfsUrl;
+    private String cid;
 
-    @OneToMany(mappedBy = "photoCard")
-    @Builder.Default
-    private List<Ticket> tickets = new ArrayList<>();
-
-    public void addTicket(Ticket ticket) { this.tickets.add(ticket); }
 }

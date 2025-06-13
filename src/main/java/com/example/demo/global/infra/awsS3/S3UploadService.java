@@ -1,8 +1,7 @@
-package com.example.demo.domain.event.service.impl;
+package com.example.demo.global.infra.awsS3;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.example.demo.domain.event.service.S3UploadService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +16,13 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class S3UploadServiceImpl implements S3UploadService {
+public class S3UploadService {
 
     private final AmazonS3 amazonS3;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    @Override
     public String saveFile(MultipartFile multipartFile) {
 
         String uniqueFileName = generateUniqueFileName(multipartFile.getOriginalFilename());
@@ -44,6 +42,7 @@ public class S3UploadServiceImpl implements S3UploadService {
 
         return amazonS3.getUrl(bucket, uniqueFileName).toString();
     }
+
     private String generateUniqueFileName(String originalFilename) {
         String extension = "";
         int lastDotIndex = originalFilename.lastIndexOf(".");
