@@ -1,0 +1,27 @@
+package com.example.demo.domain.event.controller;
+
+import com.example.demo.domain.event.dto.response.BuyerEventInfoDTO;
+import com.example.demo.domain.event.service.BuyerEventService;
+import com.example.demo.global.response.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import static com.example.demo.global.response.status.SuccessStatus._OK;
+
+@RestController
+@RequestMapping("/api/buyer/events")
+@RequiredArgsConstructor
+public class BuyerEventController {
+
+    private final BuyerEventService buyerEventService;
+
+    @Operation(summary = "구매자 - 공연 상세 조회")
+    @GetMapping("{eventId}")
+    public ApiResponse<BuyerEventInfoDTO> getEventDetail(@PathVariable Long eventId) {
+        return ApiResponse.onSuccess(_OK, buyerEventService.getEventDetailForBuyer(eventId));
+    }
+}

@@ -1,6 +1,9 @@
 package com.example.demo.domain.event.converter;
 
+import com.example.demo.domain.apply.enums.ApplyStatus;
 import com.example.demo.domain.event.dto.request.EventUploadDTO;
+import com.example.demo.domain.event.dto.response.BuyerEventInfoDTO;
+import com.example.demo.domain.event.dto.response.BuyerSessionInfoDTO;
 import com.example.demo.domain.event.dto.response.EventInfoDTO;
 import com.example.demo.domain.event.dto.response.SessionInfoDTO;
 import com.example.demo.domain.event.entity.Event;
@@ -8,6 +11,7 @@ import com.example.demo.domain.event.entity.Session;
 import com.example.demo.domain.user.entity.User;
 
 import java.math.BigInteger;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class EventConverter {
@@ -65,6 +69,38 @@ public class EventConverter {
                 .bannerUrl(bannerUrl)
                 .posterUrl(posterUrl)
                 .priceWei(priceWei)
+                .build();
+    }
+
+    public static BuyerEventInfoDTO toBuyerEventInfoDTO(Event event, List<BuyerSessionInfoDTO> sessionList) {
+        return BuyerEventInfoDTO.builder()
+                .eventId(event.getId())
+                .title(event.getTitle())
+                .description(event.getDescription())
+                .location(event.getLocation())
+                .ageLimit(event.getAgeLimit())
+                .priceKrw(event.getPriceKrw())
+                .applyStart(event.getApplyStart())
+                .applyEnd(event.getApplyEnd())
+                .startDate(event.getStartDate())
+                .endDate(event.getEndDate())
+                .startTime(event.getStartTime())
+                .endTime(event.getEndTime())
+                .posterUrl(event.getPosterUrl())
+                .capacity(event.getCapacity())
+                .eventStatus(event.getEventStatus())
+                .sessionList(sessionList)
+                .build();
+    }
+
+    public static BuyerSessionInfoDTO toBuyerSessionInfoDTO(Session session, ApplyStatus applyStatus, Long ticketId, boolean buyable) {
+        return BuyerSessionInfoDTO.builder()
+                .sessionId(session.getId())
+                .date(session.getDate())
+                .paidCount(session.getTicketList().size())
+                .applyStatus(applyStatus)
+                .ticketId(ticketId)
+                .buyable(buyable)
                 .build();
     }
 }

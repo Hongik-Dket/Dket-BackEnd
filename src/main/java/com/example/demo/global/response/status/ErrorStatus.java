@@ -14,6 +14,8 @@ public enum ErrorStatus implements BaseErrorCode {
     COMMON_BAD_REQUEST(HttpStatus.BAD_REQUEST, "COMMON_4001", "잘못된 요청입니다."),
     COMMON_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "COMMON_4002", "인증이 필요합니다."),
     COMMON_WRONG_PARAMETER(HttpStatus.BAD_REQUEST, "COMMON_4003", "잘못된 파라미터 값 입니다."),
+    INVALID_INPUT(HttpStatus.BAD_REQUEST, "COMMON_4004", "입력값이 유효하지 않습니다."),
+    INVALID_WALLET_ADDRESS(HttpStatus.BAD_REQUEST, "COMMON_4005", "유효하지 않은 지갑 주소 형식입니다."),
 
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER_4001", "해당 유저를 찾을 수 없습니다."),
     USER_ALREADY_WITHDRAWN(HttpStatus.BAD_REQUEST, "USER_4002", "이미 탈퇴한 유저입니다."),
@@ -58,12 +60,12 @@ public enum ErrorStatus implements BaseErrorCode {
     JOB_CANCEL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "JOB_5003", "Job 취소에 실패했습니다."),
     INVALID_JOB_CLASS(HttpStatus.BAD_REQUEST, "JOB_4002", "유효한 Job Class가 아닙니다."),
 
+    EVENT_NOT_OPEN_FOR_APPLY(HttpStatus.BAD_REQUEST, "APPLY_4001", "현재 공연은 응모할 수 없는 상태입니다."),
+    APPLY_TIME_INVALID(HttpStatus.BAD_REQUEST, "APPLY_4002", "응모 기간이 아닙니다."),
+    ALREADY_APPLIED(HttpStatus.BAD_REQUEST, "APPLY_4003", "이미 해당 회차에 응모한 상태입니다."),
     IPFS_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IPFS_5001", "IPFS 업로드에 실패했습니다."),
-
     PHOTOCARD_NOT_FOUND(HttpStatus.BAD_REQUEST, "PHOTOCARD_4001", "해당 포토카드를 찾을 수 없습니다."),
-
     METADATA_NOT_FOUND(HttpStatus.BAD_REQUEST, "METADATA_4001", "해당 메타데이터를 찾을 수 없습니다."),
-
 
     ;
 
