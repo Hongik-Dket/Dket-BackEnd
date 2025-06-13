@@ -1,6 +1,7 @@
 package com.example.demo.domain.event.entity;
 
 import com.example.demo.domain.apply.entity.Apply;
+import com.example.demo.domain.metadata.entity.Metadata;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.global.base.BaseEntity;
 import jakarta.persistence.*;
@@ -43,6 +44,12 @@ public class Session extends BaseEntity {
     @Builder.Default
     private List<Ticket> ticketList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Metadata> metadataList = new ArrayList<>();
+
     public void setTxHash(String txHash) { this.txHash = txHash; }
     public void setIsDrawn() { this.isDrawn = true; }
+
+    public void addMetadata(Metadata metadata) { this.metadataList.add(metadata); }
 }

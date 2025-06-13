@@ -10,10 +10,11 @@ import com.example.demo.domain.event.repository.EventRepository;
 import com.example.demo.domain.event.dto.response.EventInfoDTO;
 import com.example.demo.domain.event.repository.SessionRepository;
 import com.example.demo.domain.event.service.OrganizerEventService;
-import com.example.demo.domain.event.service.S3UploadService;
+import com.example.demo.domain.metadata.service.PhotoCardService;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.base.Constants;
+import com.example.demo.global.infra.awsS3.S3UploadService;
 import com.example.demo.global.infra.blockchain.service.DketNFTService;
 import com.example.demo.global.infra.blockchain.service.ExchangeService;
 import com.example.demo.global.infra.scheduling.SchedulingService;
@@ -30,7 +31,6 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.demo.domain.event.converter.EventConverter.*;
@@ -47,6 +47,7 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
     private final SchedulingService schedulingService;
     private final DketNFTService dketNFTService;
     private final ExchangeService exchangeService;
+    private final PhotoCardService photoCardService;
 
     @Override
     public EventInfoDTO getEventInfoForOrganizer(Long eventId) {
@@ -101,9 +102,7 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
         event.setEventStatus(EventStatus.APPLY_NOT_OPENED);
         eventRepository.save(event);
 
-        // Todo: 포토카드 IPFS 업로드
-        List<String> photoCardURIS = new ArrayList<>();
-        photoCardURIS.add(posterUrl);
+        photoCardService.createPhotoCards(event, photocardList);
 
         for (LocalDate date = request.getStartDate(); !date.isAfter(request.getEndDate()); date = date.plusDays(1)) {
             Session session = Session.builder()
