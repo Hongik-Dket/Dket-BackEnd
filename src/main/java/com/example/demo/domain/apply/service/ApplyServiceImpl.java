@@ -23,7 +23,7 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class                                                  ApplyServiceImpl implements ApplyService {
+public class ApplyServiceImpl implements ApplyService {
 
     private final ApplyRepository applyRepository;
     private final EventRepository eventRepository;
@@ -43,8 +43,7 @@ public class                                                  ApplyServiceImpl i
 
     @Override
     @Transactional
-    public ApplyResponseDTO applyToSession(Long eventId, Long sessionId) {
-        User user = userService.getCurrentUser();
+    public ApplyResponseDTO applyToSession(Long eventId, Long sessionId, User user) {
 
         // 1. Event 존재 확인
         Event event = eventRepository.findById(eventId)
