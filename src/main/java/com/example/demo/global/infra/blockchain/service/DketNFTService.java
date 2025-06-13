@@ -2,7 +2,9 @@ package com.example.demo.global.infra.blockchain.service;
 
 import com.example.demo.domain.event.entity.Event;
 import com.example.demo.domain.event.entity.Session;
+import com.example.demo.domain.event.repository.SessionRepository;
 import com.example.demo.domain.event.service.SessionService;
+import com.example.demo.domain.metadata.service.MetadataService;
 import com.example.demo.global.infra.blockchain.contracts.DketNFT;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
@@ -27,7 +29,6 @@ import org.web3j.tx.response.PollingTransactionReceiptProcessor;
 import org.web3j.tx.response.TransactionReceiptProcessor;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,8 @@ public class DketNFTService {
 
     private final Web3j web3j;
     private final Credentials credentials;
+    private final MetadataService metadataService;
+    private final SessionRepository sessionRepository;
 
     @Value("${web3.contract-address}")
     private String contractAddress;
@@ -61,20 +64,12 @@ public class DketNFTService {
 
     public String recordEventOnChain(Event event) {
         try {
-            // Todo: 스마트컨트랙트 수정 예정
-//            List<String> photoCardList = event.getPhotoCards().stream()
-//                    .map(photoCard -> photoCard.getIpfsCid())
-//                    .collect(Collectors.toList());
-
-            List<String> tmp = new ArrayList<>(List.of("test"));
-
             var tx = dketNFT.createEvent(
                     BigInteger.valueOf(event.getId()),
                     event.getOrganizer().getWalletAddress(),
                     event.getTitle(),
                     BigInteger.valueOf(event.getCapacity()),
-                    event.getPriceWei(),
-                    tmp
+                    event.getPriceWei()
             ).send();
 
             return tx.getTransactionHash();
@@ -84,7 +79,6 @@ public class DketNFTService {
         }
     }
 
-    @Transactional
     public void recordAllSessionsOnChain(Event event) {
         event.getSessions().parallelStream().forEach(session -> {
             session.setTxHash(recordSessionOnChain(session));
@@ -124,16 +118,21 @@ public class DketNFTService {
                 .subscribe(
                         event -> {
                             BigInteger sessionId = event.sessionId;
+                            BigInteger randomWord = event.randomWord;
                             drawSession(sessionId);
+                            metadataService.createMetadata(sessionId, randomWord);
                         },
                         error -> {
                             System.out.println(error.getMessage());
-                            throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
                         }
                 );
     }
 
-    private void drawSession(BigInteger sessionId) {
+    @Transactional
+    protected void drawSession(BigInteger sessionId) {
+        Session session = sessionRepository.findByIdWithApplyList(Long.valueOf(String.valueOf(sessionId)))
+                .orElseThrow(()->new CustomException(ErrorStatus.SESSION_NOT_FOUND));
+
         try {
             Function function = new Function(
                     "drawSession",
@@ -167,11 +166,25 @@ public class DketNFTService {
 
             List<DketNFT.WinnersDrawnEventResponse> events = dketNFT.getWinnersDrawnEvents(txReceipt);
 
-            if (!events.isEmpty() && events.get(0).winners != null) {
-                List<String> winners = events.get(0).winners;
+            if (events.isEmpty()) {
+                if (session.getApplyList().isEmpty()) {
+                    return;
+                } else {
+                    throw new CustomException(ErrorStatus.SESSION_DRAW_FAILED);
+                }
+            }
+
+            List<String> winners = events.get(0).winners;
+
+            if (winners != null && !winners.isEmpty()) {
                 sessionService.saveWinners(sessionId.longValue(), winners);
-            } else
-                throw new CustomException(ErrorStatus.BLOCKCHAIN_WINNERS_NOT_FOUND);
+            } else {
+                if (session.getApplyList().isEmpty()) {
+                    return;
+                } else {
+                    throw new CustomException(ErrorStatus.SESSION_DRAW_FAILED);
+                }
+            }
 
         } catch (Exception e) {
             System.out.println(e.getMessage());

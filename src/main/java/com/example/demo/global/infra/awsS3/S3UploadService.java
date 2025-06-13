@@ -43,7 +43,7 @@ public class S3UploadService {
         return amazonS3.getUrl(bucket, uniqueFileName).toString();
     }
 
-    public String generateUniqueFileName(String originalFilename) {
+    private String generateUniqueFileName(String originalFilename) {
         String extension = "";
         int lastDotIndex = originalFilename.lastIndexOf(".");
 
