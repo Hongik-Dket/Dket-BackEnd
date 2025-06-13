@@ -28,7 +28,6 @@ import org.web3j.tx.response.PollingTransactionReceiptProcessor;
 import org.web3j.tx.response.TransactionReceiptProcessor;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,7 +77,6 @@ public class DketNFTService {
         }
     }
 
-    @Transactional
     public void recordAllSessionsOnChain(Event event) {
         event.getSessions().parallelStream().forEach(session -> {
             session.setTxHash(recordSessionOnChain(session));
@@ -129,7 +127,8 @@ public class DketNFTService {
                 );
     }
 
-    private void drawSession(BigInteger sessionId) {
+    @Transactional
+    protected void drawSession(BigInteger sessionId) {
         try {
             Function function = new Function(
                     "drawSession",
@@ -163,11 +162,12 @@ public class DketNFTService {
 
             List<DketNFT.WinnersDrawnEventResponse> events = dketNFT.getWinnersDrawnEvents(txReceipt);
 
-            if (!events.isEmpty() && events.get(0).winners != null) {
+            if (!events.isEmpty() && events.get(0).winners != null && !events.get(0).winners.isEmpty()) {
                 List<String> winners = events.get(0).winners;
                 sessionService.saveWinners(sessionId.longValue(), winners);
-            } else
-                throw new CustomException(ErrorStatus.BLOCKCHAIN_WINNERS_NOT_FOUND);
+            } else {
+
+            }
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
