@@ -89,7 +89,7 @@ public class MetadataService {
 
             pinataService.uploadJsonFile(jsonStream, "Ticket_metadata_" + metadataId + ".json")
                     .thenAccept(result -> {
-                        metadataCommandService.setMetadataCid(metadata, result);
+                        metadataCommandService.setMetadataCid(metadataId, result);
                     });
         } catch (Exception e) {
             System.out.println(e.getMessage());

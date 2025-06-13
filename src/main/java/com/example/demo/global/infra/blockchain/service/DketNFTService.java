@@ -2,6 +2,7 @@ package com.example.demo.global.infra.blockchain.service;
 
 import com.example.demo.domain.event.entity.Event;
 import com.example.demo.domain.event.entity.Session;
+import com.example.demo.domain.event.repository.SessionRepository;
 import com.example.demo.domain.event.service.SessionService;
 import com.example.demo.domain.metadata.service.MetadataService;
 import com.example.demo.global.infra.blockchain.contracts.DketNFT;
@@ -40,6 +41,7 @@ public class DketNFTService {
     private final Web3j web3j;
     private final Credentials credentials;
     private final MetadataService metadataService;
+    private final SessionRepository sessionRepository;
 
     @Value("${web3.contract-address}")
     private String contractAddress;
@@ -122,13 +124,15 @@ public class DketNFTService {
                         },
                         error -> {
                             System.out.println(error.getMessage());
-                            throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
                         }
                 );
     }
 
     @Transactional
     protected void drawSession(BigInteger sessionId) {
+        Session session = sessionRepository.findByIdWithApplyList(Long.valueOf(String.valueOf(sessionId)))
+                .orElseThrow(()->new CustomException(ErrorStatus.SESSION_NOT_FOUND));
+
         try {
             Function function = new Function(
                     "drawSession",
@@ -162,11 +166,24 @@ public class DketNFTService {
 
             List<DketNFT.WinnersDrawnEventResponse> events = dketNFT.getWinnersDrawnEvents(txReceipt);
 
-            if (!events.isEmpty() && events.get(0).winners != null && !events.get(0).winners.isEmpty()) {
-                List<String> winners = events.get(0).winners;
+            if (events.isEmpty()) {
+                if (session.getApplyList().isEmpty()) {
+                    return;
+                } else {
+                    throw new CustomException(ErrorStatus.SESSION_DRAW_FAILED);
+                }
+            }
+
+            List<String> winners = events.get(0).winners;
+
+            if (winners != null && !winners.isEmpty()) {
                 sessionService.saveWinners(sessionId.longValue(), winners);
             } else {
-
+                if (session.getApplyList().isEmpty()) {
+                    return;
+                } else {
+                    throw new CustomException(ErrorStatus.SESSION_DRAW_FAILED);
+                }
             }
 
         } catch (Exception e) {

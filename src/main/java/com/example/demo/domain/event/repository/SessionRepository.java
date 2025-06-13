@@ -2,6 +2,8 @@ package com.example.demo.domain.event.repository;
 
 import com.example.demo.domain.event.entity.Session;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,5 +13,6 @@ import java.util.Optional;
 public interface SessionRepository extends JpaRepository<Session, Long> {
     Optional<Session> findById(Long id);
 
-    List<Session> findByEventId(Long eventId);
+    @Query("SELECT s FROM Session s LEFT JOIN FETCH s.applyList WHERE s.id = :id")
+    Optional<Session> findByIdWithApplyList(@Param("id") Long id);
 }
