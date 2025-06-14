@@ -11,9 +11,8 @@ import java.math.BigInteger;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApprovalDTO {
+public class PriceWeiDTO {
 
     Long sessionId;
     BigInteger priceWei;
-
 }

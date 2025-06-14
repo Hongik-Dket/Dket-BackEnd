@@ -2,6 +2,7 @@ package com.example.demo.domain.user.entity;
 
 import com.example.demo.domain.apply.entity.Apply;
 import com.example.demo.domain.event.entity.Event;
+import com.example.demo.domain.event.enums.AgeLimit;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.global.base.BaseEntity;
 import jakarta.persistence.*;
@@ -47,5 +48,11 @@ public class User extends BaseEntity {
     public void addEvent(Event event) { this.organizedEvents.add(event); }
     public void addApply(Apply apply) { this.applies.add(apply); }
     public void addTicket(Ticket ticket) { this.tickets.add(ticket); }
+
+    public boolean isEligibleFor(AgeLimit ageLimit) {
+        if (ageLimit == null) return true;
+
+        return this.age >= ageLimit.getMinimumAge();
+    }
 
 }

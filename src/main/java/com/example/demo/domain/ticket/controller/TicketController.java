@@ -1,6 +1,6 @@
 package com.example.demo.domain.ticket.controller;
 
-import com.example.demo.domain.ticket.dto.ApprovalDTO;
+import com.example.demo.domain.ticket.dto.PriceWeiDTO;
 import com.example.demo.domain.ticket.service.TicketService;
 import com.example.demo.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,9 +19,9 @@ public class TicketController {
 
     private final TicketService ticketService;
 
-    @Operation(summary = "티켓 결제 승인 요청")
-    @GetMapping("buyer/{sessionId}/request-approval")
-    public ApiResponse<ApprovalDTO> requestApproval(@PathVariable("sessionId") Long sessionId) {
-        return ApiResponse.onSuccess(_OK, ticketService.approveTicket(sessionId));
+    @Operation(summary = "티켓 가격 확인")
+    @GetMapping("buyer/{sessionId}")
+    public ApiResponse<PriceWeiDTO> getPriceWei(@PathVariable("sessionId") Long sessionId) {
+        return ApiResponse.onSuccess(_OK, ticketService.getPriceWei(sessionId));
     }
 }

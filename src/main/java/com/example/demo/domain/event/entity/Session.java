@@ -4,6 +4,7 @@ import com.example.demo.domain.apply.entity.Apply;
 import com.example.demo.domain.metadata.entity.Metadata;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.global.base.BaseEntity;
+import com.example.demo.global.base.Constants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,4 +57,11 @@ public class Session extends BaseEntity {
 
     public void addMetadata(Metadata metadata) { this.metadataList.add(metadata); }
     public void addTicket(Ticket ticket) { this.ticketList.add(ticket); }
+
+    public boolean isBuyableNow() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime eventStartDateTime = LocalDateTime.of(this.date, getEvent().getStartTime());
+
+        return now.isBefore(eventStartDateTime.minusHours(Constants.PAYMENT_AVAILABLE_BEFORE_EVENT_START));
+    }
 }
