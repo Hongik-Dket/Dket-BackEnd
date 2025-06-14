@@ -1,4 +1,4 @@
-package com.example.demo.global.infra.awsS3;
+package com.example.demo.global.infra.image;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;

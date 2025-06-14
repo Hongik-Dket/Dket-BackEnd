@@ -14,7 +14,7 @@ import com.example.demo.domain.metadata.service.PhotoCardService;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.base.Constants;
-import com.example.demo.global.infra.awsS3.S3UploadService;
+import com.example.demo.global.infra.image.S3UploadService;
 import com.example.demo.global.infra.blockchain.service.DketNFTService;
 import com.example.demo.global.infra.blockchain.service.ExchangeService;
 import com.example.demo.global.infra.scheduling.SchedulingService;

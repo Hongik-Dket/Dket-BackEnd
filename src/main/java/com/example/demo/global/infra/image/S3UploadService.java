@@ -1,4 +1,4 @@
-package com.example.demo.global.infra.awsS3;
+package com.example.demo.global.infra.image;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
