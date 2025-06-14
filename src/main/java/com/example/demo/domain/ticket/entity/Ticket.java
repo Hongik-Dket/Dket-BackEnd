@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @Entity
@@ -38,8 +39,18 @@ public class Ticket extends BaseEntity {
 
     private LocalDateTime paidAt;
 
-    private String tokenId;
+    private BigInteger tokenId;
 
     private LocalDateTime enteredAt;
+
+    private String qrCode;
+
+    public void paidBy(User user) {
+        this.paidAt = LocalDateTime.now();
+        this.user = user;
+        user.addTicket(this);
+    }
+
+    public void setQrCode(String qrCode) { this.qrCode = qrCode; }
 
 }

@@ -42,7 +42,8 @@ dependencies {
 	implementation 'org.web3j:core:4.10.3'
 	implementation 'org.apache.httpcomponents:httpclient:4.5.13'
 	implementation 'org.apache.httpcomponents:httpmime:4.5.13'
-
+	implementation 'com.google.zxing:core:3.5.3'
+	implementation 'com.google.zxing:javase:3.5.3'
 
 	implementation 'org.slf4j:jcl-over-slf4j'
 	implementation 'ch.qos.logback:logback-classic'

@@ -48,10 +48,9 @@ cloud:
 web3:
   network-url: ${ETH_RPC_URL}
   private-key: ${ETH_PRIVATE_KEY}
-  contract-address: "0x69f006F4c33C473B94ce3e44b78068DF5d3DFD7A"
+  contract-address: "0xb98F59a53b0bC1B40b9bF54BB78d1f702083e634"
 
 pinata:
   api-key: ${PINATA_API_KEY}
   api-secret: ${PINATA_API_SECRET}
   upload-url: "https://api.pinata.cloud/pinning/pinFileToIPFS"
-  gateway: "amaranth-recent-lizard-832.mypinata.cloud"

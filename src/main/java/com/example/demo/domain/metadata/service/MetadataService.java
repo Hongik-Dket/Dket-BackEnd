@@ -6,10 +6,13 @@ import com.example.demo.domain.metadata.entity.Metadata;
 import com.example.demo.domain.metadata.entity.PhotoCard;
 import com.example.demo.domain.metadata.repository.MetadataRepository;
 import com.example.demo.domain.metadata.repository.PhotoCardRepository;
+import com.example.demo.global.event.ReadyToMintEvent;
 import com.example.demo.global.infra.ipfs.PinataService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -39,7 +43,7 @@ public class MetadataService {
 
     @Transactional
     public void createMetadata(BigInteger sessionId, BigInteger randomWord) {
-        Session session = sessionRepository.findById(Long.valueOf(String.valueOf(sessionId)))
+        Session session = sessionRepository.findById(sessionId.longValue())
                 .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
 
         int capacity = session.getEvent().getCapacity();
@@ -72,25 +76,42 @@ public class MetadataService {
         }
 
         metadataRepository.saveAll(metadataList);
+        metadataRepository.flush();
 
-        for (Metadata metadata : metadataList)
-            uploadMetadata(metadata.getId());
+        List<Long> metadataIds = metadataList.stream()
+                .map(Metadata::getId)
+                .collect(Collectors.toList());
+        uploadAllMetadataAsync(metadataIds);
 
     }
 
-    private void uploadMetadata(Long metadataId) {
-        Metadata metadata = metadataRepository.findById(metadataId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.METADATA_NOT_FOUND));
+    public void uploadAllMetadataAsync(List<Long> metadataIds) {
+        Session session = metadataRepository.findSessionByMetadataId(metadataIds.get(0));
 
-        String json = convertToJson(metadata);
+        List<CompletableFuture<Void>> futures = metadataIds.stream()
+                .map(this::uploadMetadataAsync)
+                .collect(Collectors.toList());
 
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                .thenRun(() -> {
+                    metadataCommandService.finishUpload(session.getId());
+                });
+    }
+
+    @Async("pinataUploadExecutor")
+    public CompletableFuture<Void> uploadMetadataAsync(Long metadataId) {
         try {
+            Metadata metadata = metadataRepository.findById(metadataId)
+                    .orElseThrow(() -> new CustomException(ErrorStatus.METADATA_NOT_FOUND));
+
+            String json = convertToJson(metadata);
             InputStream jsonStream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
 
-            pinataService.uploadJsonFile(jsonStream, "Ticket_metadata_" + metadataId + ".json")
-                    .thenAccept(result -> {
-                        metadataCommandService.setMetadataCid(metadataId, result);
+            return pinataService.uploadJsonFile(jsonStream, "Ticket_metadata_" + metadataId + ".json")
+                    .thenAccept(cid -> {
+                        metadataCommandService.setMetadataCid(metadataId, cid);
                     });
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new CustomException(ErrorStatus.IPFS_UPLOAD_FAILED);
