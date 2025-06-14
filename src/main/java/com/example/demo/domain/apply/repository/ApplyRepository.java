@@ -25,9 +25,6 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
                                           @Param("currentStatus") ApplyStatus currentStatus,
                                           @Param("newStatus") ApplyStatus newStatus);
 
-    @Query("SELECT a.user.walletAddress FROM Apply a WHERE a.session.id = :sessionId")
-    List<String> findWalletAddressesBySessionId(@Param("sessionId") Long sessionId);
-
     @Modifying
     @Query("UPDATE Apply a SET a.applyStatus = :newStatus " +
             "WHERE a.session.id = :sessionId AND a.user.walletAddress IN :walletAddresses")

@@ -37,6 +37,7 @@ public enum ErrorStatus implements BaseErrorCode {
     OAUTH_PROCESSING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "OAUTH_4002", "OAuth 로그인 처리에 실패했습니다."),
 
     TICKET_INVALID_SEAT(HttpStatus.BAD_REQUEST, "TICKET_4001", "좌석 코드는 0 이상 999999 이하의 숫자여야 합니다."),
+    TICKET_INVALID_BUYER(HttpStatus.BAD_REQUEST, "TICKET_4002", "해당 티켓을 결제할 수 없는 사용자입니다."),
 
     EVENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "EVENT_4001", "해당 공연을 찾을 수 없습니다."),
     EVENT_ORGANIZER_MISMATCH(HttpStatus.BAD_REQUEST, "EVENT_4002", "해당 공연의 개최자가 아닙니다."),
@@ -47,6 +48,7 @@ public enum ErrorStatus implements BaseErrorCode {
     SESSION_ALREADY_DRAWN(HttpStatus.BAD_REQUEST, "SESSION_4002", "이미 추첨 완료된 세션입니다."),
     SESSION_DRAW_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "SESSION_5001", "해당 세션 추첨에 실패했습니다."),
     SESSION_MINTING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "SESSION_5002", "해당 세션 티켓 발행에 실패했습니다."),
+    SESSION_CANNOT_BUY(HttpStatus.BAD_REQUEST, "SESSION_4003", "티켓을 구매할 수 없는 세션입니다."),
 
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IMAGE_5001", "이미지 업로드에 실패하였습니다."),
 
@@ -55,8 +57,6 @@ public enum ErrorStatus implements BaseErrorCode {
     BLOCKCHAIN_ESTIMATE_GAS_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "BLOCKCHAIN_5004", "가스 추정에 실패하였습니다."),
 
     TOKEN_INVALID(HttpStatus.BAD_REQUEST, "TOKEN_4001", "유효하지 않은 토큰입니다."),
-    TOKEN_OWNER_NOT_FOUND(HttpStatus.BAD_REQUEST, "TOKEN_4002", "해당 토큰의 소유자를 찾지 못했습니다."),
-    TOKEN_URI_NOT_FOUND(HttpStatus.BAD_REQUEST, "TOKEN_4003", "해당 토큰의 URI를 찾지 못했습니다."),
 
     JOB_EXECUTION_FAILED(HttpStatus.BAD_REQUEST, "JOB_4001", "Job 실행에 실패했습니다."),
     JOB_STORE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "JOB_5001", "Job 저장에 실패했습니다."),
