@@ -269,6 +269,15 @@ public class DketNFTService {
                 );
     }
 
+    private void registerMintedTickets(List<BigInteger> tokenIds) {
+        List<String> cidList = new ArrayList<>();
+
+        for (BigInteger tokenId : tokenIds)
+            cidList.add(getTokenUri(tokenId).replace("ipfs://", ""));
+
+        ticketService.batchRegisterTicket(tokenIds, cidList);
+    }
+
     private BigInteger estimateGas(String encodedFunction) {
         try {
             Transaction ethCallTransaction = Transaction.createEthCallTransaction(
@@ -294,15 +303,6 @@ public class DketNFTService {
             e.printStackTrace();
             throw new CustomException(ErrorStatus.BLOCKCHAIN_ESTIMATE_GAS_FAILED);
         }
-    }
-
-    private void registerMintedTickets(List<BigInteger> tokenIds) {
-        List<String> cidList = new ArrayList<>();
-
-        for (BigInteger tokenId : tokenIds)
-            cidList.add(getTokenUri(tokenId).replace("ipfs://", ""));
-
-        ticketService.batchRegisterTicket(tokenIds, cidList);
     }
 
     private String getTokenUri(BigInteger tokenId) {

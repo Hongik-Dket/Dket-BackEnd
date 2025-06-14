@@ -13,6 +13,4 @@ import java.util.Optional;
 public interface SessionRepository extends JpaRepository<Session, Long> {
     Optional<Session> findById(Long id);
 
-    @Query("SELECT s FROM Session s LEFT JOIN FETCH s.applyList WHERE s.id = :id")
-    Optional<Session> findByIdWithApplyList(@Param("id") Long id);
 }
