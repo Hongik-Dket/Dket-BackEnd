@@ -52,6 +52,8 @@ public enum ErrorStatus implements BaseErrorCode {
     SESSION_CANNOT_BUY(HttpStatus.BAD_REQUEST, "SESSION_4003", "티켓을 구매할 수 없는 세션입니다."),
 
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IMAGE_5001", "이미지 업로드에 실패하였습니다."),
+    IMAGE_GENERATE_QRCODE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IMAGE_5002", "QR 코드 생성에 실패했습니다."),
+    IMAGE_CONVERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IMAGE_5003", "이미지 변환에 실패했습니다."),
 
     BLOCKCHAIN_TRANSACTION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "BLOCKCHAIN_5001", "블록체인 트랜잭션 발생에 실패하였습니다."),
     BLOCKCHAIN_GET_ETH_PRICE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "BLOCKCHAIN_5002", "이더리움 가격을 조회하는데 실패하였습니다."),

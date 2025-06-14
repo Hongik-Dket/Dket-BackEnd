@@ -14,13 +14,17 @@ import com.example.demo.domain.ticket.repository.TicketRepository;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.domain.user.service.UserService;
+import com.example.demo.global.infra.image.ByteArrayMultipartFile;
+import com.example.demo.global.infra.image.QrCodeGenerator;
+import com.example.demo.global.infra.image.S3UploadService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.image.BufferedImage;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
@@ -37,8 +41,9 @@ public class TicketService {
     private final SessionRepository sessionRepository;
     private final ApplyRepository applyRepository;
     private final UserRepository userRepository;
-    private final ApplicationEventPublisher eventPublisher;
     private final TicketRepository ticketRepository;
+    private final QrCodeGenerator qrCodeGenerator;
+    private final S3UploadService s3UploadService;
 
     @Transactional
     public void batchRegisterTicket(List<BigInteger> tokenIdList, List<String> cidList) {
@@ -96,7 +101,8 @@ public class TicketService {
 
         apply.setApplyStatus(ApplyStatus.PAID);
 
-        //Todo: QR코드 이미지 생성
+        String qrCodeUrl = s3UploadService.saveFile(qrCodeGenerator.generateQrCodeFile(ticket.getId()));
+        ticket.setQrCode(qrCodeUrl);
     }
 
     private void validateBuyer(Session session, User user) {
