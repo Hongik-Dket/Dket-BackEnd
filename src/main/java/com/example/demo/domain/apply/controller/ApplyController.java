@@ -2,6 +2,8 @@ package com.example.demo.domain.apply.controller;
 
 import com.example.demo.domain.apply.DTO.ApplyResponseDTO;
 import com.example.demo.domain.apply.service.ApplyService;
+import com.example.demo.domain.user.entity.User;
+import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import static com.example.demo.global.response.status.SuccessStatus._OK;
 @RequiredArgsConstructor
 public class ApplyController {
     private final ApplyService applyService;
+    private final UserService userService;
 
     @Operation(summary = "구매자 - 공연 회차 응모하기")
     @PostMapping("/{eventId}/sessions/{sessionId}/apply")
@@ -24,7 +27,8 @@ public class ApplyController {
             @PathVariable Long eventId,
             @PathVariable Long sessionId
     ) {
-        ApplyResponseDTO responseDTO = applyService.applyToSession(eventId, sessionId);
+        User user = userService.getCurrentUser();
+        ApplyResponseDTO responseDTO = applyService.applyToSession(eventId, sessionId, user);
         return ApiResponse.onSuccess(_OK, responseDTO);
     }
 }
