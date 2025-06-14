@@ -43,4 +43,10 @@ public class Ticket extends BaseEntity {
 
     private LocalDateTime enteredAt;
 
+    public void paidBy(User user) {
+        this.paidAt = LocalDateTime.now();
+        this.user = user;
+        user.addTicket(this);
+    }
+
 }

@@ -68,6 +68,7 @@ public class DketNFTService {
         listenToRandomFulfilled();
         listenToWinnersDrawn();
         listenToSessionMinted();
+        listenToPaymentTransferred();
     }
 
     public String recordEventOnChain(Event event) {
@@ -276,6 +277,22 @@ public class DketNFTService {
             cidList.add(getTokenUri(tokenId).replace("ipfs://", ""));
 
         ticketService.batchRegisterTicket(tokenIds, cidList);
+    }
+
+    private void listenToPaymentTransferred() {
+        dketNFT.paymentTransferredEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST)
+                .subscribe(
+                        event -> {
+                            String buyer = event.to;
+                            Long sessionId = event.sessionId.longValue();
+                            Long tokenId = event.tokenId.longValue();
+
+                            ticketService.completeTicket(buyer, sessionId, tokenId);
+                        },
+                        error -> {
+                            System.out.println(error.getMessage());
+                        }
+                );
     }
 
     private BigInteger estimateGas(String encodedFunction) {
