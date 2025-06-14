@@ -27,4 +27,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Event> findPurchasedEventsByBuyer(@Param("buyerId") Long buyerId, Pageable pageable);
 
     Optional<Ticket> findByUserAndSession(User user, Session session);
+
+    Optional<Ticket> findByTokenId(Long tokenId);
 }

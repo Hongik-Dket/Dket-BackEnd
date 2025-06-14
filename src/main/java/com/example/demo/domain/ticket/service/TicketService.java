@@ -10,6 +10,7 @@ import com.example.demo.domain.metadata.entity.Metadata;
 import com.example.demo.domain.metadata.repository.MetadataRepository;
 import com.example.demo.domain.ticket.dto.PriceWeiDTO;
 import com.example.demo.domain.ticket.entity.Ticket;
+import com.example.demo.domain.ticket.repository.TicketRepository;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.domain.user.service.UserService;
@@ -37,6 +38,7 @@ public class TicketService {
     private final ApplyRepository applyRepository;
     private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final TicketRepository ticketRepository;
 
     @Transactional
     public void batchRegisterTicket(List<BigInteger> tokenIdList, List<String> cidList) {
@@ -74,6 +76,27 @@ public class TicketService {
                 .priceWei(session.getEvent().getPriceWei())
                 .sessionId(sessionId)
                 .build();
+    }
+
+    @Transactional
+    public void completeTicket(String address, Long sessionId, Long tokenId) {
+        User user = userRepository.findByWalletAddress(address)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
+
+        Ticket ticket = ticketRepository.findByTokenId(tokenId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.TICKET_NOT_FOUND));
+
+        ticket.paidBy(user);
+
+        Apply apply = applyRepository.findBySessionAndUser(session, user)
+                .orElseThrow(() -> new CustomException(ErrorStatus.APPLY_NOT_FOUND));
+
+        apply.setApplyStatus(ApplyStatus.PAID);
+
+        //Todo: QR코드 이미지 생성
     }
 
     private void validateBuyer(Session session, User user) {

@@ -38,6 +38,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     TICKET_INVALID_SEAT(HttpStatus.BAD_REQUEST, "TICKET_4001", "좌석 코드는 0 이상 999999 이하의 숫자여야 합니다."),
     TICKET_INVALID_BUYER(HttpStatus.BAD_REQUEST, "TICKET_4002", "해당 티켓을 결제할 수 없는 사용자입니다."),
+    TICKET_NOT_FOUND(HttpStatus.BAD_REQUEST, "TICKET_4003", "해당 티켓을 찾을 수 없습니다."),
 
     EVENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "EVENT_4001", "해당 공연을 찾을 수 없습니다."),
     EVENT_ORGANIZER_MISMATCH(HttpStatus.BAD_REQUEST, "EVENT_4002", "해당 공연의 개최자가 아닙니다."),
@@ -67,6 +68,7 @@ public enum ErrorStatus implements BaseErrorCode {
     EVENT_NOT_OPEN_FOR_APPLY(HttpStatus.BAD_REQUEST, "APPLY_4001", "현재 공연은 응모할 수 없는 상태입니다."),
     APPLY_TIME_INVALID(HttpStatus.BAD_REQUEST, "APPLY_4002", "응모 기간이 아닙니다."),
     ALREADY_APPLIED(HttpStatus.BAD_REQUEST, "APPLY_4003", "이미 해당 회차에 응모한 상태입니다."),
+    APPLY_NOT_FOUND(HttpStatus.BAD_REQUEST, "APPLY_4004", "해당 응모 내역을 찾을 수 없습니다."),
 
     IPFS_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IPFS_5001", "IPFS 업로드에 실패했습니다."),
 
