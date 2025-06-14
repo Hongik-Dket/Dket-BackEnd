@@ -7,6 +7,7 @@ import com.example.demo.global.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,10 @@ public class User extends BaseEntity {
     private String email;
 
     private int age;
+
+    private String name;
+    
+    private LocalDate birth;
 
     private String walletAddress;
 
