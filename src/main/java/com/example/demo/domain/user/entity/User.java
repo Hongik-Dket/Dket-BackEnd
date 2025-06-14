@@ -30,7 +30,7 @@ public class User extends BaseEntity {
     private int age;
 
     private String name;
-    
+
     private LocalDate birth;
 
     private String walletAddress;
