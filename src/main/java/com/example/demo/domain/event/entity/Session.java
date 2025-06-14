@@ -35,6 +35,7 @@ public class Session extends BaseEntity {
     private String txHash;
 
     private Boolean isDrawn;
+    private Boolean metadataUploaded;
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
     @Builder.Default
@@ -50,6 +51,8 @@ public class Session extends BaseEntity {
 
     public void setTxHash(String txHash) { this.txHash = txHash; }
     public void setIsDrawn() { this.isDrawn = true; }
+    public void setMetadataUploaded() { this.metadataUploaded = true; }
 
     public void addMetadata(Metadata metadata) { this.metadataList.add(metadata); }
+    public void addTicket(Ticket ticket) { this.ticketList.add(ticket); }
 }

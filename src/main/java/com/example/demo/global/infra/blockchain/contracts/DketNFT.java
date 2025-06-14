@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
+
 import org.web3j.abi.EventEncoder;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.TypeReference;
@@ -949,7 +951,13 @@ public class DketNFT extends Contract {
             WinnersDrawnEventResponse typedResponse = new WinnersDrawnEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.sessionId = (BigInteger) eventValues.getIndexedValues().get(0).getValue();
-            typedResponse.winners = (List<String>) ((Array) eventValues.getNonIndexedValues().get(0)).getNativeValueCopy();
+
+            DynamicArray<Address> winnerArray = (DynamicArray<Address>) eventValues.getNonIndexedValues().get(0);
+            List<String> winners = winnerArray.getValue().stream()
+                    .map(Address::getValue)
+                    .collect(Collectors.toList());
+
+            typedResponse.winners = winners;
             responses.add(typedResponse);
         }
         return responses;

@@ -46,13 +46,17 @@ public enum ErrorStatus implements BaseErrorCode {
     SESSION_NOT_FOUND(HttpStatus.BAD_REQUEST, "SESSION_4001", "해당 회차를 찾을 수 없습니다."),
     SESSION_ALREADY_DRAWN(HttpStatus.BAD_REQUEST, "SESSION_4002", "이미 추첨 완료된 세션입니다."),
     SESSION_DRAW_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "SESSION_5001", "해당 세션 추첨에 실패했습니다."),
+    SESSION_MINTING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "SESSION_5002", "해당 세션 티켓 발행에 실패했습니다."),
 
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IMAGE_5001", "이미지 업로드에 실패하였습니다."),
 
     BLOCKCHAIN_TRANSACTION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "BLOCKCHAIN_5001", "블록체인 트랜잭션 발생에 실패하였습니다."),
     BLOCKCHAIN_GET_ETH_PRICE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "BLOCKCHAIN_5002", "이더리움 가격을 조회하는데 실패하였습니다."),
-    BLOCKCHAIN_WINNERS_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "BLOCKCHAIN_5003", "당첨자 목록을 찾을 수 없습니다."),
     BLOCKCHAIN_ESTIMATE_GAS_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "BLOCKCHAIN_5004", "가스 추정에 실패하였습니다."),
+
+    TOKEN_INVALID(HttpStatus.BAD_REQUEST, "TOKEN_4001", "유효하지 않은 토큰입니다."),
+    TOKEN_OWNER_NOT_FOUND(HttpStatus.BAD_REQUEST, "TOKEN_4002", "해당 토큰의 소유자를 찾지 못했습니다."),
+    TOKEN_URI_NOT_FOUND(HttpStatus.BAD_REQUEST, "TOKEN_4003", "해당 토큰의 URI를 찾지 못했습니다."),
 
     JOB_EXECUTION_FAILED(HttpStatus.BAD_REQUEST, "JOB_4001", "Job 실행에 실패했습니다."),
     JOB_STORE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "JOB_5001", "Job 저장에 실패했습니다."),
@@ -63,8 +67,11 @@ public enum ErrorStatus implements BaseErrorCode {
     EVENT_NOT_OPEN_FOR_APPLY(HttpStatus.BAD_REQUEST, "APPLY_4001", "현재 공연은 응모할 수 없는 상태입니다."),
     APPLY_TIME_INVALID(HttpStatus.BAD_REQUEST, "APPLY_4002", "응모 기간이 아닙니다."),
     ALREADY_APPLIED(HttpStatus.BAD_REQUEST, "APPLY_4003", "이미 해당 회차에 응모한 상태입니다."),
+
     IPFS_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IPFS_5001", "IPFS 업로드에 실패했습니다."),
+
     PHOTOCARD_NOT_FOUND(HttpStatus.BAD_REQUEST, "PHOTOCARD_4001", "해당 포토카드를 찾을 수 없습니다."),
+
     METADATA_NOT_FOUND(HttpStatus.BAD_REQUEST, "METADATA_4001", "해당 메타데이터를 찾을 수 없습니다."),
 
     ;
