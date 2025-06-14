@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @Entity
@@ -38,7 +39,7 @@ public class Ticket extends BaseEntity {
 
     private LocalDateTime paidAt;
 
-    private String tokenId;
+    private BigInteger tokenId;
 
     private LocalDateTime enteredAt;
 

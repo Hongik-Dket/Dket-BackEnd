@@ -109,6 +109,7 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
                     .event(event)
                     .date(date)
                     .isDrawn(false)
+                    .metadataUploaded(false)
                     .build();
 
             event.addSession(session);
