@@ -8,5 +8,5 @@ public interface ApplyService {
 
     void cancelWinnerTickets(Event event);
 
-    ApplyResponseDTO applyToSession(Long eventId, Long sessionId, User user);
+    ApplyResponseDTO applyToSession(Long eventId, Long sessionId);
 }

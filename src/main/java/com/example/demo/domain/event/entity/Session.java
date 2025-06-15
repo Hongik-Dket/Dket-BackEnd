@@ -55,6 +55,7 @@ public class Session extends BaseEntity {
     public void setIsDrawn() { this.isDrawn = true; }
     public void setMetadataUploaded() { this.metadataUploaded = true; }
 
+    public void addApply(Apply apply) { this.applyList.add(apply); }
     public void addMetadata(Metadata metadata) { this.metadataList.add(metadata); }
     public void addTicket(Ticket ticket) { this.ticketList.add(ticket); }
 
