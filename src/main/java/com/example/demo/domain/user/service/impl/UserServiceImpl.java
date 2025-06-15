@@ -1,5 +1,8 @@
 package com.example.demo.domain.user.service.impl;
 
+import com.example.demo.domain.ticket.converter.TicketConverter;
+import com.example.demo.domain.ticket.dto.TicketDTO;
+import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.user.dto.response.WalletDTO;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
@@ -11,6 +14,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -18,6 +27,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final WalletService walletService;
+    private final TicketConverter ticketConverter;
 
     @Override
     public User getCurrentUser() {
@@ -51,6 +61,33 @@ public class UserServiceImpl implements UserService {
                 .walletAddress(address)
                 .balance(walletService.getEthBalance(address))
                 .build();
+    }
 
+    @Override
+    public List<TicketDTO> getMyTickets() {
+        User user = getCurrentUser();
+        LocalDate now = LocalDate.now();
+
+        Comparator<Ticket> bySessionDate = Comparator.comparing(ticket -> ticket.getSession().getDate());
+
+        List<Ticket> futureTickets = user.getTickets().stream()
+                .filter(ticket -> !ticket.getSession().getDate().isBefore(now))
+                .sorted(bySessionDate)
+                .collect(Collectors.toList());
+
+        List<Ticket> pastTickets = user.getTickets().stream()
+                .filter(ticket -> ticket.getSession().getDate().isBefore(now))
+                .sorted(bySessionDate.reversed())
+                .collect(Collectors.toList());
+
+        List<Ticket> ticketList = new ArrayList<>();
+        ticketList.addAll(futureTickets);
+        ticketList.addAll(pastTickets);
+
+        List<TicketDTO> result = new ArrayList<>();
+        for (Ticket ticket : ticketList)
+            result.add(ticketConverter.toTicketDTO(ticket));
+
+        return result;
     }
 }

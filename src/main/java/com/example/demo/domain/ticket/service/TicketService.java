@@ -10,7 +10,7 @@ import com.example.demo.domain.metadata.entity.Metadata;
 import com.example.demo.domain.metadata.repository.MetadataRepository;
 import com.example.demo.domain.ticket.converter.TicketConverter;
 import com.example.demo.domain.ticket.dto.PriceWeiDTO;
-import com.example.demo.domain.ticket.dto.TicketDTO;
+import com.example.demo.domain.ticket.dto.TicketDetailDTO;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.ticket.repository.TicketRepository;
 import com.example.demo.domain.user.entity.User;
@@ -110,7 +110,7 @@ public class TicketService {
         ticket.setQrCode(qrCodeUrl);
     }
 
-    public TicketDTO getTicketById(Long ticketId) {
+    public TicketDetailDTO getTicketById(Long ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.TICKET_NOT_FOUND));
 
@@ -119,10 +119,10 @@ public class TicketService {
         if (!(ticket.getUser().equals(user)) && !(ticket.getSession().getEvent().getOrganizer().equals(user)))
             throw new CustomException(ErrorStatus.TICKET_INVALID_USER);
 
-        return ticketConverter.toTicketDTO(ticket);
+        return ticketConverter.toTicketDetailDTO(ticket);
     }
 
-    public TicketDTO getTicketByNumber(String ticketNumber) {
+    public TicketDetailDTO getTicketByNumber(String ticketNumber) {
         Metadata metadata = metadataRepository.findByTicketNumber(ticketNumber)
                 .orElseThrow(() -> new CustomException(ErrorStatus.METADATA_NOT_FOUND));
 
@@ -133,7 +133,7 @@ public class TicketService {
 
         validateOrganizer(ticket, user);
 
-        return ticketConverter.toTicketDTO(ticket);
+        return ticketConverter.toTicketDetailDTO(ticket);
     }
 
     @Transactional
