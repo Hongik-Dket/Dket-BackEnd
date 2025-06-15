@@ -43,7 +43,8 @@ public class ApplyServiceImpl implements ApplyService {
 
     @Override
     @Transactional
-    public ApplyResponseDTO applyToSession(Long eventId, Long sessionId, User user) {
+    public ApplyResponseDTO applyToSession(Long eventId, Long sessionId) {
+        User user = userService.getCurrentUser();
 
         // 1. Event 존재 확인
         Event event = eventRepository.findById(eventId)
@@ -72,17 +73,23 @@ public class ApplyServiceImpl implements ApplyService {
             throw new CustomException(ErrorStatus.ALREADY_APPLIED);
         }
 
+        if (!user.isEligibleFor(session.getEvent().getAgeLimit()))
+            throw new CustomException(ErrorStatus.APPLY_AGE_RESTRICTED);
+
         // 5. 저장
-        Apply apply = new Apply();
-        apply.setUser(user);
-        apply.setSession(session);
-        apply.setApplyStatus(ApplyStatus.APPLIED);
-        Apply saved = applyRepository.save(apply);
+        Apply apply = Apply.builder()
+                .session(session)
+                .user(user)
+                .applyStatus(ApplyStatus.APPLIED)
+                .build();
+
+        user.addApply(apply);
+        session.addApply(apply);
 
         return ApplyResponseDTO.builder()
-                .applyId(saved.getId())
+                .applyId(apply.getId())
                 .sessionId(sessionId)
-                .appliedAt(saved.getCreatedAt())
+                .appliedAt(apply.getCreatedAt())
                 .build();
     }
 }
