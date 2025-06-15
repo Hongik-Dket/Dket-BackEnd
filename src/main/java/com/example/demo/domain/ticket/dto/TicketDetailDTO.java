@@ -23,7 +23,7 @@ public class TicketDetailDTO {
     private String seatNumber;
     private String qrCodeUrl;
     private Long photoCardId;
-    private String NFTUrl;
+    private String NftUrl;
     private boolean isEntered;
     
     

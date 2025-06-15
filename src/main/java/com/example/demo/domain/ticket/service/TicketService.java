@@ -8,7 +8,6 @@ import com.example.demo.domain.event.entity.Session;
 import com.example.demo.domain.event.repository.SessionRepository;
 import com.example.demo.domain.metadata.entity.Metadata;
 import com.example.demo.domain.metadata.repository.MetadataRepository;
-import com.example.demo.domain.ticket.converter.TicketConverter;
 import com.example.demo.domain.ticket.dto.PriceWeiDTO;
 import com.example.demo.domain.ticket.dto.TicketDetailDTO;
 import com.example.demo.domain.ticket.entity.Ticket;
@@ -16,11 +15,13 @@ import com.example.demo.domain.ticket.repository.TicketRepository;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.domain.user.service.UserService;
+import com.example.demo.global.base.Constants;
 import com.example.demo.global.infra.image.QrCodeGenerator;
 import com.example.demo.global.infra.image.S3UploadService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static com.example.demo.domain.ticket.converter.TicketConverter.toTicketDetailDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +49,8 @@ public class TicketService {
     private final QrCodeGenerator qrCodeGenerator;
     private final S3UploadService s3UploadService;
 
-    private final TicketConverter ticketConverter;
+    @Value("${web3.contract-address}")
+    private String contractAddress;
 
     @Transactional
     public void batchRegisterTicket(List<BigInteger> tokenIdList, List<String> cidList) {
@@ -119,7 +123,7 @@ public class TicketService {
         if (!(ticket.getUser().equals(user)) && !(ticket.getSession().getEvent().getOrganizer().equals(user)))
             throw new CustomException(ErrorStatus.TICKET_INVALID_USER);
 
-        return ticketConverter.toTicketDetailDTO(ticket);
+        return toTicketDetailDTO(ticket, getNftUrl(ticket));
     }
 
     public TicketDetailDTO getTicketByNumber(String ticketNumber) {
@@ -133,7 +137,7 @@ public class TicketService {
 
         validateOrganizer(ticket, user);
 
-        return ticketConverter.toTicketDetailDTO(ticket);
+        return toTicketDetailDTO(ticket, getNftUrl(ticket));
     }
 
     @Transactional
@@ -153,6 +157,10 @@ public class TicketService {
             throw new CustomException(ErrorStatus.TICKET_INVALID);
 
         ticket.enter();
+    }
+
+    public String getNftUrl(Ticket ticket) {
+        return Constants.OPENSEA_BASE_URL + contractAddress + "/%s".formatted(ticket.getTokenId());
     }
 
     private void validateBuyer(Session session, User user) {
