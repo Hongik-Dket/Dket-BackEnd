@@ -42,6 +42,7 @@ public class TicketConverter {
         return TicketDTO.builder()
                 .ticketId(ticket.getId())
                 .eventTitle(ticket.getSession().getEvent().getTitle())
+                .posterUrl(ticket.getSession().getEvent().getPosterUrl())
                 .location(ticket.getSession().getEvent().getLocation())
                 .sessionDate(ticket.getSession().getDate())
                 .startTime(ticket.getSession().getEvent().getStartTime())

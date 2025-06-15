@@ -16,6 +16,7 @@ public class TicketDTO {
 
     private Long ticketId;
     private String eventTitle;
+    private String posterUrl;
     private String location;
     private LocalDate sessionDate;
     private LocalTime startTime;
