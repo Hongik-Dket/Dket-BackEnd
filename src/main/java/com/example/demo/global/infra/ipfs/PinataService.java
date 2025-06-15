@@ -12,6 +12,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,5 +76,9 @@ public class PinataService {
             System.out.println(e.getMessage());
             throw new CustomException(ErrorStatus.IPFS_UPLOAD_FAILED);
         }
+    }
+
+    public String cidToHttp(String cid) {
+        return "https://" + pinataConfig.getGateway() + "/ipfs/" + cid;
     }
 }
