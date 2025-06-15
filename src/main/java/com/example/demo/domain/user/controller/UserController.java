@@ -1,5 +1,6 @@
 package com.example.demo.domain.user.controller;
 
+import com.example.demo.domain.ticket.dto.TicketDTO;
 import com.example.demo.domain.user.dto.request.MetaMaskLoginRequestDTO;
 import com.example.demo.domain.user.dto.response.WalletDTO;
 import com.example.demo.domain.user.entity.User;
@@ -10,6 +11,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.example.demo.global.response.status.SuccessStatus._OK;
 
@@ -40,5 +43,11 @@ public class UserController {
     @GetMapping("/wallet")
     public ApiResponse<WalletDTO> getWallet() {
         return ApiResponse.onSuccess(_OK, userService.getWalletInfo());
+    }
+
+    @Operation(summary = "내 티켓 목록 조회하기")
+    @GetMapping("/tickets")
+    public ApiResponse<List<TicketDTO>> getTickets() {
+        return ApiResponse.onSuccess(_OK, userService.getMyTickets());
     }
 }
