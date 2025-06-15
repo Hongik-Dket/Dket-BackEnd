@@ -112,7 +112,9 @@ public class TicketService {
 
         User user = userService.getCurrentUser();
 
-        validateUser(ticket, user);
+        if (!(ticket.getUser().equals(user)) && !(ticket.getSession().getEvent().getOrganizer().equals(user)))
+            throw new CustomException(ErrorStatus.TICKEt_INVALID_USER);
+
         return ticketConverter.toTicketDTO(ticket);
     }
 
@@ -125,7 +127,9 @@ public class TicketService {
 
         User user = userService.getCurrentUser();
 
-        validateUser(ticket, user);
+        if (!(ticket.getSession().getEvent().getOrganizer().equals(user)))
+            throw new CustomException(ErrorStatus.TICKEt_INVALID_USER);
+
         return ticketConverter.toTicketDTO(ticket);
     }
 
@@ -156,8 +160,4 @@ public class TicketService {
         }
     }
 
-    private void validateUser(Ticket ticket, User user) {
-        if (!(ticket.getUser().equals(user)) && !(ticket.getSession().getEvent().getOrganizer().equals(user)))
-            throw new CustomException(ErrorStatus.TICKEt_INVALID_USER);
-    }
 }
