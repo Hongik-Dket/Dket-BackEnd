@@ -1,5 +1,7 @@
 package com.example.demo.domain.user.service.impl;
 
+import com.example.demo.domain.metadata.dto.PhotoCardDTO;
+import com.example.demo.domain.metadata.entity.PhotoCard;
 import com.example.demo.domain.ticket.converter.TicketConverter;
 import com.example.demo.domain.ticket.dto.TicketDTO;
 import com.example.demo.domain.ticket.entity.Ticket;
@@ -8,6 +10,7 @@ import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.infra.blockchain.service.WalletService;
+import com.example.demo.global.infra.ipfs.PinataService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.demo.domain.metadata.converter.PhotoCardConverter.toPhotoCardDTO;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -28,6 +33,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final WalletService walletService;
     private final TicketConverter ticketConverter;
+    private final PinataService pinataService;
 
     @Override
     public User getCurrentUser() {
@@ -66,6 +72,31 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<TicketDTO> getMyTickets() {
         User user = getCurrentUser();
+        List<Ticket> ticketList = getSortedMyTickets(user);
+
+        List<TicketDTO> result = new ArrayList<>();
+        for (Ticket ticket : ticketList)
+            result.add(ticketConverter.toTicketDTO(ticket));
+
+        return result;
+    }
+
+    @Override
+    public List<PhotoCardDTO> getMyPhotoCards() {
+        User user = getCurrentUser();
+        List<Ticket> ticketList = getSortedMyTickets(user);
+
+        List<PhotoCardDTO> result = new ArrayList<>();
+        for (Ticket ticket : ticketList) {
+            PhotoCard photoCard = ticket.getMetadata().getPhotoCard();
+            String ipfsUrl = pinataService.cidToHttp(photoCard.getCid());
+
+            result.add(toPhotoCardDTO(photoCard, ipfsUrl));
+        }
+        return result;
+    }
+
+    private List<Ticket> getSortedMyTickets(User user) {
         LocalDate now = LocalDate.now();
 
         Comparator<Ticket> bySessionDate = Comparator.comparing(ticket -> ticket.getSession().getDate());
@@ -84,10 +115,6 @@ public class UserServiceImpl implements UserService {
         ticketList.addAll(futureTickets);
         ticketList.addAll(pastTickets);
 
-        List<TicketDTO> result = new ArrayList<>();
-        for (Ticket ticket : ticketList)
-            result.add(ticketConverter.toTicketDTO(ticket));
-
-        return result;
+        return ticketList;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.demo.domain.user.controller;
 
+import com.example.demo.domain.metadata.dto.PhotoCardDTO;
 import com.example.demo.domain.ticket.dto.TicketDTO;
 import com.example.demo.domain.user.dto.request.MetaMaskLoginRequestDTO;
 import com.example.demo.domain.user.dto.response.WalletDTO;
@@ -49,5 +50,11 @@ public class UserController {
     @GetMapping("/tickets")
     public ApiResponse<List<TicketDTO>> getTickets() {
         return ApiResponse.onSuccess(_OK, userService.getMyTickets());
+    }
+
+    @Operation(summary = "내 포토카드 목록 조회하기")
+    @GetMapping("/photocards")
+    public ApiResponse<List<PhotoCardDTO>> getPhotoCards() {
+        return ApiResponse.onSuccess(_OK, userService.getMyPhotoCards());
     }
 }

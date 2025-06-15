@@ -54,3 +54,4 @@ pinata:
   api-key: ${PINATA_API_KEY}
   api-secret: ${PINATA_API_SECRET}
   upload-url: "https://api.pinata.cloud/pinning/pinFileToIPFS"
+  gateway: "amaranth-recent-lizard-832.mypinata.cloud"
