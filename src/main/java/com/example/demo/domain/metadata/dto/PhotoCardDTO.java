@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class PhotoCardDTO {
 
     private Long photoCardId;
-    private String ipfsUrl;
+    private String imageUrl;
 }
