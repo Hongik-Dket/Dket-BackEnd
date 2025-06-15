@@ -1,9 +1,9 @@
 package com.example.demo.domain.event.controller;
 
 import com.example.demo.domain.event.dto.request.EventUploadDTO;
-import com.example.demo.domain.event.dto.response.EventInfoDTO;
+import com.example.demo.domain.event.dto.response.OrganizerEventInfoDTO;
 import com.example.demo.domain.event.dto.response.ResponseDTO;
-import com.example.demo.domain.event.dto.response.SessionInfoDTO;
+import com.example.demo.domain.event.dto.response.OrganizerSessionInfoDTO;
 import com.example.demo.domain.event.service.OrganizerEventService;
 import com.example.demo.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,13 +26,13 @@ public class OrganizerEventController {
 
     @Operation(summary = "개최자 - 공연 상세 조회")
     @GetMapping("{eventId}")
-    public ApiResponse<EventInfoDTO> getEventInfoForOrganizer(@PathVariable Long eventId) {
+    public ApiResponse<OrganizerEventInfoDTO> getEventInfoForOrganizer(@PathVariable Long eventId) {
         return ApiResponse.onSuccess(_OK, organizerEventService.getEventInfoForOrganizer(eventId));
     }
 
     @Operation(summary = "개최자 - 회차 상세 조회")
     @GetMapping("{eventId}/{sessionId}")
-    public ApiResponse<SessionInfoDTO> getSessionInfoForOrganizer(
+    public ApiResponse<OrganizerSessionInfoDTO> getSessionInfoForOrganizer(
             @PathVariable Long eventId, @PathVariable Long sessionId) {
         return ApiResponse.onSuccess(_OK, organizerEventService.getSessionInfoForOrganizer(eventId, sessionId));
     }

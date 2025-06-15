@@ -4,10 +4,11 @@ import com.example.demo.domain.apply.enums.ApplyStatus;
 import com.example.demo.domain.event.dto.request.EventUploadDTO;
 import com.example.demo.domain.event.dto.response.BuyerEventInfoDTO;
 import com.example.demo.domain.event.dto.response.BuyerSessionInfoDTO;
-import com.example.demo.domain.event.dto.response.EventInfoDTO;
-import com.example.demo.domain.event.dto.response.SessionInfoDTO;
+import com.example.demo.domain.event.dto.response.OrganizerEventInfoDTO;
+import com.example.demo.domain.event.dto.response.OrganizerSessionInfoDTO;
 import com.example.demo.domain.event.entity.Event;
 import com.example.demo.domain.event.entity.Session;
+import com.example.demo.domain.metadata.dto.PhotoCardInfoDTO;
 import com.example.demo.domain.user.entity.User;
 
 import java.math.BigInteger;
@@ -16,8 +17,8 @@ import java.util.stream.Collectors;
 
 public class EventConverter {
 
-    public static EventInfoDTO toEventInfoDTO(Event event) {
-        return EventInfoDTO.builder()
+    public static OrganizerEventInfoDTO toEventInfoDTO(Event event, List<PhotoCardInfoDTO> photoCardInfoDTOList) {
+        return OrganizerEventInfoDTO.builder()
                 .eventId(event.getId())
                 .title(event.getTitle())
                 .posterUrl(event.getPosterUrl())
@@ -37,11 +38,13 @@ public class EventConverter {
                                 .map(Session::getId)
                                 .collect(Collectors.toList())
                 )
+                .description(event.getDescription())
+                .photoCardList(photoCardInfoDTOList)
                 .build();
     }
 
-    public static SessionInfoDTO toSessionInfoDTO(Session session, int attendeeCount) {
-        return SessionInfoDTO.builder()
+    public static OrganizerSessionInfoDTO toSessionInfoDTO(Session session, int attendeeCount) {
+        return OrganizerSessionInfoDTO.builder()
                 .eventId(session.getEvent().getId())
                 .sessionId(session.getId())
                 .date(session.getDate())

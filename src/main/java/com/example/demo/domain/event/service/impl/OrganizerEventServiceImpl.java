@@ -2,14 +2,16 @@ package com.example.demo.domain.event.service.impl;
 
 import com.example.demo.domain.event.dto.request.EventUploadDTO;
 import com.example.demo.domain.event.dto.response.ResponseDTO;
-import com.example.demo.domain.event.dto.response.SessionInfoDTO;
+import com.example.demo.domain.event.dto.response.OrganizerSessionInfoDTO;
 import com.example.demo.domain.event.entity.Event;
 import com.example.demo.domain.event.entity.Session;
 import com.example.demo.domain.event.enums.EventStatus;
 import com.example.demo.domain.event.repository.EventRepository;
-import com.example.demo.domain.event.dto.response.EventInfoDTO;
+import com.example.demo.domain.event.dto.response.OrganizerEventInfoDTO;
 import com.example.demo.domain.event.repository.SessionRepository;
 import com.example.demo.domain.event.service.OrganizerEventService;
+import com.example.demo.domain.metadata.dto.PhotoCardInfoDTO;
+import com.example.demo.domain.metadata.entity.PhotoCard;
 import com.example.demo.domain.metadata.service.PhotoCardService;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.UserService;
@@ -17,6 +19,7 @@ import com.example.demo.global.base.Constants;
 import com.example.demo.global.infra.image.S3UploadService;
 import com.example.demo.global.infra.blockchain.service.DketNFTService;
 import com.example.demo.global.infra.blockchain.service.ExchangeService;
+import com.example.demo.global.infra.ipfs.PinataService;
 import com.example.demo.global.infra.scheduling.SchedulingService;
 import com.example.demo.global.infra.scheduling.jobs.event.OpenApplyJob;
 import com.example.demo.global.infra.scheduling.jobs.session.ClosePaymentJob;
@@ -32,9 +35,11 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.demo.domain.event.converter.EventConverter.*;
+import static com.example.demo.domain.metadata.converter.PhotoCardConverter.toPhotoCardInfoDTO;
 
 @Service
 @Transactional(readOnly = true)
@@ -49,9 +54,10 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
     private final DketNFTService dketNFTService;
     private final ExchangeService exchangeService;
     private final PhotoCardService photoCardService;
+    private final PinataService pinataService;
 
     @Override
-    public EventInfoDTO getEventInfoForOrganizer(Long eventId) {
+    public OrganizerEventInfoDTO getEventInfoForOrganizer(Long eventId) {
         User user = userService.getCurrentUser();
 
         Event event = eventRepository.findById(eventId)
@@ -60,11 +66,17 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
         if (!event.getOrganizer().equals(user))
             throw new CustomException(ErrorStatus.EVENT_ORGANIZER_MISMATCH);
 
-        return toEventInfoDTO(event);
+        List<PhotoCardInfoDTO> photoCardInfoDTOList = new ArrayList<>();
+        for (PhotoCard photoCard : event.getPhotoCards()) {
+            String url = pinataService.cidToHttp(photoCard.getCid());
+            photoCardInfoDTOList.add(toPhotoCardInfoDTO(photoCard, url));
+        }
+
+        return toEventInfoDTO(event, photoCardInfoDTOList);
     }
 
     @Override
-    public SessionInfoDTO getSessionInfoForOrganizer(Long eventId, Long sessionId) {
+    public OrganizerSessionInfoDTO getSessionInfoForOrganizer(Long eventId, Long sessionId) {
         User user = userService.getCurrentUser();
 
         Event event = eventRepository.findById(eventId)
