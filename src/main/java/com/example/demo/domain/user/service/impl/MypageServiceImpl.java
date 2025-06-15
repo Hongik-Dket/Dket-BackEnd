@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.example.demo.domain.metadata.converter.PhotoCardConverter.toPhotoCardDTO;
+import static com.example.demo.domain.metadata.converter.PhotoCardConverter.toPhotoCardDetailDTO;
 import static com.example.demo.domain.ticket.converter.TicketConverter.toTicketDTO;
 
 @Service
@@ -88,18 +89,6 @@ public class MypageServiceImpl implements MypageService {
         String nftUrl = ticketService.getNftUrl(ticket);
 
         return toPhotoCardDetailDTO(ticket, ipfsUrl, nftUrl);
-    }
-
-    public static PhotoCardDetailDTO toPhotoCardDetailDTO(Ticket ticket, String ipfsUrl, String nftUrl) {
-        return PhotoCardDetailDTO.builder()
-                .photoCardId(ticket.getMetadata().getPhotoCard().getId())
-                .ticketId(ticket.getId())
-                .imageUrl(ipfsUrl)
-                .eventTitle(ticket.getSession().getEvent().getTitle())
-                .sessionDate(ticket.getSession().getDate())
-                .ticketNumber(ticket.getMetadata().getTicketNumber())
-                .nftUrl(nftUrl)
-                .build();
     }
 
     private List<Ticket> getSortedMyTickets(User user) {

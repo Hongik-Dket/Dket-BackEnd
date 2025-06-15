@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SessionInfoDTO {
+public class OrganizerSessionInfoDTO {
 
     private Long eventId;
     private Long sessionId;
