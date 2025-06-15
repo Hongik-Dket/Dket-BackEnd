@@ -1,14 +1,15 @@
 package com.example.demo.domain.ticket.controller;
 
 import com.example.demo.domain.ticket.dto.PriceWeiDTO;
+import com.example.demo.domain.ticket.dto.TicketDTO;
 import com.example.demo.domain.ticket.service.TicketService;
 import com.example.demo.global.response.ApiResponse;
+import com.example.demo.global.response.exception.CustomException;
+import com.example.demo.global.response.status.ErrorStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.coyote.BadRequestException;
+import org.springframework.web.bind.annotation.*;
 
 import static com.example.demo.global.response.status.SuccessStatus._OK;
 
@@ -23,5 +24,21 @@ public class TicketController {
     @GetMapping("buyer/{sessionId}")
     public ApiResponse<PriceWeiDTO> getPriceWei(@PathVariable("sessionId") Long sessionId) {
         return ApiResponse.onSuccess(_OK, ticketService.getPriceWei(sessionId));
+    }
+
+    @Operation(summary = "티켓 조회")
+    @GetMapping("")
+    public ApiResponse<TicketDTO> getTicket(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String number
+    ) {
+        if ((id == null && number == null) || (id != null && number != null))
+            throw new CustomException(ErrorStatus.TICKET_WRONG_PARAMETER);
+
+        if (id != null) {
+            return ApiResponse.onSuccess(_OK, ticketService.getTicketById(id));
+        } else {
+            return ApiResponse.onSuccess(_OK, ticketService.getTicketByNumber(number));
+        }
     }
 }

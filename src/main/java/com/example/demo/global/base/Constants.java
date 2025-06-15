@@ -8,4 +8,7 @@ public class Constants {
     // 공연 시작 전 결제 가능 기한(시간 단위): 공연 시작 2시간 전까지 결제 가능
     public static final int PAYMENT_AVAILABLE_BEFORE_EVENT_START = 2;
 
+    // OpenSea base url
+    public static final String OPENSEA_BASE_URL = "https://testnets.opensea.io/assets/sepolia/";
+
 }

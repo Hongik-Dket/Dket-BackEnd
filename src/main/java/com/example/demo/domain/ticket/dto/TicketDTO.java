@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TicketResponseDTO {
+public class TicketDTO {
 
     private Long ticketId;
     private String eventTitle;
@@ -22,5 +22,9 @@ public class TicketResponseDTO {
     private String ticketNumber;
     private String seatNumber;
     private String qrCodeUrl;
+    private Long photoCardId;
+    private String NFTUrl;
+    private boolean isEntered;
+    
     
 }

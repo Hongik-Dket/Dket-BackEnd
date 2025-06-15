@@ -2,6 +2,7 @@ package com.example.demo.domain.ticket.repository;
 
 import com.example.demo.domain.event.entity.Event;
 import com.example.demo.domain.event.entity.Session;
+import com.example.demo.domain.metadata.entity.Metadata;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.user.entity.User;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,4 +31,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     Optional<Ticket> findByUserAndSession(User user, Session session);
 
     Optional<Ticket> findByTokenId(Long tokenId);
+
+    Optional<Ticket> findByMetadata(Metadata metadata);
 }
