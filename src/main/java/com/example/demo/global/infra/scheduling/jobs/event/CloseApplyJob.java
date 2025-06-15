@@ -39,9 +39,7 @@ public class CloseApplyJob implements Job {
         List<Session> sessions = event.getSessions();
         long emptyCount = sessions.stream()
                 .filter(session -> {
-                    boolean isEmpty = session.getApplyList().isEmpty();
-                    if (isEmpty) session.setIsDrawn();
-                    return isEmpty;
+                    return session.getApplyList().isEmpty();
                 })
                 .count();
 

@@ -70,6 +70,8 @@ public class TicketService {
 
             metadata.getSession().addTicket(ticket);
         }
+
+        metadataList.get(0).getSession().setIsBuyable(true);
     }
 
     @Transactional
@@ -159,7 +161,7 @@ public class TicketService {
         if (!user.isEligibleFor(event.getAgeLimit()))
             throw new CustomException(ErrorStatus.TICKET_INVALID_BUYER);
 
-        if (!session.isBuyableNow())
+        if (!session.getIsBuyable())
             throw new CustomException(ErrorStatus.SESSION_CANNOT_BUY);
 
         switch (event.getEventStatus()) {

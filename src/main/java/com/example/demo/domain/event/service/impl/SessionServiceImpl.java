@@ -7,11 +7,13 @@ import com.example.demo.domain.event.entity.Session;
 import com.example.demo.domain.event.enums.EventStatus;
 import com.example.demo.domain.event.repository.SessionRepository;
 import com.example.demo.domain.event.service.SessionService;
+import com.example.demo.global.event.ReadyToMintEvent;
 import com.example.demo.global.infra.scheduling.SchedulingService;
 import com.example.demo.global.infra.scheduling.jobs.event.OpenPublicJob;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,7 @@ public class SessionServiceImpl implements SessionService {
     private final SessionRepository sessionRepository;
     private final ApplyRepository applyRepository;
     private final SchedulingService schedulingService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -46,7 +49,17 @@ public class SessionServiceImpl implements SessionService {
             event.setEventStatus(EventStatus.APPLY_CLOSED);
             schedulingService.scheduleEventJob(event, OpenPublicJob.class);
         }
+    }
+
+    @Override
+    @Transactional
+    public void completeDraw(Long sessionId) {
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
 
         session.setIsDrawn();
+
+        if(session.getMetadataUploaded())
+            eventPublisher.publishEvent(new ReadyToMintEvent(session.getId()));
     }
 }

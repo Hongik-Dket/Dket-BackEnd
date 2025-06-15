@@ -1,6 +1,7 @@
 package com.example.demo.global.infra.scheduling;
 
 import com.example.demo.domain.event.entity.Event;
+import com.example.demo.domain.event.entity.Session;
 import com.example.demo.domain.event.enums.EventStatus;
 import com.example.demo.domain.event.repository.EventRepository;
 import com.example.demo.global.base.Constants;
@@ -109,6 +110,23 @@ public class SchedulingService {
 
         jobName += "_" + event.getId();
         scheduleJob(jobName, jobClass, triggerTime, Map.of("eventId", event.getId()));
+    }
+
+    public void scheduleSessionJob(Session session, Class<? extends  Job> jobClass) {
+        String jobName = jobClass.getSimpleName();
+        LocalDateTime triggerTime = null;
+
+        switch (jobName) {
+            case "ClosePaymentJob":
+                triggerTime = LocalDateTime.of(session.getDate(), session.getEvent().getStartTime())
+                        .minusHours(Constants.PAYMENT_AVAILABLE_BEFORE_EVENT_START);
+                break;
+            default:
+                throw new CustomException(ErrorStatus.INVALID_JOB_CLASS);
+        }
+
+        jobName += "_" + session.getId();
+        scheduleJob(jobName, jobClass, triggerTime, Map.of("sessionId", session.getId()));
     }
 
     public SchedulingResponseDTO getJobKeys() {

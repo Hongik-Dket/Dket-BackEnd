@@ -13,7 +13,6 @@ import com.example.demo.global.response.status.ErrorStatus;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +48,6 @@ public class DketNFTService {
     private final SessionRepository sessionRepository;
     private final TicketService ticketService;
     private final SessionService sessionService;
-    private final ApplicationEventPublisher eventPublisher;
 
     @Value("${web3.contract-address}")
     private String contractAddress;
@@ -67,6 +65,7 @@ public class DketNFTService {
 
         listenToRandomFulfilled();
         listenToWinnersDrawn();
+        listenToSetDrawn();
         listenToSessionMinted();
         listenToPaymentTransferred();
     }
@@ -83,7 +82,7 @@ public class DketNFTService {
 
             return tx.getTransactionHash();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
         }
     }
@@ -108,7 +107,7 @@ public class DketNFTService {
 
             return tx.getTransactionHash();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
         }
     }
@@ -117,7 +116,7 @@ public class DketNFTService {
         try {
             dketNFT.openPublicSale(BigInteger.valueOf(event.getId())).send();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
         }
     }
@@ -166,7 +165,7 @@ public class DketNFTService {
             }
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
         }
     }
@@ -182,7 +181,6 @@ public class DketNFTService {
                                 throw new CustomException(ErrorStatus.SESSION_DRAW_FAILED);
 
                             sessionService.saveWinners(sessionId.longValue(), winners);
-                            publishEventHandler(sessionId.longValue());
                         },
                         error -> {
                             System.out.println(error.getMessage());
@@ -190,12 +188,17 @@ public class DketNFTService {
                 );
     }
 
-    private void publishEventHandler(Long sessionId) {
-        Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
-
-        if (session.getMetadataUploaded())
-            eventPublisher.publishEvent(new ReadyToMintEvent(sessionId));
+   private void listenToSetDrawn() {
+        dketNFT.setDrawnEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST)
+                .subscribe(
+                        event -> {
+                            Long sessionId = event.sessionId.longValue();
+                            sessionService.completeDraw(sessionId);
+                        },
+                        error -> {
+                            System.out.println(error.getMessage());
+                        }
+                );
     }
 
     @EventListener
@@ -248,7 +251,7 @@ public class DketNFTService {
             }
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
         }
     }
@@ -316,7 +319,6 @@ public class DketNFTService {
             return ethEstimateGas.getAmountUsed().multiply(BigInteger.valueOf(120)).divide(BigInteger.valueOf(100));
 
         } catch (Exception e) {
-//            System.out.println(e.getMessage());
             e.printStackTrace();
             throw new CustomException(ErrorStatus.BLOCKCHAIN_ESTIMATE_GAS_FAILED);
         }

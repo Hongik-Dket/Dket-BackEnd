@@ -6,4 +6,6 @@ public interface SessionService {
 
     void saveWinners(Long sessionId, List<String> winners);
 
+    void completeDraw(Long sessionId);
+
 }
