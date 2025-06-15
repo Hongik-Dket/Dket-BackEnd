@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @Service
 @RequiredArgsConstructor
@@ -36,8 +38,14 @@ public class MetadataCommandService {
 
         session.setMetadataUploaded();
 
-        if (session.getIsDrawn())
-            eventPublisher.publishEvent(new ReadyToMintEvent(session.getId()));
+        if (session.getIsDrawn()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+                @Override
+                public void afterCommit() {
+                    eventPublisher.publishEvent(new ReadyToMintEvent(session.getId()));
+                }
+            });
+        }
     }
 
 }

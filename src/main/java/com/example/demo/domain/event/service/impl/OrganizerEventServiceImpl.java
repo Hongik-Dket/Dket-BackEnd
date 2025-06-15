@@ -19,6 +19,7 @@ import com.example.demo.global.infra.blockchain.service.DketNFTService;
 import com.example.demo.global.infra.blockchain.service.ExchangeService;
 import com.example.demo.global.infra.scheduling.SchedulingService;
 import com.example.demo.global.infra.scheduling.jobs.event.OpenApplyJob;
+import com.example.demo.global.infra.scheduling.jobs.session.ClosePaymentJob;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -110,9 +111,13 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
                     .date(date)
                     .isDrawn(false)
                     .metadataUploaded(false)
+                    .isBuyable(false)
                     .build();
 
             event.addSession(session);
+
+            sessionRepository.save(session);
+            schedulingService.scheduleSessionJob(session, ClosePaymentJob.class);
         }
 
         user.addEvent(event);

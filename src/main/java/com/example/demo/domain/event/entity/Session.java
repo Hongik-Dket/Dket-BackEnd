@@ -39,6 +39,8 @@ public class Session extends BaseEntity {
     private Boolean isDrawn;
     private Boolean metadataUploaded;
 
+    private Boolean isBuyable;
+
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Apply> applyList = new ArrayList<>();
@@ -53,16 +55,11 @@ public class Session extends BaseEntity {
 
     public void setTxHash(String txHash) { this.txHash = txHash; }
     public void setIsDrawn() { this.isDrawn = true; }
+    public void setIsBuyable(boolean isBuyable) { this.isBuyable = isBuyable; }
     public void setMetadataUploaded() { this.metadataUploaded = true; }
 
     public void addApply(Apply apply) { this.applyList.add(apply); }
     public void addMetadata(Metadata metadata) { this.metadataList.add(metadata); }
     public void addTicket(Ticket ticket) { this.ticketList.add(ticket); }
 
-    public boolean isBuyableNow() {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime eventStartDateTime = LocalDateTime.of(this.date, getEvent().getStartTime());
-
-        return now.isBefore(eventStartDateTime.minusHours(Constants.PAYMENT_AVAILABLE_BEFORE_EVENT_START));
-    }
 }

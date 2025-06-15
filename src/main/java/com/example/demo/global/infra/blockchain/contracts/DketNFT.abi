@@ -637,6 +637,19 @@
 		"inputs": [
 			{
 				"indexed": true,
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			}
+		],
+		"name": "SetDrawn",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
 				"internalType": "address",
 				"name": "from",
 				"type": "address"
