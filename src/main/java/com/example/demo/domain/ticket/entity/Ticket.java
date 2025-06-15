@@ -52,5 +52,6 @@ public class Ticket extends BaseEntity {
     }
 
     public void setQrCode(String qrCode) { this.qrCode = qrCode; }
+    public void enter() {this.enteredAt = LocalDateTime.now();}
 
 }

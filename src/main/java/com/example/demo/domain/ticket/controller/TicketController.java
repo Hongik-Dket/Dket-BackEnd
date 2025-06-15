@@ -20,12 +20,6 @@ public class TicketController {
 
     private final TicketService ticketService;
 
-    @Operation(summary = "티켓 가격 확인")
-    @GetMapping("buyer/{sessionId}")
-    public ApiResponse<PriceWeiDTO> getPriceWei(@PathVariable("sessionId") Long sessionId) {
-        return ApiResponse.onSuccess(_OK, ticketService.getPriceWei(sessionId));
-    }
-
     @Operation(summary = "티켓 조회")
     @GetMapping("")
     public ApiResponse<TicketDTO> getTicket(
@@ -40,5 +34,19 @@ public class TicketController {
         } else {
             return ApiResponse.onSuccess(_OK, ticketService.getTicketByNumber(number));
         }
+    }
+
+    @Operation(summary = "공연 입장")
+    @PatchMapping("organizer/{ticketId}/enter")
+    public ApiResponse<?> enterTicket(@PathVariable("ticketId") Long ticketId) {
+        ticketService.enterTicket(ticketId);
+
+        return ApiResponse.onSuccess(_OK, null);
+    }
+
+    @Operation(summary = "티켓 가격 확인")
+    @GetMapping("buyer/{sessionId}")
+    public ApiResponse<PriceWeiDTO> getPriceWei(@PathVariable("sessionId") Long sessionId) {
+        return ApiResponse.onSuccess(_OK, ticketService.getPriceWei(sessionId));
     }
 }

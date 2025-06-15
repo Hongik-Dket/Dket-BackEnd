@@ -25,6 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -113,7 +115,7 @@ public class TicketService {
         User user = userService.getCurrentUser();
 
         if (!(ticket.getUser().equals(user)) && !(ticket.getSession().getEvent().getOrganizer().equals(user)))
-            throw new CustomException(ErrorStatus.TICKEt_INVALID_USER);
+            throw new CustomException(ErrorStatus.TICKET_INVALID_USER);
 
         return ticketConverter.toTicketDTO(ticket);
     }
@@ -127,10 +129,28 @@ public class TicketService {
 
         User user = userService.getCurrentUser();
 
-        if (!(ticket.getSession().getEvent().getOrganizer().equals(user)))
-            throw new CustomException(ErrorStatus.TICKEt_INVALID_USER);
+        validateOrganizer(ticket, user);
 
         return ticketConverter.toTicketDTO(ticket);
+    }
+
+    @Transactional
+    public void enterTicket(Long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.TICKET_NOT_FOUND));
+
+        User user = userService.getCurrentUser();
+
+        validateOrganizer(ticket, user);
+
+        if (
+            !(ticket.getSession().getDate().equals(LocalDate.now()) &&
+                ticket.getSession().getEvent().getStartTime().isAfter(LocalTime.now()))
+                || ticket.getEnteredAt() != null
+        )
+            throw new CustomException(ErrorStatus.TICKET_INVALID);
+
+        ticket.enter();
     }
 
     private void validateBuyer(Session session, User user) {
@@ -158,6 +178,11 @@ public class TicketService {
             default:
                 throw new CustomException(ErrorStatus.SESSION_CANNOT_BUY);
         }
+    }
+
+    private void validateOrganizer(Ticket ticket, User user) {
+        if (!(ticket.getSession().getEvent().getOrganizer().equals(user)))
+            throw new CustomException(ErrorStatus.TICKET_INVALID_USER);
     }
 
 }
