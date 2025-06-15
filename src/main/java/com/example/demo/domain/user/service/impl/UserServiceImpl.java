@@ -1,8 +1,10 @@
 package com.example.demo.domain.user.service.impl;
 
+import com.example.demo.domain.user.dto.response.WalletDTO;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.domain.user.service.UserService;
+import com.example.demo.global.infra.blockchain.service.WalletService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final WalletService walletService;
 
     @Override
     public User getCurrentUser() {
@@ -37,5 +40,17 @@ public class UserServiceImpl implements UserService {
                     newUser.setWalletAddress(walletAddress);
                     return userRepository.save(newUser);
                 });
+    }
+
+    @Override
+    public WalletDTO getWalletInfo() {
+        User user = getCurrentUser();
+        String address = user.getWalletAddress();
+
+        return WalletDTO.builder()
+                .walletAddress(address)
+                .balance(walletService.getEthBalance(address))
+                .build();
+
     }
 }

@@ -1,8 +1,7 @@
-package com.example.demo.domain.user.DTO;
+package com.example.demo.domain.user.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 @Builder

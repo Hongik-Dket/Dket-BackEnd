@@ -80,6 +80,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     METADATA_NOT_FOUND(HttpStatus.BAD_REQUEST, "METADATA_4001", "해당 메타데이터를 찾을 수 없습니다."),
 
+    WALLET_INVALID_ADDRESS(HttpStatus.BAD_REQUEST, "WALLET_4001", "유효하지 않은 주소입니다."),
+    WALLET_GET_BALANCE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "WALLET_5001", "잔액 조회에 실패했습니다."),
+
     ;
 
     private final HttpStatus httpStatus;
