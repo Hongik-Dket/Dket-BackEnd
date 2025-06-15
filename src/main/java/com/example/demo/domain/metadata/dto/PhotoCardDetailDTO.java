@@ -5,13 +5,18 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PhotoCardDTO {
-
+public class PhotoCardDetailDTO {
     private Long photoCardId;
-    private String imageUrl;
     private Long ticketId;
+    private String imageUrl;
+    private String eventTitle;
+    private LocalDate sessionDate;
+    private String ticketNumber;
+    private String nftUrl;
 }

@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface PhotoCardRepository extends JpaRepository<PhotoCard, Long> {
 
-    Optional<PhotoCard> findById(Long cardId);
+    Optional<PhotoCard> findById(Long photoCardId);
 
     List<PhotoCard> findAllByIdIn(List<Long> ids);
 }
