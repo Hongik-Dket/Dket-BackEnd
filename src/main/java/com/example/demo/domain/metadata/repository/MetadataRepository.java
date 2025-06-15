@@ -17,4 +17,6 @@ public interface MetadataRepository extends JpaRepository<Metadata, Long> {
     Session findSessionByMetadataId(@Param("metadataId") Long metadataId);
 
     List<Metadata> findAllByCidIn(List<String> cids);
+
+    Optional<Metadata> findByTicketNumber(String ticketNumber);
 }
