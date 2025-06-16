@@ -34,6 +34,9 @@ import org.web3j.tx.gas.DefaultGasProvider;
 
 import java.math.BigInteger;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -53,6 +56,8 @@ public class DketNFTService {
     private String contractAddress;
 
     private DketNFT dketNFT;
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     @PostConstruct
     public void init() {
@@ -127,8 +132,16 @@ public class DketNFTService {
                         event -> {
                             BigInteger sessionId = event.sessionId;
                             BigInteger randomWord = event.randomWord;
-                            drawSession(sessionId);
                             metadataService.createMetadata(sessionId, randomWord);
+
+                            scheduler.schedule(()->{
+                                try {
+                                    drawSession(sessionId);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }, 15, TimeUnit.SECONDS);
+
                         },
                         error -> {
                             System.out.println(error.getMessage());

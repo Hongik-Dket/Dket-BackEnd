@@ -186,7 +186,7 @@ public class TicketService {
                 break;
 
             default:
-                throw new CustomException(ErrorStatus.SESSION_CANNOT_BUY);
+//                throw new CustomException(ErrorStatus.SESSION_CANNOT_BUY);
         }
     }
 

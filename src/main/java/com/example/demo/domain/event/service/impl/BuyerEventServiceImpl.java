@@ -56,7 +56,9 @@ public class BuyerEventServiceImpl implements BuyerEventService {
             Long ticketId = ticket != null ? ticket.getId() : null;
 
             // 잔여 티켓 계산
-            int paidCount = session.getTicketList().size();
+            int paidCount = (int) session.getTicketList().stream()
+                    .filter(ticket1 -> ticket1.getPaidAt() != null)
+                    .count();
             boolean buyable = event.getEventStatus() == EventStatus.TICKETED
                     && (event.getCapacity() - paidCount > 0)
                     && applyStatus != ApplyStatus.PAID;

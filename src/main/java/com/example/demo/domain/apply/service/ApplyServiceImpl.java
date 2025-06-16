@@ -83,13 +83,15 @@ public class ApplyServiceImpl implements ApplyService {
                 .applyStatus(ApplyStatus.APPLIED)
                 .build();
 
-        user.addApply(apply);
-        session.addApply(apply);
+        Apply saved = applyRepository.saveAndFlush(apply);
+
+        user.addApply(saved);
+        session.addApply(saved);
 
         return ApplyResponseDTO.builder()
-                .applyId(apply.getId())
+                .applyId(saved.getId())
                 .sessionId(sessionId)
-                .appliedAt(apply.getCreatedAt())
+                .appliedAt(saved.getCreatedAt())
                 .build();
     }
 }
