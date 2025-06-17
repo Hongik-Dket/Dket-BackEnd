@@ -70,15 +70,16 @@ public enum ErrorStatus implements BaseErrorCode {
     JOB_CANCEL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "JOB_5003", "Job 취소에 실패했습니다."),
     INVALID_JOB_CLASS(HttpStatus.BAD_REQUEST, "JOB_4002", "유효한 Job Class가 아닙니다."),
 
-    EVENT_NOT_OPEN_FOR_APPLY(HttpStatus.BAD_REQUEST, "APPLY_4001", "현재 공연은 응모할 수 없는 상태입니다."),
-    APPLY_TIME_INVALID(HttpStatus.BAD_REQUEST, "APPLY_4002", "응모 기간이 아닙니다."),
-    ALREADY_APPLIED(HttpStatus.BAD_REQUEST, "APPLY_4003", "이미 해당 회차에 응모한 상태입니다."),
-    APPLY_NOT_FOUND(HttpStatus.BAD_REQUEST, "APPLY_4004", "해당 응모 내역을 찾을 수 없습니다."),
-    APPLY_AGE_RESTRICTED(HttpStatus.BAD_REQUEST, "APPLY_4005", "응모 가능한 연령이 아닙니다."),
+    APPLY_INVALID_PERIOD(HttpStatus.BAD_REQUEST, "APPLY_4001", "응모 기간이 아닙니다."),
+    APPLY_ALREADY_DONE(HttpStatus.BAD_REQUEST, "APPLY_4002", "이미 해당 회차에 응모한 상태입니다."),
+    APPLY_NOT_FOUND(HttpStatus.BAD_REQUEST, "APPLY_4003", "해당 응모 내역을 찾을 수 없습니다."),
+    APPLY_AGE_RESTRICTED(HttpStatus.BAD_REQUEST, "APPLY_4004", "응모 가능한 연령이 아닙니다."),
+    APPLY_SELF_HOSTING_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "APPLY_4005", "본인이 개최한 공연에는 응모할 수 없습니다."),
 
     IPFS_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IPFS_5001", "IPFS 업로드에 실패했습니다."),
 
     METADATA_NOT_FOUND(HttpStatus.BAD_REQUEST, "METADATA_4001", "해당 메타데이터를 찾을 수 없습니다."),
+    METADATA_JSON_CONVERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "METADATA_5001", "해당 메타데이터를 Json으로 변환하는데 실패했습니다."),
 
     WALLET_INVALID_ADDRESS(HttpStatus.BAD_REQUEST, "WALLET_4001", "유효하지 않은 주소입니다."),
     WALLET_GET_BALANCE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "WALLET_5001", "잔액 조회에 실패했습니다."),

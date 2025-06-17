@@ -6,6 +6,6 @@ public interface UserService {
 
     User getCurrentUser();
 
-    User loginWithWallet(String walletAddress);
+    void loginWithWallet(String walletAddress);
 
 }

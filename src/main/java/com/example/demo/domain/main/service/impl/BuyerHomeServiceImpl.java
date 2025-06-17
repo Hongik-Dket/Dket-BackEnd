@@ -54,6 +54,7 @@ public class BuyerHomeServiceImpl implements BuyerHomeService {
     public EventCardListDTO getPopularEventsForBuyer() {
         Pageable top20 = PageRequest.of(0, 20);
         List<Event> events = eventRepository.findPopularEvents(top20);
+
         return MainConverter.toEventCardListDTO(events);
     }
 
@@ -61,6 +62,7 @@ public class BuyerHomeServiceImpl implements BuyerHomeService {
     public EventCardListDTO getAppliedEventsForBuyer() {
         User buyer = userService.getCurrentUser();
         List<Event> events = applyRepository.findAppliedEventsByBuyer(buyer.getId(), Pageable.unpaged());
+
         return MainConverter.toEventCardListDTO(events);
     }
 
@@ -68,12 +70,14 @@ public class BuyerHomeServiceImpl implements BuyerHomeService {
     public EventCardListDTO getPurchasedEventsForBuyer() {
         User buyer = userService.getCurrentUser();
         List<Event> events = ticketRepository.findPurchasedEventsByBuyer(buyer.getId(), Pageable.unpaged());
+
         return MainConverter.toEventCardListDTO(events);
     }
 
     @Override
     public EventCardListDTO getEntireEventsForBuyer() {
         List<Event> events = eventRepository.findAllSorted(Pageable.unpaged());
+
         return MainConverter.toEventCardListDTO(events);
     }
 }

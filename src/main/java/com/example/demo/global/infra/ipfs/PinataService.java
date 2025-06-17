@@ -4,6 +4,7 @@ import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -12,7 +13,6 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -36,7 +37,7 @@ public class PinataService {
         try {
             return uploadToPinata(file.getInputStream(), ContentType.DEFAULT_BINARY, file.getOriginalFilename());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error("포토카드 파일 [{}] IPFS 업로드 실패", file.getOriginalFilename(), e);
             throw new CustomException(ErrorStatus.IPFS_UPLOAD_FAILED);
         }
     }
@@ -47,7 +48,7 @@ public class PinataService {
             String ipfsHash = uploadToPinata(jsonStream, ContentType.APPLICATION_JSON, fileName);
             return CompletableFuture.completedFuture(ipfsHash);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error("JSON 파일 [{}] IPFS 업로드 실패", fileName, e);
             throw new CustomException(ErrorStatus.IPFS_UPLOAD_FAILED);
         }
     }
@@ -73,7 +74,7 @@ public class PinataService {
                 return (String) result.get(IPFS_HASH_KEY);
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error("파일 [{}] IPFS 업로드 실패", fileName, e);
             throw new CustomException(ErrorStatus.IPFS_UPLOAD_FAILED);
         }
     }

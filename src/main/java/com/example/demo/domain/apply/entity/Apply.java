@@ -36,7 +36,4 @@ public class Apply extends BaseEntity {
 
     public void setApplyStatus(ApplyStatus applyStatus) { this.applyStatus = applyStatus; }
 
-    public void setSession(Session session) { this.session = session; }
-
-    public void setUser(User user) { this.user = user; }
 }

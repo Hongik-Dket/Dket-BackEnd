@@ -1,0 +1,2 @@
+2025-06-17 10:02:57.893 [http-nio-8080-exec-1] ERROR c.e.d.g.r.exception.CommonException - Custom Error: 입장할 수 없는 티켓입니다. - Code: CustomException - Status: 400 BAD_REQUEST
+2025-06-17 10:03:02.327 [http-nio-8080-exec-2] ERROR c.e.d.g.r.exception.CommonException - Custom Error: 입장할 수 없는 티켓입니다. - Code: CustomException - Status: 400 BAD_REQUEST

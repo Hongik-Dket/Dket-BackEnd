@@ -53,19 +53,17 @@ public class MypageServiceImpl implements MypageService {
     @Override
     public List<TicketDTO> getMyTickets() {
         User user = userService.getCurrentUser();
-        List<Ticket> ticketList = getSortedMyTickets(user);
 
-        List<TicketDTO> result = new ArrayList<>();
-        for (Ticket ticket : ticketList)
-            result.add(toTicketDTO(ticket));
-
-        return result;
+        return ticketRepository.findAllSortedByDateAndFutureFirst(user, LocalDate.now())
+                .stream()
+                .map(ticket -> toTicketDTO(ticket))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<PhotoCardDTO> getMyPhotoCards() {
         User user = userService.getCurrentUser();
-        List<Ticket> ticketList = getSortedMyTickets(user);
+        List<Ticket> ticketList = ticketRepository.findAllSortedByDateAndFutureFirstWithPhotoCard(user, LocalDate.now());
 
         List<PhotoCardDTO> result = new ArrayList<>();
         for (Ticket ticket : ticketList) {
@@ -80,41 +78,12 @@ public class MypageServiceImpl implements MypageService {
     public PhotoCardDetailDTO getMyPhotoCardDetail(Long ticketId) {
         User user = userService.getCurrentUser();
 
-        Ticket ticket = ticketRepository.findById(ticketId)
+        Ticket ticket = ticketRepository.findByIdAndUserId(ticketId, user.getId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.TICKET_NOT_FOUND));
-
-        validateUser(user, ticket);
 
         String ipfsUrl = pinataService.cidToHttp(ticket.getMetadata().getPhotoCard().getCid());
         String nftUrl = ticketService.getNftUrl(ticket);
 
         return toPhotoCardDetailDTO(ticket, ipfsUrl, nftUrl);
-    }
-
-    private List<Ticket> getSortedMyTickets(User user) {
-        LocalDate now = LocalDate.now();
-
-        Comparator<Ticket> bySessionDate = Comparator.comparing(ticket -> ticket.getSession().getDate());
-
-        List<Ticket> futureTickets = user.getTickets().stream()
-                .filter(ticket -> !ticket.getSession().getDate().isBefore(now))
-                .sorted(bySessionDate)
-                .collect(Collectors.toList());
-
-        List<Ticket> pastTickets = user.getTickets().stream()
-                .filter(ticket -> ticket.getSession().getDate().isBefore(now))
-                .sorted(bySessionDate.reversed())
-                .collect(Collectors.toList());
-
-        List<Ticket> ticketList = new ArrayList<>();
-        ticketList.addAll(futureTickets);
-        ticketList.addAll(pastTickets);
-
-        return ticketList;
-    }
-
-    private void validateUser(User user, Ticket ticket) {
-        if (!ticket.getUser().equals(user))
-            throw new CustomException(ErrorStatus.TICKET_INVALID_USER);
     }
 }

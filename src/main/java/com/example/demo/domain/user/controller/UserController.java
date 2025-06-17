@@ -5,13 +5,11 @@ import com.example.demo.domain.metadata.dto.PhotoCardDetailDTO;
 import com.example.demo.domain.ticket.dto.TicketDTO;
 import com.example.demo.domain.user.dto.request.MetaMaskLoginRequestDTO;
 import com.example.demo.domain.user.dto.response.WalletDTO;
-import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.MypageService;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.response.ApiResponse;
 import com.example.demo.global.response.code.ReasonDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +31,7 @@ public class UserController {
     public ResponseEntity<ReasonDTO> completeMetaMaskLogin(
             @RequestBody MetaMaskLoginRequestDTO request) {
 
-        User user = userService.loginWithWallet(request.getWalletAddress());
+        userService.loginWithWallet(request.getWalletAddress());
 
         return ResponseEntity.ok(
                 ReasonDTO.builder()
