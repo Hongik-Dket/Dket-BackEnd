@@ -75,7 +75,6 @@ public class SessionServiceImpl implements SessionService {
     @Override
     @Transactional
     public void createSessions(Event event) {
-        List<Session> sessionList = new ArrayList<>();
         for (LocalDate date = event.getStartDate(); !date.isAfter(event.getEndDate()); date = date.plusDays(1)) {
             Session session = Session.builder()
                     .event(event)
@@ -87,11 +86,9 @@ public class SessionServiceImpl implements SessionService {
 
             event.addSession(session);
 
-            sessionList.add(session);
+            sessionRepository.save(session);
             schedulingService.scheduleSessionJob(session, ClosePaymentJob.class);
         }
-
-        sessionRepository.saveAll(sessionList);
     }
 
     @Override
