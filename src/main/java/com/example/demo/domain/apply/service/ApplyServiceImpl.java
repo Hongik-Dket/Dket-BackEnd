@@ -89,9 +89,9 @@ public class ApplyServiceImpl implements ApplyService {
         session.addApply(apply);
 
         return ApplyResponseDTO.builder()
-                .applyId(saved.getId())
+                .applyId(apply.getId())
                 .sessionId(sessionId)
-                .appliedAt(saved.getCreatedAt())
+                .appliedAt(apply.getCreatedAt())
                 .build();
     }
 }
