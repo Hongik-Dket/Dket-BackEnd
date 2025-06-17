@@ -23,9 +23,12 @@ public class SwaggerConfig {
                 .title("Dket Back-End API")
                 .description("Dket 백엔드 API 명세서")
                 .version("1.0.0");
+
         String jwtSchemeName = "JWT_TOKEN";
+
         SecurityRequirement securityRequirement = new SecurityRequirement()
                 .addList(jwtSchemeName);
+
         Components components = new Components()
                 .addSecuritySchemes(jwtSchemeName,
                         new SecurityScheme()
@@ -37,6 +40,7 @@ public class SwaggerConfig {
                     new RequestBody()
                             .content(new Content().addMediaType("multipart/form-data",
                                     new MediaType().schema(new Schema<>().type("object")))));
+
         return new OpenAPI()
                 .addServersItem(new Server().url("/"))
                 .info(apiInfo)

@@ -6,7 +6,7 @@ import com.example.demo.domain.ticket.dto.TicketDTO;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.ticket.repository.TicketRepository;
 import com.example.demo.domain.ticket.service.TicketService;
-import com.example.demo.domain.user.dto.response.WalletDTO;
+import com.example.demo.domain.user.dto.WalletDTO;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.MypageService;
 import com.example.demo.domain.user.service.UserService;
@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
