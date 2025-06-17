@@ -1,7 +1,5 @@
 package com.example.demo.domain.ticket.controller;
 
-import com.example.demo.domain.event.dto.response.PriceWeiDTO;
-import com.example.demo.domain.event.service.SessionService;
 import com.example.demo.domain.ticket.dto.TicketDetailDTO;
 import com.example.demo.domain.ticket.service.TicketService;
 import com.example.demo.global.response.ApiResponse;
@@ -19,7 +17,6 @@ import static com.example.demo.global.response.status.SuccessStatus._OK;
 public class TicketController {
 
     private final TicketService ticketService;
-    private final SessionService sessionService;
 
     @Operation(summary = "티켓 조회")
     @GetMapping("")
@@ -43,11 +40,5 @@ public class TicketController {
         ticketService.enterTicket(ticketId);
 
         return ApiResponse.onSuccess(_OK, null);
-    }
-
-    @Operation(summary = "티켓 가격 확인")
-    @GetMapping("buyer/{sessionId}")
-    public ApiResponse<PriceWeiDTO> getPriceWei(@PathVariable("sessionId") Long sessionId) {
-        return ApiResponse.onSuccess(_OK, sessionService.getPriceWei(sessionId));
     }
 }
