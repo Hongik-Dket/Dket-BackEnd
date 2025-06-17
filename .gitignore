@@ -30,5 +30,5 @@ out/
 .vscode/
 
 .env
-logs/
 .DS_Store
+logs/
