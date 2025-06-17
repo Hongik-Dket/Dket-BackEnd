@@ -29,7 +29,7 @@ public class BuyerEventController {
     }
 
     @Operation(summary = "티켓 가격 확인")
-    @GetMapping("/{sessionId}")
+    @GetMapping("/{sessionId}/price")
     public ApiResponse<PriceWeiDTO> getPriceWei(@PathVariable("sessionId") Long sessionId) {
         return ApiResponse.onSuccess(_OK, sessionService.getPriceWei(sessionId));
     }
