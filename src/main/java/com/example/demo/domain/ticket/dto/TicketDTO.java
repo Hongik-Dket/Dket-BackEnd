@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Builder
@@ -16,15 +16,9 @@ public class TicketDTO {
 
     private Long ticketId;
     private String eventTitle;
-    private LocalDateTime eventDateTime;
-    private String buyerName;
-    private LocalDate birth;
-    private String ticketNumber;
-    private String seatNumber;
-    private String qrCodeUrl;
-    private Long photoCardId;
-    private String NFTUrl;
-    private boolean isEntered;
-    
-    
+    private String posterUrl;
+    private String location;
+    private LocalDate sessionDate;
+    private LocalTime startTime;
+    private boolean entered;
 }

@@ -1,14 +1,12 @@
 package com.example.demo.domain.ticket.controller;
 
-import com.example.demo.domain.ticket.dto.PriceWeiDTO;
-import com.example.demo.domain.ticket.dto.TicketDTO;
+import com.example.demo.domain.ticket.dto.TicketDetailDTO;
 import com.example.demo.domain.ticket.service.TicketService;
 import com.example.demo.global.response.ApiResponse;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.web.bind.annotation.*;
 
 import static com.example.demo.global.response.status.SuccessStatus._OK;
@@ -22,7 +20,7 @@ public class TicketController {
 
     @Operation(summary = "티켓 조회")
     @GetMapping("")
-    public ApiResponse<TicketDTO> getTicket(
+    public ApiResponse<TicketDetailDTO> getTicket(
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String number
     ) {
@@ -42,11 +40,5 @@ public class TicketController {
         ticketService.enterTicket(ticketId);
 
         return ApiResponse.onSuccess(_OK, null);
-    }
-
-    @Operation(summary = "티켓 가격 확인")
-    @GetMapping("buyer/{sessionId}")
-    public ApiResponse<PriceWeiDTO> getPriceWei(@PathVariable("sessionId") Long sessionId) {
-        return ApiResponse.onSuccess(_OK, ticketService.getPriceWei(sessionId));
     }
 }

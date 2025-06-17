@@ -11,4 +11,5 @@ public class PinataConfig {
     private String apiKey;
     private String apiSecret;
     private String uploadUrl;
+    private String gateway;
 }

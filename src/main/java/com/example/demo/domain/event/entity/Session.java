@@ -38,7 +38,6 @@ public class Session extends BaseEntity {
 
     private Boolean isDrawn;
     private Boolean metadataUploaded;
-
     private Boolean isBuyable;
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
@@ -55,11 +54,17 @@ public class Session extends BaseEntity {
 
     public void setTxHash(String txHash) { this.txHash = txHash; }
     public void setIsDrawn() { this.isDrawn = true; }
-    public void setIsBuyable(boolean isBuyable) { this.isBuyable = isBuyable; }
     public void setMetadataUploaded() { this.metadataUploaded = true; }
+    public void setIsBuyable(boolean isBuyable) { this.isBuyable = isBuyable; }
 
     public void addApply(Apply apply) { this.applyList.add(apply); }
-    public void addMetadata(Metadata metadata) { this.metadataList.add(metadata); }
     public void addTicket(Ticket ticket) { this.ticketList.add(ticket); }
+    public void addMetadata(Metadata metadata) { this.metadataList.add(metadata); }
+
+    public int getPaidCount() {
+        return (int) this.ticketList.stream()
+                .filter(ticket -> ticket.getPaidAt() != null)
+                .count();
+    }
 
 }
