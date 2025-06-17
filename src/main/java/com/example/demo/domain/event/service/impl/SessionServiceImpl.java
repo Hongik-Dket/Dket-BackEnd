@@ -9,6 +9,7 @@ import com.example.demo.domain.event.enums.EventStatus;
 import com.example.demo.domain.event.repository.SessionRepository;
 import com.example.demo.domain.event.service.SessionService;
 import com.example.demo.domain.event.dto.response.PriceWeiDTO;
+import com.example.demo.domain.ticket.repository.TicketRepository;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.event.ReadyToMintEvent;
@@ -23,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -36,6 +36,7 @@ public class SessionServiceImpl implements SessionService {
     private final SchedulingService schedulingService;
     private final ApplicationEventPublisher eventPublisher;
     private final UserService userService;
+    private final TicketRepository ticketRepository;
 
     @Override
     @Transactional
@@ -108,11 +109,17 @@ public class SessionServiceImpl implements SessionService {
     private void validateBuyer(Session session, User user) {
         Event event = session.getEvent();
 
-        if (!user.isEligibleFor(event.getAgeLimit()))
+        if (!user.isEligibleFor(event.getAgeLimit())) {
             throw new CustomException(ErrorStatus.TICKET_INVALID_BUYER);
+        }
 
-        if (!session.getIsBuyable())
+        if (!session.getIsBuyable()) {
             throw new CustomException(ErrorStatus.SESSION_CANNOT_BUY);
+        }
+
+        if (ticketRepository.existsByUserIdAndSessionId(user.getId(), session.getId())) {
+            throw new CustomException(ErrorStatus.TICKET_ALREADY_PAID);
+        }
 
         switch (event.getEventStatus()) {
             case APPLY_CLOSED:
