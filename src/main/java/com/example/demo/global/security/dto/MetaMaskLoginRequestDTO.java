@@ -1,4 +1,4 @@
-package com.example.demo.domain.user.dto.request;
+package com.example.demo.global.security.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
