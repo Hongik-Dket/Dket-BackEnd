@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.swing.text.html.Option;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,9 +29,27 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     """)
     List<Event> findPurchasedEventsByBuyer(@Param("buyerId") Long buyerId, Pageable pageable);
 
-    Optional<Ticket> findByUserAndSession(User user, Session session);
-
     Optional<Ticket> findByTokenId(Long tokenId);
 
     Optional<Ticket> findByMetadata(Metadata metadata);
+
+    int countBySessionIdAndPaidAtIsNotNull(Long sessionId);
+
+    List<Ticket> findByUserIdAndSessionIdIn(Long userId, List<Long> sessionIds);
+
+    @Query("SELECT t FROM Ticket t " +
+            "JOIN FETCH t.session s " +
+            "WHERE t.user = :user " +
+            "ORDER BY CASE WHEN s.date >= :now THEN 0 ELSE 1 END ASC, s.date ASC")
+    List<Ticket> findAllSortedByDateAndFutureFirst(@Param("user") User user, @Param("now") LocalDate now);
+
+    @Query("SELECT t FROM Ticket t " +
+            "JOIN FETCH t.session s " +
+            "JOIN FETCH t.metadata m " +
+            "JOIN FETCH m.photoCard pc " +
+            "WHERE t.user = :user " +
+            "ORDER BY CASE WHEN s.date >= :now THEN 0 ELSE 1 END, s.date ASC")
+    List<Ticket> findAllSortedByDateAndFutureFirstWithPhotoCard(@Param("user") User user, @Param("now") LocalDate now);
+
+    Optional<Ticket> findByIdAndUserId(Long id, Long userId);
 }

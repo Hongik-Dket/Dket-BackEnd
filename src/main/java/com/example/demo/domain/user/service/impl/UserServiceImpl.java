@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
@@ -24,18 +24,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User loginWithWallet(String walletAddress) {
+    @Transactional
+    public void loginWithWallet(String walletAddress) {
         if (walletAddress == null || walletAddress.isBlank()) {
             throw new CustomException(ErrorStatus.INVALID_INPUT);
         }
+
         if (!walletAddress.matches("^0x[a-fA-F0-9]{40}$")) {
             throw new CustomException(ErrorStatus.INVALID_WALLET_ADDRESS);
         }
-        return userRepository.findByWalletAddress(walletAddress)
-                .orElseGet(() -> {
-                    User newUser = new User();
-                    newUser.setWalletAddress(walletAddress);
-                    return userRepository.save(newUser);
-                });
+
+        if (!userRepository.existsByWalletAddress(walletAddress)) {
+            User user = User.builder()
+                    .walletAddress(walletAddress)
+                    .build();
+            userRepository.save(user);
+        }
     }
 }

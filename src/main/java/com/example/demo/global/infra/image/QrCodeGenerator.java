@@ -22,7 +22,7 @@ import java.io.ByteArrayOutputStream;
 public class QrCodeGenerator {
 
     public MultipartFile generateQrCodeFile(Long ticketId) {
-        BufferedImage qrImage = generateQrCodeImage("ticket:%s".formatted(ticketId), 300, 300);
+        BufferedImage qrImage = generateQrCodeImage("%s".formatted(ticketId), 300, 300);
         byte[] qrBytes = bufferedImageToBytes(qrImage, "png");
 
         return new ByteArrayMultipartFile(qrBytes, "qrcode.png", "image/png");

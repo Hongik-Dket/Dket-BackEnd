@@ -1,7 +1,7 @@
 package com.example.demo.domain.event.service;
 
-import com.example.demo.domain.event.dto.response.BuyerEventInfoDTO;
+import com.example.demo.domain.event.dto.response.BuyerEventDetailDTO;
 
 public interface BuyerEventService {
-    BuyerEventInfoDTO getEventDetailForBuyer(Long eventId);
+    BuyerEventDetailDTO getEventDetailForBuyer(Long eventId);
 }

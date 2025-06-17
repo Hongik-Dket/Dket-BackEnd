@@ -37,7 +37,7 @@ public class OrganizerHomeController {
         return ApiResponse.onSuccess(_OK, organizerHomeService.getClosedEventsForOrganizer());
     }
 
-    @Operation(summary = "개최자 - 전체 공연 조회")
+    @Operation(summary = "개최자 - 개최한 전체 공연 조회")
     @GetMapping("/all")
     public ApiResponse<EventCardListDTO> getAllEventsOrganizer() {
         return ApiResponse.onSuccess(_OK, organizerHomeService.getAllEventsForOrganizer());

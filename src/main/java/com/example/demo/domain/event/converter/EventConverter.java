@@ -1,13 +1,12 @@
 package com.example.demo.domain.event.converter;
 
-import com.example.demo.domain.apply.enums.ApplyStatus;
 import com.example.demo.domain.event.dto.request.EventUploadDTO;
-import com.example.demo.domain.event.dto.response.BuyerEventInfoDTO;
+import com.example.demo.domain.event.dto.response.BuyerEventDetailDTO;
 import com.example.demo.domain.event.dto.response.BuyerSessionInfoDTO;
-import com.example.demo.domain.event.dto.response.OrganizerEventInfoDTO;
-import com.example.demo.domain.event.dto.response.OrganizerSessionInfoDTO;
+import com.example.demo.domain.event.dto.response.OrganizerEventDetailDTO;
 import com.example.demo.domain.event.entity.Event;
 import com.example.demo.domain.event.entity.Session;
+import com.example.demo.domain.event.enums.EventStatus;
 import com.example.demo.domain.metadata.dto.PhotoCardInfoDTO;
 import com.example.demo.domain.user.entity.User;
 
@@ -17,8 +16,8 @@ import java.util.stream.Collectors;
 
 public class EventConverter {
 
-    public static OrganizerEventInfoDTO toEventInfoDTO(Event event, List<PhotoCardInfoDTO> photoCardInfoDTOList) {
-        return OrganizerEventInfoDTO.builder()
+    public static OrganizerEventDetailDTO toOrganizerEventInfoDTO(Event event, List<PhotoCardInfoDTO> photoCardInfoDTOList) {
+        return OrganizerEventDetailDTO.builder()
                 .eventId(event.getId())
                 .title(event.getTitle())
                 .posterUrl(event.getPosterUrl())
@@ -43,17 +42,6 @@ public class EventConverter {
                 .build();
     }
 
-    public static OrganizerSessionInfoDTO toSessionInfoDTO(Session session, int attendeeCount) {
-        return OrganizerSessionInfoDTO.builder()
-                .eventId(session.getEvent().getId())
-                .sessionId(session.getId())
-                .date(session.getDate())
-                .applyCount(session.getApplyList().size())
-                .paidCount(session.getTicketList().size())
-                .attendeeCount(attendeeCount)
-                .build();
-    }
-
     public static Event toEvent(EventUploadDTO eventUploadDTO, User user, String bannerUrl, String posterUrl, BigInteger priceWei) {
         return Event.builder()
                 .organizer(user)
@@ -72,11 +60,12 @@ public class EventConverter {
                 .bannerUrl(bannerUrl)
                 .posterUrl(posterUrl)
                 .priceWei(priceWei)
+                .eventStatus(EventStatus.APPLY_NOT_OPENED)
                 .build();
     }
 
-    public static BuyerEventInfoDTO toBuyerEventInfoDTO(Event event, List<BuyerSessionInfoDTO> sessionList) {
-        return BuyerEventInfoDTO.builder()
+    public static BuyerEventDetailDTO toBuyerEventInfoDTO(Event event, List<BuyerSessionInfoDTO> sessionList) {
+        return BuyerEventDetailDTO.builder()
                 .eventId(event.getId())
                 .title(event.getTitle())
                 .description(event.getDescription())
@@ -96,14 +85,4 @@ public class EventConverter {
                 .build();
     }
 
-    public static BuyerSessionInfoDTO toBuyerSessionInfoDTO(Session session, ApplyStatus applyStatus, Long ticketId, boolean buyable) {
-        return BuyerSessionInfoDTO.builder()
-                .sessionId(session.getId())
-                .date(session.getDate())
-                .paidCount(session.getTicketList().size())
-                .applyStatus(applyStatus)
-                .ticketId(ticketId)
-                .buyable(buyable)
-                .build();
-    }
 }

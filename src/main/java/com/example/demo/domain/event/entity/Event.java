@@ -34,14 +34,12 @@ public class Event extends BaseEntity {
     @JoinColumn(name = "organizer_id")
     private User organizer;
 
-    @Column(length = 50)
     private String title;
 
     @Enumerated (EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10)")
     private AgeLimit ageLimit;
 
-    @Column(length = 100)
     private String location;
 
     private String description;
@@ -53,6 +51,7 @@ public class Event extends BaseEntity {
     private LocalTime endTime;
 
     private int priceKrw;
+    private BigInteger priceWei;
 
     private int capacity;
 
@@ -64,12 +63,9 @@ public class Event extends BaseEntity {
     private LocalDateTime applyEnd;
 
     private String bannerUrl;
-
     private String posterUrl;
 
     private String txHash;
-
-    private BigInteger priceWei;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     @Builder.Default

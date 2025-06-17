@@ -1,6 +1,6 @@
 package com.example.demo.domain.apply.service;
 
-import com.example.demo.domain.apply.DTO.ApplyResponseDTO;
+import com.example.demo.domain.apply.dto.ApplyResponseDTO;
 import com.example.demo.domain.apply.entity.Apply;
 import com.example.demo.domain.apply.enums.ApplyStatus;
 import com.example.demo.domain.apply.repository.ApplyRepository;
@@ -36,8 +36,9 @@ public class ApplyServiceImpl implements ApplyService {
 
         List<Long> sessionIds = eventRepository.findSessionIdsByEventId(event.getId());
 
-        for (Long sessionId : sessionIds)
+        for (Long sessionId : sessionIds) {
             applyRepository.batchUpdateApplyStatusBySessionId(sessionId, ApplyStatus.SELECTED, ApplyStatus.CANCELED);
+        }
 
     }
 
@@ -50,6 +51,10 @@ public class ApplyServiceImpl implements ApplyService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.EVENT_NOT_FOUND));
 
+        if (event.getOrganizer().getId().equals(user.getId())) {
+            throw new CustomException(ErrorStatus.APPLY_SELF_HOSTING_NOT_ALLOWED);
+        }
+
         // 2. Session 존재, Event 일치 여부 확인
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
@@ -59,22 +64,18 @@ public class ApplyServiceImpl implements ApplyService {
 
         // 3. 공연 상태 및 응모 기간 확인
         if (!event.getEventStatus().equals(EventStatus.APPLY_OPEN)) {
-            throw new CustomException(ErrorStatus.EVENT_NOT_OPEN_FOR_APPLY);
-        }
-
-        LocalDateTime now = LocalDateTime.now();
-        if (now.isBefore(event.getApplyStart()) || now.isAfter(event.getApplyEnd())) {
-            throw new CustomException(ErrorStatus.APPLY_TIME_INVALID);
+            throw new CustomException(ErrorStatus.APPLY_INVALID_PERIOD);
         }
 
         // 4. 중복 응모 방지
         boolean alreadyApplied = applyRepository.existsByUserIdAndSessionId(user.getId(), sessionId);
         if (alreadyApplied) {
-            throw new CustomException(ErrorStatus.ALREADY_APPLIED);
+            throw new CustomException(ErrorStatus.APPLY_ALREADY_DONE);
         }
 
-        if (!user.isEligibleFor(session.getEvent().getAgeLimit()))
+        if (!user.isEligibleFor(event.getAgeLimit())) {
             throw new CustomException(ErrorStatus.APPLY_AGE_RESTRICTED);
+        }
 
         // 5. 저장
         Apply apply = Apply.builder()
@@ -83,15 +84,14 @@ public class ApplyServiceImpl implements ApplyService {
                 .applyStatus(ApplyStatus.APPLIED)
                 .build();
 
-        Apply saved = applyRepository.saveAndFlush(apply);
-
-        user.addApply(saved);
-        session.addApply(saved);
+        applyRepository.save(apply);
+        user.addApply(apply);
+        session.addApply(apply);
 
         return ApplyResponseDTO.builder()
-                .applyId(saved.getId())
+                .applyId(apply.getId())
                 .sessionId(sessionId)
-                .appliedAt(saved.getCreatedAt())
+                .appliedAt(apply.getCreatedAt())
                 .build();
     }
 }

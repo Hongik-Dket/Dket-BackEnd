@@ -1,6 +1,5 @@
 package com.example.demo.domain.ticket.controller;
 
-import com.example.demo.domain.ticket.dto.PriceWeiDTO;
 import com.example.demo.domain.ticket.dto.TicketDetailDTO;
 import com.example.demo.domain.ticket.service.TicketService;
 import com.example.demo.global.response.ApiResponse;
@@ -41,11 +40,5 @@ public class TicketController {
         ticketService.enterTicket(ticketId);
 
         return ApiResponse.onSuccess(_OK, null);
-    }
-
-    @Operation(summary = "티켓 가격 확인")
-    @GetMapping("buyer/{sessionId}")
-    public ApiResponse<PriceWeiDTO> getPriceWei(@PathVariable("sessionId") Long sessionId) {
-        return ApiResponse.onSuccess(_OK, ticketService.getPriceWei(sessionId));
     }
 }
