@@ -163,7 +163,7 @@ public class MetadataServiceImpl implements MetadataService {
 
     private String convertToJson(Metadata metadata) {
         MetadataJson metadataJson = MetadataJson.builder()
-                .name("Dket NFT Ticket")
+                .name(":Dket NFT Ticket")
                 .description("This NFT represents a ticket for the " + metadata.getSession().getEvent().getTitle())
                 .image("ipfs://" + metadata.getPhotoCard().getCid())
                 .attributes(List.of(
