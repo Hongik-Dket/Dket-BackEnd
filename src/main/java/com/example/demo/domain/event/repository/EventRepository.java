@@ -2,7 +2,6 @@ package com.example.demo.domain.event.repository;
 
 import com.example.demo.domain.event.entity.Event;
 import com.example.demo.domain.event.enums.EventStatus;
-import com.example.demo.domain.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,11 +17,9 @@ import java.util.Optional;
 public interface EventRepository extends JpaRepository<Event, Long> {
     Optional<Event> findById(Long id);
 
-    Page<Event> findByOrganizerAndEventStatus(User organizer, EventStatus eventStatus, Pageable pageable);
+    Page<Event> findByOrganizerIdAndEventStatus(Long organizerId, EventStatus eventStatus, Pageable pageable);
 
-    Page<Event> findByOrganizerAndApplyEndBetween(User organizer, LocalDateTime start, LocalDateTime end, Pageable pageable);
-
-    Page<Event> findByOrganizerAndEventStatusNot(User organizer, EventStatus eventStatus, Pageable pageable);
+    Page<Event> findByOrganizerIdAndEventStatusNot(Long organizer, EventStatus eventStatus, Pageable pageable);
 
     List<Event> findByEventStatusNotIn(List<EventStatus> excludedStatuses);
 
@@ -49,4 +46,30 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             e.endDate DESC
     """)
     List<Event> findAllSorted(Pageable pageable);
+
+    @Query("""
+    SELECT e FROM Event e
+    WHERE e.organizer.id = :organizerId
+      AND (
+            (e.applyEnd BETWEEN :from AND :to)
+            OR e.eventStatus = 'APPLY_CLOSED'
+      )
+    ORDER BY e.applyEnd DESC
+""")
+    Page<Event> findRecentlyClosedApply(
+            @Param("organizerId") Long organizerId,
+            @Param("from") LocalDateTime from,
+            @Param("to") LocalDateTime to,
+            Pageable pageable
+    );
+
+    @Query("""
+    SELECT e FROM Event e
+    WHERE e.organizer.id = :organizerId
+    ORDER BY
+        CASE WHEN e.eventStatus = 'ENDED' THEN 1 ELSE 0 END ASC,
+        e.startDate ASC,
+        e.endDate DESC
+    """)
+    Page<Event> findSortedForOrganizer(@Param("organizerId") Long organizerId, Pageable pageable);
 }

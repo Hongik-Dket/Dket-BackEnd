@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -37,6 +39,7 @@ public class S3UploadService {
         try {
             amazonS3.putObject(bucket, uniqueFileName, multipartFile.getInputStream(), metadata);
         } catch (IOException e) {
+            log.error("AWS S3 파일 업로드 실패 - 파일명 [{}]", uniqueFileName, e);
             throw new CustomException(ErrorStatus.IMAGE_UPLOAD_FAILED);
         }
 

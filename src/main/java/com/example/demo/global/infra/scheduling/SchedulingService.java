@@ -10,6 +10,7 @@ import com.example.demo.global.infra.scheduling.jobs.event.*;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SchedulingService {
@@ -73,6 +75,8 @@ public class SchedulingService {
     }
 
     private void handleSchedulerException(SchedulerException e) {
+        log.error("스케줄링 실패", e);
+
         Throwable cause = e.getCause();
         if (cause instanceof JobPersistenceException) {
             throw new CustomException(ErrorStatus.JOB_STORE_FAILED);

@@ -48,15 +48,16 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
     FROM Apply a
     WHERE a.user.id = :buyerId
       AND a.applyStatus IN ('APPLIED', 'SELECTED', 'NOT_SELECTED')
-      AND a.session.event.applyEnd > CURRENT_TIMESTAMP
+      AND a.session.event.eventStatus IN ('APPLY_OPEN', 'APPLY_CLOSED')
     ORDER BY
         CASE WHEN a.session.event.applyEnd < CURRENT_TIMESTAMP THEN 0 ELSE 1 END,
         a.session.event.applyEnd ASC
-""")
-
+    """)
     List<Event> findAppliedEventsByBuyer(@Param("buyerId") Long buyerId, Pageable pageable);
 
-    Optional<Apply> findBySessionAndUser(Session session, User user);
+    Optional<Apply> findBySessionIdAndUserId(Long sessionId, Long userId);
 
     boolean existsByUserIdAndSessionId(Long userId, Long sessionId);
+
+    List<Apply> findByUserIdAndSessionIdIn(Long userId, List<Long> sessionIds);
 }

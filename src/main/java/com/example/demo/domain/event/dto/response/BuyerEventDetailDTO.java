@@ -16,22 +16,27 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventInfoDTO {
-
+public class BuyerEventDetailDTO {
     private Long eventId;
     private String title;
-    private String posterUrl;
+    private String description;
     private String location;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private LocalTime startTime;
-    private LocalTime endTime;
     private AgeLimit ageLimit;
     private int priceKrw;
+
     private LocalDateTime applyStart;
     private LocalDateTime applyEnd;
-    private int capacity;
-    private EventStatus eventStatus;
-    private List<Long> sessionIds;
 
+    private LocalDate startDate;
+    private LocalDate endDate;
+
+    private LocalTime startTime;
+    private LocalTime endTime;
+
+    private String posterUrl;
+    private int capacity;
+
+    private EventStatus eventStatus;
+
+    private List<BuyerSessionInfoDTO> sessionList;
 }

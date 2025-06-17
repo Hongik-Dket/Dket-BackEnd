@@ -17,8 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.example.demo.domain.main.converter.MainConverter.toEventCardListDTO;
 import static com.example.demo.domain.main.converter.MainConverter.toOrganizerHomeResponseDTO;
@@ -37,21 +35,27 @@ public class OrganizerHomeServiceImpl implements OrganizerHomeService {
 
         Pageable pageable = PageRequest.of(0, 10, Sort.by("startDate").ascending());
 
-        Page<Event> todayEvents = eventRepository.findByOrganizerAndEventStatus(user, EventStatus.IN_PROGRESS, pageable);
+        Page<Event> todayEvents = eventRepository.findByOrganizerIdAndEventStatus(user.getId(), EventStatus.IN_PROGRESS, pageable);
 
-        Page<Event> recentlyClosedApply = eventRepository.findByOrganizerAndApplyEndBetween(
-                user,
-                LocalDateTime.now().minusHours(24).withSecond(0).withNano(0),
-                LocalDateTime.now().withSecond(0).withNano(0),
+        LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
+        LocalDateTime oneDayAgo = now.minusHours(24);
+
+        Page<Event> recentlyClosedApply = eventRepository.findRecentlyClosedApply(
+                user.getId(),
+                oneDayAgo,
+                now,
                 PageRequest.of(0, 10, Sort.by("applyEnd").descending())
         );
 
-        Page<Event> allEvents = eventRepository.findByOrganizerAndEventStatusNot(user, EventStatus.ENDED, pageable);
+        Page<Event> allEvents = eventRepository.findByOrganizerIdAndEventStatusNot(
+                user.getId(), EventStatus.ENDED, pageable);
 
         Page<Event> endedEvents = Page.empty();
         if (allEvents.getTotalElements() < 10) {
-            endedEvents = eventRepository.findByOrganizerAndEventStatus(
-                    user, EventStatus.ENDED, PageRequest.of(
+            endedEvents = eventRepository.findByOrganizerIdAndEventStatus(
+                    user.getId(),
+                    EventStatus.ENDED,
+                    PageRequest.of(
                             0,
                             10 - (int) allEvents.getTotalElements(),
                             Sort.by("endDate").descending()
@@ -66,8 +70,9 @@ public class OrganizerHomeServiceImpl implements OrganizerHomeService {
     public EventCardListDTO getTodayEventsForOrganizer() {
         User user = userService.getCurrentUser();
 
-        Page<Event> events = eventRepository.findByOrganizerAndEventStatus(
-                user, EventStatus.IN_PROGRESS,
+        Page<Event> events = eventRepository.findByOrganizerIdAndEventStatus(
+                user.getId(),
+                EventStatus.IN_PROGRESS,
                 PageRequest.of(0, Integer.MAX_VALUE, Sort.by("startDate").ascending())
         );
 
@@ -78,10 +83,13 @@ public class OrganizerHomeServiceImpl implements OrganizerHomeService {
     public EventCardListDTO getClosedEventsForOrganizer() {
         User user = userService.getCurrentUser();
 
-        Page<Event> events = eventRepository.findByOrganizerAndApplyEndBetween(
-                user,
-                LocalDateTime.now().minusHours(24).withSecond(0).withNano(0),
-                LocalDateTime.now().withSecond(0).withNano(0),
+        LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
+        LocalDateTime oneDayAgo = now.minusHours(24);
+
+        Page<Event> events = eventRepository.findRecentlyClosedApply(
+                user.getId(),
+                oneDayAgo,
+                now,
                 PageRequest.of(0, Integer.MAX_VALUE, Sort.by("applyEnd").descending())
         );
 
@@ -92,21 +100,11 @@ public class OrganizerHomeServiceImpl implements OrganizerHomeService {
     public EventCardListDTO getAllEventsForOrganizer() {
         User user = userService.getCurrentUser();
 
-        Page<Event> activeEvents = eventRepository.findByOrganizerAndEventStatusNot(
-                user, EventStatus.ENDED,
-                PageRequest.of(0, Integer.MAX_VALUE, Sort.by("startDate").ascending())
+        Page<Event> events = eventRepository.findSortedForOrganizer(
+                user.getId(), Pageable.unpaged()
         );
 
-        Page<Event> endedEvents = eventRepository.findByOrganizerAndEventStatus(
-                user, EventStatus.ENDED,
-                PageRequest.of(0, Integer.MAX_VALUE, Sort.by("endDate").descending())
-        );
-
-        List<Event> allEvents = new ArrayList<>();
-        allEvents.addAll(activeEvents.getContent());
-        allEvents.addAll(endedEvents.getContent());
-
-        return toEventCardListDTO(allEvents);
+        return toEventCardListDTO(events.getContent());
     }
 
 }
