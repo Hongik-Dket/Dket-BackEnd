@@ -1,7 +1,6 @@
 package com.example.demo.domain.ticket.repository;
 
 import com.example.demo.domain.event.entity.Event;
-import com.example.demo.domain.event.entity.Session;
 import com.example.demo.domain.metadata.entity.Metadata;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.user.entity.User;
@@ -11,7 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -52,4 +50,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findAllSortedByDateAndFutureFirstWithPhotoCard(@Param("user") User user, @Param("now") LocalDate now);
 
     Optional<Ticket> findByIdAndUserId(Long id, Long userId);
+
+    boolean existsByUserIdAndSessionId(Long userId, Long sessionId);
 }

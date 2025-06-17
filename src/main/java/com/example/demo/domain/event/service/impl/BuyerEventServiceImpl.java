@@ -80,6 +80,10 @@ public class BuyerEventServiceImpl implements BuyerEventService {
             return false;
         }
 
+        if (ticketRepository.existsByUserIdAndSessionId(user.getId(), session.getId())) {
+            return false;
+        }
+
         switch (event.getEventStatus()) {
             case APPLY_CLOSED:
                 return apply != null && apply.getApplyStatus() == ApplyStatus.SELECTED;
