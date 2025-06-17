@@ -23,7 +23,7 @@ public class BuyerEventController {
     private final SessionService sessionService;
 
     @Operation(summary = "구매자 - 공연 상세 조회")
-    @GetMapping("{eventId}")
+    @GetMapping("/{eventId}")
     public ApiResponse<BuyerEventDetailDTO> getEventDetailForBuyer(@PathVariable Long eventId) {
         return ApiResponse.onSuccess(_OK, buyerEventService.getEventDetailForBuyer(eventId));
     }
