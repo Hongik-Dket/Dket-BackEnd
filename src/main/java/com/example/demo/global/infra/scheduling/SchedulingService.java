@@ -4,9 +4,11 @@ import com.example.demo.domain.event.entity.Event;
 import com.example.demo.domain.event.entity.Session;
 import com.example.demo.domain.event.enums.EventStatus;
 import com.example.demo.domain.event.repository.EventRepository;
+import com.example.demo.domain.event.repository.SessionRepository;
 import com.example.demo.global.base.Constants;
 import com.example.demo.global.infra.scheduling.dto.SchedulingResponseDTO;
 import com.example.demo.global.infra.scheduling.jobs.event.*;
+import com.example.demo.global.infra.scheduling.jobs.session.ClosePaymentJob;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ public class SchedulingService {
 
     private final Scheduler scheduler;
     private final EventRepository eventRepository;
+    private final SessionRepository sessionRepository;
 
     private void scheduleJob(String jobName, Class<? extends Job> jobClass, LocalDateTime time, Map<String, Object> jobData) {
         try {
@@ -156,7 +159,6 @@ public class SchedulingService {
                 return;
 
             List<Event> eventList = eventRepository.findByEventStatusNotIn(List.of(EventStatus.ENDED));
-
             for (Event event : eventList) {
                 switch (event.getEventStatus()) {
                     case APPLY_NOT_OPENED -> scheduleEventJob(event, OpenApplyJob.class);
@@ -165,6 +167,11 @@ public class SchedulingService {
                     case TICKETED -> scheduleEventJob(event, StartEventJob.class);
                     case IN_PROGRESS -> scheduleEventJob(event, EndEventJob.class);
                 }
+            }
+
+            List<Session> sessionList = sessionRepository.findByIsBuyableTrueAndIsDrawnTrueAndMetadataUploadedTrue();
+            for (Session session : sessionList) {
+                scheduleSessionJob(session, ClosePaymentJob.class);
             }
 
         } catch (SchedulerException e) {
