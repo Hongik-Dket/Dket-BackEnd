@@ -34,7 +34,9 @@ public class CloseApplyJob implements Job {
 
         event.setEventStatus(EventStatus.APPLY_CLOSED);
 
-        dketNFTService.recordAllSessionsOnChain(event);
+        for (Session session : event.getSessions()) {
+            session.setTxHash(dketNFTService.recordSessionOnChain(session));
+        }
 
         List<Session> sessions = event.getSessions();
         long emptyCount = sessions.stream()

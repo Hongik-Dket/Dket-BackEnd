@@ -98,20 +98,7 @@ public class DketNFTServiceImpl implements DketNFTService {
     }
 
     @Override
-    @Transactional
-    public void recordAllSessionsOnChain(Event event) {
-        List<Session> sessions = event.getSessions();
-
-        Map<Session, String> txMap = sessions.parallelStream()
-            .collect(Collectors.toMap(
-                session -> session,
-                this::recordSessionOnChain
-            ));
-
-        txMap.forEach((session, txHash) -> session.setTxHash(txHash));
-    }
-
-    private String recordSessionOnChain(Session session) {
+    public String recordSessionOnChain(Session session) {
         try {
             List<String> applications = session.getApplyList().stream()
                     .map(apply -> apply.getUser().getWalletAddress())
