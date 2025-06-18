@@ -14,4 +14,6 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     Optional<Session> findById(Long id);
 
     Optional<Session> findByIdAndEventId(Long id, Long eventId);
+
+    List<Session> findByIsBuyableTrueAndIsDrawnTrueAndMetadataUploadedTrue();
 }
