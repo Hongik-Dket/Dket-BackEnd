@@ -9,6 +9,7 @@ import com.example.demo.domain.ticket.service.TicketService;
 import com.example.demo.global.event.ReadyToMintEvent;
 import com.example.demo.global.infra.blockchain.contracts.DketNFT;
 import com.example.demo.global.infra.blockchain.service.DketNFTService;
+import com.example.demo.global.infra.blockchain.service.DketNFTViewService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import jakarta.annotation.PostConstruct;
@@ -55,6 +56,7 @@ public class DketNFTServiceImpl implements DketNFTService {
     private final SessionRepository sessionRepository;
     private final TicketService ticketService;
     private final SessionService sessionService;
+    private final DketNFTViewService dketNFTViewService;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 
@@ -238,7 +240,7 @@ public class DketNFTServiceImpl implements DketNFTService {
         List<String> cidList = new ArrayList<>();
 
         for (BigInteger tokenId : tokenIds) {
-            cidList.add(getTokenUri(tokenId).replace("ipfs://", ""));
+            cidList.add(dketNFTViewService.getTokenUri(tokenId).replace("ipfs://", ""));
         }
 
         ticketService.batchRegisterTicket(tokenIds, cidList);
@@ -260,7 +262,7 @@ public class DketNFTServiceImpl implements DketNFTService {
             );
     }
 
-    public void sendTransaction(String functionName, List<Type> inputParams) {
+    private void sendTransaction(String functionName, List<Type> inputParams) {
         try {
             Function function = new Function(functionName, inputParams, Collections.emptyList());
             String encodedFunction = FunctionEncoder.encode(function);
@@ -307,18 +309,6 @@ public class DketNFTServiceImpl implements DketNFTService {
 
         } catch (Exception e) {
             log.error("Gas 추정 중 예외 발생", e);
-            throw new CustomException(ErrorStatus.BLOCKCHAIN_ESTIMATE_GAS_FAILED);
-        }
-    }
-
-    private String getTokenUri(BigInteger tokenId) {
-        try {
-            return dketNFT.tokenURI(tokenId).send();
-        } catch (ContractCallException e) {
-            log.error("Token [{}] URI 호출 실패: {}", tokenId, e.getMessage(), e);
-            throw new CustomException(ErrorStatus.TOKEN_INVALID);
-        } catch (Exception e) {
-            log.error("Token [{}] TokenUri 트랜잭션 실패: {}", tokenId, e.getMessage(), e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_ESTIMATE_GAS_FAILED);
         }
     }

@@ -1,10 +1,8 @@
 package com.example.demo.domain.ticket.service;
 
-import com.example.demo.domain.apply.entity.Apply;
 import com.example.demo.domain.apply.enums.ApplyStatus;
 import com.example.demo.domain.apply.repository.ApplyRepository;
 import com.example.demo.domain.event.entity.Session;
-import com.example.demo.domain.event.enums.EventStatus;
 import com.example.demo.domain.event.repository.SessionRepository;
 import com.example.demo.domain.metadata.entity.Metadata;
 import com.example.demo.domain.metadata.repository.MetadataRepository;
@@ -15,6 +13,7 @@ import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.base.Constants;
+import com.example.demo.global.infra.blockchain.service.DketNFTViewService;
 import com.example.demo.global.infra.image.QrCodeGenerator;
 import com.example.demo.global.infra.image.S3UploadService;
 import com.example.demo.global.response.exception.CustomException;
@@ -47,6 +46,7 @@ public class TicketServiceImpl implements TicketService {
     private final TicketRepository ticketRepository;
     private final QrCodeGenerator qrCodeGenerator;
     private final S3UploadService s3UploadService;
+    private final DketNFTViewService dketNFTViewService;
 
     @Value("${web3.contract-address}")
     private String contractAddress;
@@ -110,9 +110,18 @@ public class TicketServiceImpl implements TicketService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.TICKET_NOT_FOUND));
 
         User user = userService.getCurrentUser();
+        String ownerWalletAddress = dketNFTViewService.getOwnerWallet(ticket.getTokenId());
 
-        if (!(ticket.getUser().equals(user)) && !(ticket.getSession().getEvent().getOrganizer().equals(user)))
+        if (ownerWalletAddress == null) {
+            throw new CustomException(ErrorStatus.TICKET_NOT_FOUND);
+        }
+
+        if (!(ownerWalletAddress.equals(user.getWalletAddress()))
+                && !(ticket.getSession().getEvent().getOrganizer().getId().equals(user.getId()))) {
             throw new CustomException(ErrorStatus.TICKET_INVALID_USER);
+        }
+
+        validateTicket(ticket, ownerWalletAddress);
 
         return toTicketDetailDTO(ticket, getNftUrl(ticket));
     }
@@ -126,8 +135,10 @@ public class TicketServiceImpl implements TicketService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.TICKET_NOT_FOUND));
 
         User user = userService.getCurrentUser();
+        String ownerWalletAddress = dketNFTViewService.getOwnerWallet(ticket.getTokenId());
 
         validateOrganizer(ticket, user);
+        validateTicket(ticket, ownerWalletAddress);
 
         return toTicketDetailDTO(ticket, getNftUrl(ticket));
     }
@@ -159,7 +170,14 @@ public class TicketServiceImpl implements TicketService {
     }
 
     private void validateOrganizer(Ticket ticket, User user) {
-        if (!(ticket.getSession().getEvent().getOrganizer().equals(user)))
+        if (!(ticket.getSession().getEvent().getOrganizer().getId().equals(user.getId()))) {
             throw new CustomException(ErrorStatus.TICKET_INVALID_USER);
+        }
+    }
+
+    private void validateTicket(Ticket ticket, String ownerWalletAddress) {
+        if (!ticket.getUser().getWalletAddress().equals(ownerWalletAddress)) {
+            throw new CustomException(ErrorStatus.TICKET_INVALID);
+        }
     }
 }
