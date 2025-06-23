@@ -1,5 +1,6 @@
 package com.example.demo.global.security;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,7 +42,16 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore((request, response, chain) -> {
+                    HttpServletRequest req = (HttpServletRequest) request;
+                    String path = req.getRequestURI();
+
+                    if (path.startsWith("/actuator")) {
+                        chain.doFilter(request, response);
+                    } else {
+                        jwtAuthenticationFilter.doFilter(request, response, chain);
+                    }
+                }, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }
