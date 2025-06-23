@@ -33,7 +33,6 @@ public class DketNFTViewServiceImpl implements DketNFTViewService {
 
     @PostConstruct
     public void init() {
-        System.out.println("📦 Loaded contractAddress = [" + contractAddress + "] (" + contractAddress.length() + " chars)");
         dketNFT = DketNFT.load(
                 contractAddress,
                 web3j,
