@@ -42,16 +42,7 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore((request, response, chain) -> {
-                    HttpServletRequest req = (HttpServletRequest) request;
-                    String path = req.getRequestURI();
-
-                    if (path.startsWith("/actuator")) {
-                        chain.doFilter(request, response);
-                    } else {
-                        jwtAuthenticationFilter.doFilter(request, response, chain);
-                    }
-                }, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }
