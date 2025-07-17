@@ -1,7 +1,7 @@
 package com.example.demo.domain.metadata.service.impl;
 
-import com.example.demo.domain.event.entity.Session;
-import com.example.demo.domain.event.repository.SessionRepository;
+import com.example.demo.domain.concert.entity.Session;
+import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.domain.metadata.dto.MetadataJson;
 import com.example.demo.domain.metadata.entity.Metadata;
 import com.example.demo.domain.metadata.entity.PhotoCard;
@@ -53,10 +53,10 @@ public class MetadataServiceImpl implements MetadataService {
         Session session = sessionRepository.findById(sessionId.longValue())
                 .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
 
-        List<Long> photoCardIds = session.getEvent().getPhotoCards()
+        List<Long> photoCardIds = session.getConcert().getPhotoCards()
                 .stream().map(PhotoCard::getId).collect(Collectors.toList());
 
-        int capacity = session.getEvent().getCapacity();
+        int capacity = session.getConcert().getCapacity();
         List<Integer> seatList = generateShuffledSeats(capacity, randomWord);
 
         List<Long> photoCardIndicesList = generateRandomPhotoCardIds(capacity, photoCardIds, randomWord);
@@ -67,7 +67,7 @@ public class MetadataServiceImpl implements MetadataService {
 
         for (int i = 0; i < capacity; i++) {
             String seatCode = convertSeatCode(seatList.get(i));
-            String ticketNumber = generateTicketNumber(session.getEvent().getId(), sessionId, seatCode);
+            String ticketNumber = generateTicketNumber(session.getConcert().getId(), sessionId, seatCode);
 
             Metadata metadata = Metadata.builder()
                     .session(session)
@@ -155,8 +155,8 @@ public class MetadataServiceImpl implements MetadataService {
         return String.format("%06d", seatNumber);
     }
 
-    private String generateTicketNumber(Long eventId, BigInteger sessionId, String seatCode) {
-        return "N" + String.format("%04d", eventId)
+    private String generateTicketNumber(Long concertId, BigInteger sessionId, String seatCode) {
+        return "N" + String.format("%04d", concertId)
                 + String.format("%05d", sessionId)
                 + seatCode;
     }
@@ -164,10 +164,10 @@ public class MetadataServiceImpl implements MetadataService {
     private String convertToJson(Metadata metadata) {
         MetadataJson metadataJson = MetadataJson.builder()
                 .name(":Dket NFT Ticket")
-                .description("This NFT represents a ticket for the " + metadata.getSession().getEvent().getTitle())
+                .description("This NFT represents a ticket for the " + metadata.getSession().getConcert().getTitle())
                 .image("ipfs://" + metadata.getPhotoCard().getCid())
                 .attributes(List.of(
-                        new MetadataJson.Attribute("Event", metadata.getSession().getEvent().getTitle()),
+                        new MetadataJson.Attribute("Concert", metadata.getSession().getConcert().getTitle()),
                         new MetadataJson.Attribute("Date", metadata.getSession().getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))),
                         new MetadataJson.Attribute("Ticket Number", metadata.getTicketNumber()),
                         new MetadataJson.Attribute("Seat", metadata.getSeatCode())

@@ -4,11 +4,11 @@ import com.example.demo.domain.apply.dto.ApplyResponseDTO;
 import com.example.demo.domain.apply.entity.Apply;
 import com.example.demo.domain.apply.enums.ApplyStatus;
 import com.example.demo.domain.apply.repository.ApplyRepository;
-import com.example.demo.domain.event.entity.Event;
-import com.example.demo.domain.event.entity.Session;
-import com.example.demo.domain.event.enums.EventStatus;
-import com.example.demo.domain.event.repository.EventRepository;
-import com.example.demo.domain.event.repository.SessionRepository;
+import com.example.demo.domain.concert.entity.Concert;
+import com.example.demo.domain.concert.entity.Session;
+import com.example.demo.domain.concert.enums.ConcertStatus;
+import com.example.demo.domain.concert.repository.ConcertRepository;
+import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.response.exception.CustomException;
@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -26,15 +25,15 @@ import java.util.List;
 public class ApplyServiceImpl implements ApplyService {
 
     private final ApplyRepository applyRepository;
-    private final EventRepository eventRepository;
+    private final ConcertRepository concertRepository;
     private final SessionRepository sessionRepository;
     private final UserService userService;
 
     @Override
     @Transactional
-    public void cancelWinnerTickets(Event event) {
+    public void cancelWinnerTickets(Concert concert) {
 
-        List<Long> sessionIds = eventRepository.findSessionIdsByEventId(event.getId());
+        List<Long> sessionIds = concertRepository.findSessionIdsByConcertId(concert.getId());
 
         for (Long sessionId : sessionIds) {
             applyRepository.batchUpdateApplyStatusBySessionId(sessionId, ApplyStatus.SELECTED, ApplyStatus.CANCELED);
@@ -44,26 +43,26 @@ public class ApplyServiceImpl implements ApplyService {
 
     @Override
     @Transactional
-    public ApplyResponseDTO applyToSession(Long eventId, Long sessionId) {
+    public ApplyResponseDTO applyToSession(Long concertId, Long sessionId) {
         User user = userService.getCurrentUser();
 
-        // 1. Event 존재 확인
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.EVENT_NOT_FOUND));
+        // 1. Concert 존재 확인
+        Concert concert = concertRepository.findById(concertId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.CONCERT_NOT_FOUND));
 
-        if (event.getOrganizer().getId().equals(user.getId())) {
+        if (concert.getOrganizer().getId().equals(user.getId())) {
             throw new CustomException(ErrorStatus.APPLY_SELF_HOSTING_NOT_ALLOWED);
         }
 
-        // 2. Session 존재, Event 일치 여부 확인
+        // 2. Session 존재, Concert 일치 여부 확인
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
-        if (!session.getEvent().getId().equals(eventId)) {
-            throw new CustomException(ErrorStatus.EVENT_SESSION_MISMATCH);
+        if (!session.getConcert().getId().equals(concertId)) {
+            throw new CustomException(ErrorStatus.CONCERT_SESSION_MISMATCH);
         }
 
         // 3. 공연 상태 및 응모 기간 확인
-        if (!event.getEventStatus().equals(EventStatus.APPLY_OPEN)) {
+        if (!concert.getConcertStatus().equals(ConcertStatus.APPLY_OPEN)) {
             throw new CustomException(ErrorStatus.APPLY_INVALID_PERIOD);
         }
 
@@ -73,7 +72,7 @@ public class ApplyServiceImpl implements ApplyService {
             throw new CustomException(ErrorStatus.APPLY_ALREADY_DONE);
         }
 
-        if (!user.isEligibleFor(event.getAgeLimit())) {
+        if (!user.isEligibleFor(concert.getAgeLimit())) {
             throw new CustomException(ErrorStatus.APPLY_AGE_RESTRICTED);
         }
 

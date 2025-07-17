@@ -2,8 +2,8 @@ package com.example.demo.domain.ticket.service;
 
 import com.example.demo.domain.apply.enums.ApplyStatus;
 import com.example.demo.domain.apply.repository.ApplyRepository;
-import com.example.demo.domain.event.entity.Session;
-import com.example.demo.domain.event.repository.SessionRepository;
+import com.example.demo.domain.concert.entity.Session;
+import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.domain.metadata.entity.Metadata;
 import com.example.demo.domain.metadata.repository.MetadataRepository;
 import com.example.demo.domain.ticket.dto.TicketDetailDTO;
@@ -99,7 +99,7 @@ public class TicketServiceImpl implements TicketService {
         ticket.setQrCode(qrCodeUrl);
 
         int paidCount = ticketRepository.countBySessionIdAndPaidAtIsNotNull(sessionId);
-        if (paidCount == session.getEvent().getCapacity()) {
+        if (paidCount == session.getConcert().getCapacity()) {
             session.setIsBuyable(false);
         }
     }
@@ -117,7 +117,7 @@ public class TicketServiceImpl implements TicketService {
         }
 
         if (!(ownerWalletAddress.equals(user.getWalletAddress()))
-                && !(ticket.getSession().getEvent().getOrganizer().getId().equals(user.getId()))) {
+                && !(ticket.getSession().getConcert().getOrganizer().getId().equals(user.getId()))) {
             throw new CustomException(ErrorStatus.TICKET_INVALID_USER);
         }
 
@@ -155,7 +155,7 @@ public class TicketServiceImpl implements TicketService {
 
         if (
             !(ticket.getSession().getDate().equals(LocalDate.now()) &&
-                    ticket.getSession().getEvent().getStartTime().isAfter(LocalTime.now()))
+                    ticket.getSession().getConcert().getStartTime().isAfter(LocalTime.now()))
                     || ticket.getEnteredAt() != null
         ) {
             throw new CustomException(ErrorStatus.TICKET_INVALID);
@@ -170,7 +170,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     private void validateOrganizer(Ticket ticket, User user) {
-        if (!(ticket.getSession().getEvent().getOrganizer().getId().equals(user.getId()))) {
+        if (!(ticket.getSession().getConcert().getOrganizer().getId().equals(user.getId()))) {
             throw new CustomException(ErrorStatus.TICKET_INVALID_USER);
         }
     }

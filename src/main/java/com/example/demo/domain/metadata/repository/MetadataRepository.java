@@ -1,6 +1,6 @@
 package com.example.demo.domain.metadata.repository;
 
-import com.example.demo.domain.event.entity.Session;
+import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.metadata.entity.Metadata;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

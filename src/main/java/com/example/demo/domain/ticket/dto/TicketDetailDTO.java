@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 public class TicketDetailDTO {
 
     private Long ticketId;
-    private String eventTitle;
-    private LocalDateTime eventDateTime;
+    private String concertTitle;
+    private LocalDateTime concertDateTime;
     private String buyerName;
     private LocalDate birth;
     private String ticketNumber;

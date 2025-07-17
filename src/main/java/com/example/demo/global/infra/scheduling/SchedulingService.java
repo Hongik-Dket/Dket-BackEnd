@@ -1,13 +1,13 @@
 package com.example.demo.global.infra.scheduling;
 
-import com.example.demo.domain.event.entity.Event;
-import com.example.demo.domain.event.entity.Session;
-import com.example.demo.domain.event.enums.EventStatus;
-import com.example.demo.domain.event.repository.EventRepository;
-import com.example.demo.domain.event.repository.SessionRepository;
+import com.example.demo.domain.concert.entity.Concert;
+import com.example.demo.domain.concert.entity.Session;
+import com.example.demo.domain.concert.enums.ConcertStatus;
+import com.example.demo.domain.concert.repository.ConcertRepository;
+import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.global.base.Constants;
 import com.example.demo.global.infra.scheduling.dto.SchedulingResponseDTO;
-import com.example.demo.global.infra.scheduling.jobs.event.*;
+import com.example.demo.global.infra.scheduling.jobs.concert.*;
 import com.example.demo.global.infra.scheduling.jobs.session.ClosePaymentJob;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
@@ -28,7 +28,7 @@ import java.util.*;
 public class SchedulingService {
 
     private final Scheduler scheduler;
-    private final EventRepository eventRepository;
+    private final ConcertRepository concertRepository;
     private final SessionRepository sessionRepository;
 
     private void scheduleJob(String jobName, Class<? extends Job> jobClass, LocalDateTime time, Map<String, Object> jobData) {
@@ -90,33 +90,33 @@ public class SchedulingService {
         }
     }
 
-    public void scheduleEventJob(Event event, Class<? extends  Job> jobClass) {
+    public void scheduleConcertJob(Concert concert, Class<? extends  Job> jobClass) {
         String jobName = jobClass.getSimpleName();
         LocalDateTime triggerTime = null;
 
         switch (jobName) {
             case "OpenApplyJob":
-                triggerTime = event.getApplyStart();
+                triggerTime = concert.getApplyStart();
                 break;
             case "CloseApplyJob":
-                triggerTime = event.getApplyEnd();
+                triggerTime = concert.getApplyEnd();
                 break;
             case "OpenPublicJob":
-                triggerTime = event.getApplyEnd().withHour(0).withMinute(0).withSecond(0).withNano(0)
+                triggerTime = concert.getApplyEnd().withHour(0).withMinute(0).withSecond(0).withNano(0)
                         .plusDays(Constants.PAYMENT_DEADLINE);
                 break;
-            case "StartEventJob":
-                triggerTime = LocalDateTime.of(event.getStartDate(), LocalTime.of(0, 0));
+            case "StartConcertJob":
+                triggerTime = LocalDateTime.of(concert.getStartDate(), LocalTime.of(0, 0));
                 break;
-            case "EndEventJob":
-                triggerTime = LocalDateTime.of(event.getEndDate().plusDays(1), LocalTime.of(0, 0));
+            case "EndConcertJob":
+                triggerTime = LocalDateTime.of(concert.getEndDate().plusDays(1), LocalTime.of(0, 0));
                 break;
             default:
                 throw new CustomException(ErrorStatus.INVALID_JOB_CLASS);
         }
 
-        jobName += "_" + event.getId();
-        scheduleJob(jobName, jobClass, triggerTime, Map.of("eventId", event.getId()));
+        jobName += "_" + concert.getId();
+        scheduleJob(jobName, jobClass, triggerTime, Map.of("concertId", concert.getId()));
     }
 
     public void scheduleSessionJob(Session session, Class<? extends  Job> jobClass) {
@@ -125,8 +125,8 @@ public class SchedulingService {
 
         switch (jobName) {
             case "ClosePaymentJob":
-                triggerTime = LocalDateTime.of(session.getDate(), session.getEvent().getStartTime())
-                        .minusHours(Constants.PAYMENT_AVAILABLE_BEFORE_EVENT_START);
+                triggerTime = LocalDateTime.of(session.getDate(), session.getConcert().getStartTime())
+                        .minusHours(Constants.PAYMENT_AVAILABLE_BEFORE_CONCERT_START);
                 break;
             default:
                 throw new CustomException(ErrorStatus.INVALID_JOB_CLASS);
@@ -158,14 +158,14 @@ public class SchedulingService {
             if (!scheduler.getJobKeys(GroupMatcher.anyGroup()).isEmpty())
                 return;
 
-            List<Event> eventList = eventRepository.findByEventStatusNotIn(List.of(EventStatus.ENDED));
-            for (Event event : eventList) {
-                switch (event.getEventStatus()) {
-                    case APPLY_NOT_OPENED -> scheduleEventJob(event, OpenApplyJob.class);
-                    case APPLY_OPEN -> scheduleEventJob(event, CloseApplyJob.class);
-                    case APPLY_CLOSED -> scheduleEventJob(event, OpenPublicJob.class);
-                    case TICKETED -> scheduleEventJob(event, StartEventJob.class);
-                    case IN_PROGRESS -> scheduleEventJob(event, EndEventJob.class);
+            List<Concert> concertList = concertRepository.findByConcertStatusNotIn(List.of(ConcertStatus.ENDED));
+            for (Concert concert : concertList) {
+                switch (concert.getConcertStatus()) {
+                    case APPLY_NOT_OPENED -> scheduleConcertJob(concert, OpenApplyJob.class);
+                    case APPLY_OPEN -> scheduleConcertJob(concert, CloseApplyJob.class);
+                    case APPLY_CLOSED -> scheduleConcertJob(concert, OpenPublicJob.class);
+                    case TICKETED -> scheduleConcertJob(concert, StartConcertJob.class);
+                    case IN_PROGRESS -> scheduleConcertJob(concert, EndConcertJob.class);
                 }
             }
 

@@ -1,6 +1,6 @@
 package com.example.demo.domain.ticket.repository;
 
-import com.example.demo.domain.event.entity.Event;
+import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.metadata.entity.Metadata;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.user.entity.User;
@@ -17,15 +17,15 @@ import java.util.Optional;
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Query("""
-        SELECT DISTINCT t.session.event
+        SELECT DISTINCT t.session.concert
         FROM Ticket t
         WHERE t.user.id = :buyerId
         ORDER BY 
-            CASE WHEN t.session.event.eventStatus = 'ENDED' THEN 1 ELSE 0 END ASC,
-            t.session.event.startDate ASC,
-            t.session.event.endDate DESC
+            CASE WHEN t.session.concert.concertStatus = 'ENDED' THEN 1 ELSE 0 END ASC,
+            t.session.concert.startDate ASC,
+            t.session.concert.endDate DESC
     """)
-    List<Event> findPurchasedEventsByBuyer(@Param("buyerId") Long buyerId, Pageable pageable);
+    List<Concert> findPurchasedConcertsByBuyer(@Param("buyerId") Long buyerId, Pageable pageable);
 
     Optional<Ticket> findByTokenId(Long tokenId);
 

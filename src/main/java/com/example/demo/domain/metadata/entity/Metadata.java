@@ -1,6 +1,6 @@
 package com.example.demo.domain.metadata.entity;
 
-import com.example.demo.domain.event.entity.Session;
+import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.global.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

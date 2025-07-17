@@ -13,17 +13,17 @@ import org.springframework.web.bind.annotation.RestController;
 import static com.example.demo.global.response.status.SuccessStatus._OK;
 
 @RestController
-@RequestMapping("/api/buyer/events")
+@RequestMapping("/api/buyer/concerts")
 @RequiredArgsConstructor
 public class ApplyController {
     private final ApplyService applyService;
 
     @Operation(summary = "구매자 - 공연 회차 응모하기")
-    @PostMapping("/{eventId}/sessions/{sessionId}/apply")
+    @PostMapping("/{concertId}/sessions/{sessionId}/apply")
     public ApiResponse<ApplyResponseDTO> applyToSession(
-            @PathVariable Long eventId,
+            @PathVariable Long concertId,
             @PathVariable Long sessionId
     ) {
-        return ApiResponse.onSuccess(_OK, applyService.applyToSession(eventId, sessionId));
+        return ApiResponse.onSuccess(_OK, applyService.applyToSession(concertId, sessionId));
     }
 }
