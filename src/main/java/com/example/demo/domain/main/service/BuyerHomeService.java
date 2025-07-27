@@ -1,18 +1,18 @@
 package com.example.demo.domain.main.service;
 
 import com.example.demo.domain.main.dto.BuyerHomeResponseDTO;
-import com.example.demo.domain.main.dto.EventCardListDTO;
+import com.example.demo.domain.main.dto.ConcertCardListDTO;
 
 public interface BuyerHomeService {
 
     BuyerHomeResponseDTO getHomeForBuyer();
 
-    EventCardListDTO getPopularEventsForBuyer();
+    ConcertCardListDTO getPopularConcertsForBuyer();
 
-    EventCardListDTO getAppliedEventsForBuyer();
+    ConcertCardListDTO getAppliedConcertsForBuyer();
 
-    EventCardListDTO getPurchasedEventsForBuyer();
+    ConcertCardListDTO getPurchasedConcertsForBuyer();
 
-    EventCardListDTO getEntireEventsForBuyer();
+    ConcertCardListDTO getEntireConcertsForBuyer();
     
 }

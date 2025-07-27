@@ -15,7 +15,7 @@ public class PhotoCardDetailDTO {
     private Long photoCardId;
     private Long ticketId;
     private String imageUrl;
-    private String eventTitle;
+    private String concertTitle;
     private LocalDate sessionDate;
     private String ticketNumber;
     private String nftUrl;

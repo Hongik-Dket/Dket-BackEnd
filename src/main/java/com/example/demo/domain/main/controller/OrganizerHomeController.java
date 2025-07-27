@@ -1,6 +1,6 @@
 package com.example.demo.domain.main.controller;
 
-import com.example.demo.domain.main.dto.EventCardListDTO;
+import com.example.demo.domain.main.dto.ConcertCardListDTO;
 import com.example.demo.domain.main.dto.OrganizerHomeResponseDTO;
 import com.example.demo.domain.main.service.OrganizerHomeService;
 import com.example.demo.global.response.ApiResponse;
@@ -27,19 +27,19 @@ public class OrganizerHomeController {
 
     @Operation(summary = "개최자 - 오늘 공연 조회")
     @GetMapping("/today")
-    public ApiResponse<EventCardListDTO> getTodayEventsOrganizer() {
-        return ApiResponse.onSuccess(_OK, organizerHomeService.getTodayEventsForOrganizer());
+    public ApiResponse<ConcertCardListDTO> getTodayConcertsOrganizer() {
+        return ApiResponse.onSuccess(_OK, organizerHomeService.getTodayConcertsForOrganizer());
     }
 
     @Operation(summary = "개최자 - 최근 응모 마감 공연 조회")
     @GetMapping("/closed")
-    public ApiResponse<EventCardListDTO> getClosedEventsOrganizer() {
-        return ApiResponse.onSuccess(_OK, organizerHomeService.getClosedEventsForOrganizer());
+    public ApiResponse<ConcertCardListDTO> getClosedConcertsOrganizer() {
+        return ApiResponse.onSuccess(_OK, organizerHomeService.getClosedConcertsForOrganizer());
     }
 
     @Operation(summary = "개최자 - 개최한 전체 공연 조회")
     @GetMapping("/all")
-    public ApiResponse<EventCardListDTO> getAllEventsOrganizer() {
-        return ApiResponse.onSuccess(_OK, organizerHomeService.getAllEventsForOrganizer());
+    public ApiResponse<ConcertCardListDTO> getAllConcertsOrganizer() {
+        return ApiResponse.onSuccess(_OK, organizerHomeService.getAllConcertsForOrganizer());
     }
 }

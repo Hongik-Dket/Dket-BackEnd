@@ -44,10 +44,10 @@ public enum ErrorStatus implements BaseErrorCode {
     TICKET_INVALID(HttpStatus.BAD_REQUEST, "TICKET_4006", "유효하지 않은 티켓입니다."),
     TICKET_ALREADY_PAID(HttpStatus.BAD_REQUEST, "TICKET_4007", "이미 티켓을 결제했습니다."),
 
-    EVENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "EVENT_4001", "해당 공연을 찾을 수 없습니다."),
-    EVENT_ORGANIZER_MISMATCH(HttpStatus.BAD_REQUEST, "EVENT_4002", "해당 공연의 개최자가 아닙니다."),
-    EVENT_SESSION_MISMATCH(HttpStatus.BAD_REQUEST, "EVENT_4003", "해당 공연의 회차가 아닙니다."),
-    EVENT_INVALID_SCHEDULE(HttpStatus.BAD_REQUEST, "EVENT_4004", "잘못된 응모 기간 혹은 공연 기간입니다."),
+    CONCERT_NOT_FOUND(HttpStatus.BAD_REQUEST, "CONCERT_4001", "해당 공연을 찾을 수 없습니다."),
+    CONCERT_ORGANIZER_MISMATCH(HttpStatus.BAD_REQUEST, "CONCERT_4002", "해당 공연의 개최자가 아닙니다."),
+    CONCERT_SESSION_MISMATCH(HttpStatus.BAD_REQUEST, "CONCERT_4003", "해당 공연의 회차가 아닙니다."),
+    CONCERT_INVALID_SCHEDULE(HttpStatus.BAD_REQUEST, "CONCERT_4004", "잘못된 응모 기간 혹은 공연 기간입니다."),
 
     SESSION_NOT_FOUND(HttpStatus.BAD_REQUEST, "SESSION_4001", "해당 회차를 찾을 수 없습니다."),
     SESSION_ALREADY_DRAWN(HttpStatus.BAD_REQUEST, "SESSION_4002", "이미 추첨 완료된 세션입니다."),

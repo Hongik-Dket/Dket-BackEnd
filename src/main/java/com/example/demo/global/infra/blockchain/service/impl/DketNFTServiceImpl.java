@@ -1,9 +1,9 @@
 package com.example.demo.global.infra.blockchain.service.impl;
 
-import com.example.demo.domain.event.entity.Event;
-import com.example.demo.domain.event.entity.Session;
-import com.example.demo.domain.event.repository.SessionRepository;
-import com.example.demo.domain.event.service.SessionService;
+import com.example.demo.domain.concert.entity.Concert;
+import com.example.demo.domain.concert.entity.Session;
+import com.example.demo.domain.concert.repository.SessionRepository;
+import com.example.demo.domain.concert.service.SessionService;
 import com.example.demo.domain.metadata.service.MetadataService;
 import com.example.demo.domain.ticket.service.TicketService;
 import com.example.demo.global.event.ReadyToMintEvent;
@@ -33,7 +33,6 @@ import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthEstimateGas;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.tx.RawTransactionManager;
-import org.web3j.tx.exceptions.ContractCallException;
 import org.web3j.tx.gas.DefaultGasProvider;
 
 import java.math.BigInteger;
@@ -82,19 +81,19 @@ public class DketNFTServiceImpl implements DketNFTService {
     }
 
     @Override
-    public String recordEventOnChain(Event event) {
+    public String recordConcertOnChain(Concert concert) {
         try {
             var tx = dketNFT.createEvent(
-                    BigInteger.valueOf(event.getId()),
-                    event.getOrganizer().getWalletAddress(),
-                    event.getTitle(),
-                    BigInteger.valueOf(event.getCapacity()),
-                    event.getPriceWei()
+                    BigInteger.valueOf(concert.getId()),
+                    concert.getOrganizer().getWalletAddress(),
+                    concert.getTitle(),
+                    BigInteger.valueOf(concert.getCapacity()),
+                    concert.getPriceWei()
             ).send();
 
             return tx.getTransactionHash();
         } catch (Exception e) {
-            log.error("Event [{}] 온체인 기록 실패", event.getId(), e);
+            log.error("Concert [{}] 온체인 기록 실패", concert.getId(), e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
         }
     }
@@ -107,7 +106,7 @@ public class DketNFTServiceImpl implements DketNFTService {
                     .collect(Collectors.toList());
 
             var tx = dketNFT.createSession(
-                    BigInteger.valueOf(session.getEvent().getId()),
+                    BigInteger.valueOf(session.getConcert().getId()),
                     BigInteger.valueOf(session.getId()),
                     applications
             ).send();
@@ -120,11 +119,11 @@ public class DketNFTServiceImpl implements DketNFTService {
     }
 
     @Override
-    public void openPublicSaleOnChain(Event event) {
+    public void openPublicSaleOnChain(Concert concert) {
         try {
-            dketNFT.openPublicSale(BigInteger.valueOf(event.getId())).send();
+            dketNFT.openPublicSale(BigInteger.valueOf(concert.getId())).send();
         } catch (Exception e) {
-            log.error("Event [{}] 온체인 선착순 판매 전환 실패", event.getId(), e);
+            log.error("Concert [{}] 온체인 선착순 판매 전환 실패", concert.getId(), e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
         }
     }

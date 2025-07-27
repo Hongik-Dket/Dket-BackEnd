@@ -1,7 +1,7 @@
 package com.example.demo.domain.main.controller;
 
 import com.example.demo.domain.main.dto.BuyerHomeResponseDTO;
-import com.example.demo.domain.main.dto.EventCardListDTO;
+import com.example.demo.domain.main.dto.ConcertCardListDTO;
 import com.example.demo.domain.main.service.BuyerHomeService;
 import com.example.demo.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,25 +27,25 @@ public class BuyerHomeController {
 
     @Operation(summary = "구매자 - 인기 공연 조회")
     @GetMapping("/popular")
-    public ApiResponse<EventCardListDTO> getPopularEvents() {
-        return ApiResponse.onSuccess(_OK, buyerHomeService.getPopularEventsForBuyer());
+    public ApiResponse<ConcertCardListDTO> getPopularConcerts() {
+        return ApiResponse.onSuccess(_OK, buyerHomeService.getPopularConcertsForBuyer());
     }
 
     @Operation(summary = "구매자 - 응모한 공연 조회")
     @GetMapping("/applied")
-    public ApiResponse<EventCardListDTO> getAppliedEvents() {
-        return ApiResponse.onSuccess(_OK, buyerHomeService.getAppliedEventsForBuyer());
+    public ApiResponse<ConcertCardListDTO> getAppliedConcerts() {
+        return ApiResponse.onSuccess(_OK, buyerHomeService.getAppliedConcertsForBuyer());
     }
 
     @Operation(summary = "구매자 - 구매한 공연 조회")
     @GetMapping("/purchased")
-    public ApiResponse<EventCardListDTO> getPurchasedEvents() {
-        return ApiResponse.onSuccess(_OK, buyerHomeService.getPurchasedEventsForBuyer());
+    public ApiResponse<ConcertCardListDTO> getPurchasedConcerts() {
+        return ApiResponse.onSuccess(_OK, buyerHomeService.getPurchasedConcertsForBuyer());
     }
 
     @Operation(summary = "구매자 - 전체 공연 조회")
     @GetMapping("/entire")
-    public ApiResponse<EventCardListDTO> getEntireEvents() {
-        return ApiResponse.onSuccess(_OK, buyerHomeService.getEntireEventsForBuyer());
+    public ApiResponse<ConcertCardListDTO> getEntireConcerts() {
+        return ApiResponse.onSuccess(_OK, buyerHomeService.getEntireConcertsForBuyer());
     }
 }

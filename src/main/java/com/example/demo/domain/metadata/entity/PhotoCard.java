@@ -1,16 +1,12 @@
 package com.example.demo.domain.metadata.entity;
 
-import com.example.demo.domain.event.entity.Event;
-import com.example.demo.domain.ticket.entity.Ticket;
+import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.global.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -25,8 +21,8 @@ public class PhotoCard extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id")
-    private Event event;
+    @JoinColumn(name = "concert_id")
+    private Concert concert;
 
     private String cid;
 

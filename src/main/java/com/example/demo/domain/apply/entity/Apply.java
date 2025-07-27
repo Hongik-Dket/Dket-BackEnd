@@ -1,7 +1,7 @@
 package com.example.demo.domain.apply.entity;
 
 import com.example.demo.domain.apply.enums.ApplyStatus;
-import com.example.demo.domain.event.entity.Session;
+import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.global.base.BaseEntity;
 import com.example.demo.domain.user.entity.User;
 import jakarta.persistence.*;

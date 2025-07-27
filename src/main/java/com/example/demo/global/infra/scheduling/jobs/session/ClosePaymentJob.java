@@ -1,7 +1,7 @@
 package com.example.demo.global.infra.scheduling.jobs.session;
 
-import com.example.demo.domain.event.entity.Session;
-import com.example.demo.domain.event.repository.SessionRepository;
+import com.example.demo.domain.concert.entity.Session;
+import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;

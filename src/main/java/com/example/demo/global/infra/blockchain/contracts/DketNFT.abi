@@ -184,7 +184,7 @@
 			}
 		],
 		"name": "Approval",
-		"type": "event"
+		"type": "concert"
 	},
 	{
 		"anonymous": false,
@@ -209,7 +209,7 @@
 			}
 		],
 		"name": "ApprovalForAll",
-		"type": "event"
+		"type": "concert"
 	},
 	{
 		"inputs": [
@@ -246,7 +246,7 @@
 			}
 		],
 		"name": "BatchMetadataUpdate",
-		"type": "event"
+		"type": "concert"
 	},
 	{
 		"inputs": [
@@ -353,7 +353,7 @@
 			}
 		],
 		"name": "EventCreated",
-		"type": "event"
+		"type": "concert"
 	},
 	{
 		"anonymous": false,
@@ -366,7 +366,7 @@
 			}
 		],
 		"name": "MetadataUpdate",
-		"type": "event"
+		"type": "concert"
 	},
 	{
 		"inputs": [
@@ -416,7 +416,7 @@
 			}
 		],
 		"name": "OwnershipTransferred",
-		"type": "event"
+		"type": "concert"
 	},
 	{
 		"anonymous": false,
@@ -447,7 +447,7 @@
 			}
 		],
 		"name": "PaymentTransferred",
-		"type": "event"
+		"type": "concert"
 	},
 	{
 		"anonymous": false,
@@ -460,7 +460,7 @@
 			}
 		],
 		"name": "PublicSaleOpened",
-		"type": "event"
+		"type": "concert"
 	},
 	{
 		"anonymous": false,
@@ -479,7 +479,7 @@
 			}
 		],
 		"name": "RandomFulfilled",
-		"type": "event"
+		"type": "concert"
 	},
 	{
 		"inputs": [
@@ -593,7 +593,7 @@
 			}
 		],
 		"name": "SessionCreated",
-		"type": "event"
+		"type": "concert"
 	},
 	{
 		"anonymous": false,
@@ -612,7 +612,7 @@
 			}
 		],
 		"name": "SessionMinted",
-		"type": "event"
+		"type": "concert"
 	},
 	{
 		"inputs": [
@@ -643,7 +643,7 @@
 			}
 		],
 		"name": "SetDrawn",
-		"type": "event"
+		"type": "concert"
 	},
 	{
 		"anonymous": false,
@@ -668,7 +668,7 @@
 			}
 		],
 		"name": "Transfer",
-		"type": "event"
+		"type": "concert"
 	},
 	{
 		"inputs": [
@@ -723,7 +723,7 @@
 			}
 		],
 		"name": "VRFRequestSent",
-		"type": "event"
+		"type": "concert"
 	},
 	{
 		"anonymous": false,
@@ -742,7 +742,7 @@
 			}
 		],
 		"name": "WinnersDrawn",
-		"type": "event"
+		"type": "concert"
 	},
 	{
 		"inputs": [
@@ -795,7 +795,7 @@
 				"type": "uint256"
 			}
 		],
-		"name": "events",
+		"name": "concerts",
 		"outputs": [
 			{
 				"internalType": "uint256",

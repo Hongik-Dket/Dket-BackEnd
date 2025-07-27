@@ -1,6 +1,6 @@
 package com.example.demo.domain.ticket.entity;
 
-import com.example.demo.domain.event.entity.Session;
+import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.metadata.entity.Metadata;
 import com.example.demo.global.base.BaseEntity;
 import com.example.demo.domain.user.entity.User;

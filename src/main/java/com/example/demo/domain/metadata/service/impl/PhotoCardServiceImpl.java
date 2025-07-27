@@ -1,6 +1,6 @@
 package com.example.demo.domain.metadata.service.impl;
 
-import com.example.demo.domain.event.entity.Event;
+import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.metadata.entity.PhotoCard;
 import com.example.demo.domain.metadata.service.PhotoCardService;
 import com.example.demo.global.infra.ipfs.PinataService;
@@ -20,14 +20,14 @@ public class PhotoCardServiceImpl implements PhotoCardService {
 
     @Override
     @Transactional
-    public void createPhotoCards(Event event, List<MultipartFile> images) {
+    public void createPhotoCards(Concert concert, List<MultipartFile> images) {
         for (MultipartFile image : images) {
             PhotoCard photoCard = PhotoCard.builder()
-                    .event(event)
+                    .concert(concert)
                     .cid(pinataService.uploadPhotoCard(image))
                     .build();
 
-            event.addPhotoCard(photoCard);
+            concert.addPhotoCard(photoCard);
         }
     }
 

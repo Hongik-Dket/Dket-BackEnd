@@ -2,9 +2,7 @@ package com.example.demo.domain.apply.repository;
 
 import com.example.demo.domain.apply.entity.Apply;
 import com.example.demo.domain.apply.enums.ApplyStatus;
-import com.example.demo.domain.event.entity.Event;
-import com.example.demo.domain.event.entity.Session;
-import com.example.demo.domain.user.entity.User;
+import com.example.demo.domain.concert.entity.Concert;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.domain.Pageable;
@@ -44,16 +42,16 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
     );
 
     @Query("""
-    SELECT DISTINCT a.session.event
+    SELECT DISTINCT a.session.concert
     FROM Apply a
     WHERE a.user.id = :buyerId
       AND a.applyStatus IN ('APPLIED', 'SELECTED', 'NOT_SELECTED')
-      AND a.session.event.eventStatus IN ('APPLY_OPEN', 'APPLY_CLOSED')
+      AND a.session.concert.concertStatus IN ('APPLY_OPEN', 'APPLY_CLOSED')
     ORDER BY
-        CASE WHEN a.session.event.applyEnd < CURRENT_TIMESTAMP THEN 0 ELSE 1 END,
-        a.session.event.applyEnd ASC
+        CASE WHEN a.session.concert.applyEnd < CURRENT_TIMESTAMP THEN 0 ELSE 1 END,
+        a.session.concert.applyEnd ASC
     """)
-    List<Event> findAppliedEventsByBuyer(@Param("buyerId") Long buyerId, Pageable pageable);
+    List<Concert> findAppliedConcertsByBuyer(@Param("buyerId") Long buyerId, Pageable pageable);
 
     Optional<Apply> findBySessionIdAndUserId(Long sessionId, Long userId);
 

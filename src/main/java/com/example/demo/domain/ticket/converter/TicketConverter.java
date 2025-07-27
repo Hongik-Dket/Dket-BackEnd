@@ -9,15 +9,15 @@ import java.time.LocalDateTime;
 public class TicketConverter {
 
     public static TicketDetailDTO toTicketDetailDTO(Ticket ticket, String NftUrl) {
-        LocalDateTime eventDateTime = LocalDateTime.of(
+        LocalDateTime concertDateTime = LocalDateTime.of(
                 ticket.getSession().getDate(),
-                ticket.getSession().getEvent().getStartTime()
+                ticket.getSession().getConcert().getStartTime()
         );
 
         return TicketDetailDTO.builder()
                 .ticketId(ticket.getId())
-                .eventTitle(ticket.getSession().getEvent().getTitle())
-                .eventDateTime(eventDateTime)
+                .concertTitle(ticket.getSession().getConcert().getTitle())
+                .concertDateTime(concertDateTime)
                 .buyerName(ticket.getUser().getName())
                 .birth(ticket.getUser().getBirth())
                 .ticketNumber(ticket.getMetadata().getTicketNumber())
@@ -32,11 +32,11 @@ public class TicketConverter {
     public static TicketDTO toTicketDTO(Ticket ticket) {
         return TicketDTO.builder()
                 .ticketId(ticket.getId())
-                .eventTitle(ticket.getSession().getEvent().getTitle())
-                .posterUrl(ticket.getSession().getEvent().getPosterUrl())
-                .location(ticket.getSession().getEvent().getLocation())
+                .concertTitle(ticket.getSession().getConcert().getTitle())
+                .posterUrl(ticket.getSession().getConcert().getPosterUrl())
+                .location(ticket.getSession().getConcert().getLocation())
                 .sessionDate(ticket.getSession().getDate())
-                .startTime(ticket.getSession().getEvent().getStartTime())
+                .startTime(ticket.getSession().getConcert().getStartTime())
                 .entered(ticket.getEnteredAt() != null)
                 .build();
     }

@@ -13,12 +13,12 @@ import java.util.List;
 @AllArgsConstructor
 public class OrganizerHomeResponseDTO {
 
-    private List<EventCardDTO> todayEvents;
+    private List<ConcertCardDTO> todayConcerts;
 
-    private List<EventCardDTO> recentlyClosedApplyEvents;
+    private List<ConcertCardDTO> recentlyClosedApplyConcerts;
 
-    private List<EventCardDTO> allEvents;
+    private List<ConcertCardDTO> allConcerts;
 
-    private List<EventCardDTO> endedEvents;
+    private List<ConcertCardDTO> endedConcerts;
 
 }

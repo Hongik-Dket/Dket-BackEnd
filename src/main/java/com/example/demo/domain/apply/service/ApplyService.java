@@ -1,11 +1,11 @@
 package com.example.demo.domain.apply.service;
 
 import com.example.demo.domain.apply.dto.ApplyResponseDTO;
-import com.example.demo.domain.event.entity.Event;
+import com.example.demo.domain.concert.entity.Concert;
 
 public interface ApplyService {
 
-    void cancelWinnerTickets(Event event);
+    void cancelWinnerTickets(Concert concert);
 
-    ApplyResponseDTO applyToSession(Long eventId, Long sessionId);
+    ApplyResponseDTO applyToSession(Long concertId, Long sessionId);
 }

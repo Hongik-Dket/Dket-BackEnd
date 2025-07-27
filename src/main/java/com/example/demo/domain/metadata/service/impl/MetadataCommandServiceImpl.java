@@ -1,7 +1,7 @@
 package com.example.demo.domain.metadata.service.impl;
 
-import com.example.demo.domain.event.entity.Session;
-import com.example.demo.domain.event.repository.SessionRepository;
+import com.example.demo.domain.concert.entity.Session;
+import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.domain.metadata.entity.Metadata;
 import com.example.demo.domain.metadata.repository.MetadataRepository;
 import com.example.demo.domain.metadata.service.MetadataCommandService;

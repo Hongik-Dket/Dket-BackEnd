@@ -1,9 +1,9 @@
 package com.example.demo.domain.main.service.impl;
 
-import com.example.demo.domain.event.entity.Event;
-import com.example.demo.domain.event.enums.EventStatus;
-import com.example.demo.domain.event.repository.EventRepository;
-import com.example.demo.domain.main.dto.EventCardListDTO;
+import com.example.demo.domain.concert.entity.Concert;
+import com.example.demo.domain.concert.enums.ConcertStatus;
+import com.example.demo.domain.concert.repository.ConcertRepository;
+import com.example.demo.domain.main.dto.ConcertCardListDTO;
 import com.example.demo.domain.main.dto.OrganizerHomeResponseDTO;
 import com.example.demo.domain.main.service.OrganizerHomeService;
 import com.example.demo.domain.user.entity.User;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-import static com.example.demo.domain.main.converter.MainConverter.toEventCardListDTO;
+import static com.example.demo.domain.main.converter.MainConverter.toConcertCardListDTO;
 import static com.example.demo.domain.main.converter.MainConverter.toOrganizerHomeResponseDTO;
 
 @Service
@@ -27,7 +27,7 @@ import static com.example.demo.domain.main.converter.MainConverter.toOrganizerHo
 public class OrganizerHomeServiceImpl implements OrganizerHomeService {
 
     private final UserService userService;
-    private final EventRepository eventRepository;
+    private final ConcertRepository concertRepository;
 
     @Override
     public OrganizerHomeResponseDTO getHomeForOrganizer() {
@@ -35,76 +35,76 @@ public class OrganizerHomeServiceImpl implements OrganizerHomeService {
 
         Pageable pageable = PageRequest.of(0, 10, Sort.by("startDate").ascending());
 
-        Page<Event> todayEvents = eventRepository.findByOrganizerIdAndEventStatus(user.getId(), EventStatus.IN_PROGRESS, pageable);
+        Page<Concert> todayConcerts = concertRepository.findByOrganizerIdAndConcertStatus(user.getId(), ConcertStatus.IN_PROGRESS, pageable);
 
         LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
         LocalDateTime oneDayAgo = now.minusHours(24);
 
-        Page<Event> recentlyClosedApply = eventRepository.findRecentlyClosedApply(
+        Page<Concert> recentlyClosedApply = concertRepository.findRecentlyClosedApply(
                 user.getId(),
                 oneDayAgo,
                 now,
                 PageRequest.of(0, 10, Sort.by("applyEnd").descending())
         );
 
-        Page<Event> allEvents = eventRepository.findByOrganizerIdAndEventStatusNot(
-                user.getId(), EventStatus.ENDED, pageable);
+        Page<Concert> allConcerts = concertRepository.findByOrganizerIdAndConcertStatusNot(
+                user.getId(), ConcertStatus.ENDED, pageable);
 
-        Page<Event> endedEvents = Page.empty();
-        if (allEvents.getTotalElements() < 10) {
-            endedEvents = eventRepository.findByOrganizerIdAndEventStatus(
+        Page<Concert> endedConcerts = Page.empty();
+        if (allConcerts.getTotalElements() < 10) {
+            endedConcerts = concertRepository.findByOrganizerIdAndConcertStatus(
                     user.getId(),
-                    EventStatus.ENDED,
+                    ConcertStatus.ENDED,
                     PageRequest.of(
                             0,
-                            10 - (int) allEvents.getTotalElements(),
+                            10 - (int) allConcerts.getTotalElements(),
                             Sort.by("endDate").descending()
                     )
             );
         }
 
-        return toOrganizerHomeResponseDTO(todayEvents, recentlyClosedApply, allEvents, endedEvents);
+        return toOrganizerHomeResponseDTO(todayConcerts, recentlyClosedApply, allConcerts, endedConcerts);
     }
 
     @Override
-    public EventCardListDTO getTodayEventsForOrganizer() {
+    public ConcertCardListDTO getTodayConcertsForOrganizer() {
         User user = userService.getCurrentUser();
 
-        Page<Event> events = eventRepository.findByOrganizerIdAndEventStatus(
+        Page<Concert> concerts = concertRepository.findByOrganizerIdAndConcertStatus(
                 user.getId(),
-                EventStatus.IN_PROGRESS,
+                ConcertStatus.IN_PROGRESS,
                 PageRequest.of(0, Integer.MAX_VALUE, Sort.by("startDate").ascending())
         );
 
-        return toEventCardListDTO(events.getContent());
+        return toConcertCardListDTO(concerts.getContent());
     }
 
     @Override
-    public EventCardListDTO getClosedEventsForOrganizer() {
+    public ConcertCardListDTO getClosedConcertsForOrganizer() {
         User user = userService.getCurrentUser();
 
         LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
         LocalDateTime oneDayAgo = now.minusHours(24);
 
-        Page<Event> events = eventRepository.findRecentlyClosedApply(
+        Page<Concert> concerts = concertRepository.findRecentlyClosedApply(
                 user.getId(),
                 oneDayAgo,
                 now,
                 PageRequest.of(0, Integer.MAX_VALUE, Sort.by("applyEnd").descending())
         );
 
-        return toEventCardListDTO(events.getContent());
+        return toConcertCardListDTO(concerts.getContent());
     }
 
     @Override
-    public EventCardListDTO getAllEventsForOrganizer() {
+    public ConcertCardListDTO getAllConcertsForOrganizer() {
         User user = userService.getCurrentUser();
 
-        Page<Event> events = eventRepository.findSortedForOrganizer(
+        Page<Concert> concerts = concertRepository.findSortedForOrganizer(
                 user.getId(), Pageable.unpaged()
         );
 
-        return toEventCardListDTO(events.getContent());
+        return toConcertCardListDTO(concerts.getContent());
     }
 
 }

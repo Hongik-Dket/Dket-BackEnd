@@ -21,7 +21,7 @@ public class PhotoCardConverter {
                 .photoCardId(ticket.getMetadata().getPhotoCard().getId())
                 .ticketId(ticket.getId())
                 .imageUrl(ipfsUrl)
-                .eventTitle(ticket.getSession().getEvent().getTitle())
+                .concertTitle(ticket.getSession().getConcert().getTitle())
                 .sessionDate(ticket.getSession().getDate())
                 .ticketNumber(ticket.getMetadata().getTicketNumber())
                 .nftUrl(nftUrl)
