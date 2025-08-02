@@ -184,7 +184,7 @@
 			}
 		],
 		"name": "Approval",
-		"type": "concert"
+		"type": "event"
 	},
 	{
 		"anonymous": false,
@@ -209,7 +209,7 @@
 			}
 		],
 		"name": "ApprovalForAll",
-		"type": "concert"
+		"type": "event"
 	},
 	{
 		"inputs": [
@@ -246,7 +246,7 @@
 			}
 		],
 		"name": "BatchMetadataUpdate",
-		"type": "concert"
+		"type": "event"
 	},
 	{
 		"inputs": [
@@ -262,10 +262,35 @@
 		"type": "function"
 	},
 	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "concertId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "title",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "organizer",
+				"type": "address"
+			}
+		],
+		"name": "ConcertCreated",
+		"type": "event"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "_eventId",
+				"name": "_concertId",
 				"type": "uint256"
 			},
 			{
@@ -289,7 +314,7 @@
 				"type": "uint256"
 			}
 		],
-		"name": "createEvent",
+		"name": "createConcert",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -298,7 +323,7 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "_eventId",
+				"name": "_concertId",
 				"type": "uint256"
 			},
 			{
@@ -334,31 +359,6 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "eventId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "title",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "organizer",
-				"type": "address"
-			}
-		],
-		"name": "EventCreated",
-		"type": "concert"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
 				"indexed": false,
 				"internalType": "uint256",
 				"name": "_tokenId",
@@ -366,7 +366,7 @@
 			}
 		],
 		"name": "MetadataUpdate",
-		"type": "concert"
+		"type": "event"
 	},
 	{
 		"inputs": [
@@ -390,7 +390,7 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "eventId",
+				"name": "concertId",
 				"type": "uint256"
 			}
 		],
@@ -416,7 +416,7 @@
 			}
 		],
 		"name": "OwnershipTransferred",
-		"type": "concert"
+		"type": "event"
 	},
 	{
 		"anonymous": false,
@@ -447,7 +447,7 @@
 			}
 		],
 		"name": "PaymentTransferred",
-		"type": "concert"
+		"type": "event"
 	},
 	{
 		"anonymous": false,
@@ -455,12 +455,12 @@
 			{
 				"indexed": true,
 				"internalType": "uint256",
-				"name": "eventId",
+				"name": "concertId",
 				"type": "uint256"
 			}
 		],
 		"name": "PublicSaleOpened",
-		"type": "concert"
+		"type": "event"
 	},
 	{
 		"anonymous": false,
@@ -479,7 +479,7 @@
 			}
 		],
 		"name": "RandomFulfilled",
-		"type": "concert"
+		"type": "event"
 	},
 	{
 		"inputs": [
@@ -576,7 +576,7 @@
 			{
 				"indexed": true,
 				"internalType": "uint256",
-				"name": "eventId",
+				"name": "concertId",
 				"type": "uint256"
 			},
 			{
@@ -593,7 +593,7 @@
 			}
 		],
 		"name": "SessionCreated",
-		"type": "concert"
+		"type": "event"
 	},
 	{
 		"anonymous": false,
@@ -612,7 +612,7 @@
 			}
 		],
 		"name": "SessionMinted",
-		"type": "concert"
+		"type": "event"
 	},
 	{
 		"inputs": [
@@ -643,7 +643,7 @@
 			}
 		],
 		"name": "SetDrawn",
-		"type": "concert"
+		"type": "event"
 	},
 	{
 		"anonymous": false,
@@ -668,7 +668,7 @@
 			}
 		],
 		"name": "Transfer",
-		"type": "concert"
+		"type": "event"
 	},
 	{
 		"inputs": [
@@ -723,7 +723,7 @@
 			}
 		],
 		"name": "VRFRequestSent",
-		"type": "concert"
+		"type": "event"
 	},
 	{
 		"anonymous": false,
@@ -742,7 +742,7 @@
 			}
 		],
 		"name": "WinnersDrawn",
-		"type": "concert"
+		"type": "event"
 	},
 	{
 		"inputs": [
@@ -799,7 +799,7 @@
 		"outputs": [
 			{
 				"internalType": "uint256",
-				"name": "eventId",
+				"name": "concertId",
 				"type": "uint256"
 			},
 			{
@@ -862,7 +862,7 @@
 		"outputs": [
 			{
 				"internalType": "uint256",
-				"name": "eventId",
+				"name": "concertId",
 				"type": "uint256"
 			},
 			{

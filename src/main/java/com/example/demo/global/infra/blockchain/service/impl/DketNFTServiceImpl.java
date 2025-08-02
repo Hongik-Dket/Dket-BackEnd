@@ -83,7 +83,7 @@ public class DketNFTServiceImpl implements DketNFTService {
     @Override
     public String recordConcertOnChain(Concert concert) {
         try {
-            var tx = dketNFT.createEvent(
+            var tx = dketNFT.createConcert(
                     BigInteger.valueOf(concert.getId()),
                     concert.getOrganizer().getWalletAddress(),
                     concert.getTitle(),

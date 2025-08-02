@@ -40,9 +40,7 @@ public class CloseApplyJob implements Job {
 
         List<Session> sessions = concert.getSessions();
         long emptyCount = sessions.stream()
-                .filter(session -> {
-                    return session.getApplyList().isEmpty();
-                })
+                .filter(session -> session.getApplyList().isEmpty())
                 .count();
 
         if (emptyCount == sessions.size()) {
