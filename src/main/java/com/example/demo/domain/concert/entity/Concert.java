@@ -62,6 +62,8 @@ public class Concert extends BaseEntity {
     private LocalDateTime applyStart;
     private LocalDateTime applyEnd;
 
+    private Boolean isResaleAllowed;
+
     private String bannerUrl;
     private String posterUrl;
 

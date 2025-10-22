@@ -38,6 +38,7 @@ public class ConcertConverter {
                                 .collect(Collectors.toList())
                 )
                 .description(concert.getDescription())
+                .isResaleAllowed(concert.getIsResaleAllowed())
                 .photoCardList(photoCardInfoDTOList)
                 .build();
     }
@@ -57,6 +58,7 @@ public class ConcertConverter {
                 .capacity(concertUploadDTO.getCapacity())
                 .applyStart(concertUploadDTO.getApplyStart())
                 .applyEnd(concertUploadDTO.getApplyEnd())
+                .isResaleAllowed(concertUploadDTO.getIsResaleAllowed())
                 .bannerUrl(bannerUrl)
                 .posterUrl(posterUrl)
                 .priceWei(priceWei)
@@ -81,6 +83,7 @@ public class ConcertConverter {
                 .posterUrl(concert.getPosterUrl())
                 .capacity(concert.getCapacity())
                 .concertStatus(concert.getConcertStatus())
+                .isResaleAllowed(concert.getIsResaleAllowed())
                 .sessionList(sessionList)
                 .build();
     }
