@@ -35,5 +35,6 @@ public class OrganizerConcertDetailDTO {
     private ConcertStatus concertStatus;
     private List<Long> sessionIds;
     private String description;
+    private Boolean isResaleAllowed;
     private List<PhotoCardInfoDTO> photoCardList;
 }

@@ -2,19 +2,9 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "vrfCoordinator",
-				"type": "address"
-			},
-			{
 				"internalType": "uint64",
 				"name": "subscriptionId",
 				"type": "uint64"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "keyHash",
-				"type": "bytes32"
 			}
 		],
 		"stateMutability": "nonpayable",
@@ -212,24 +202,6 @@
 		"type": "event"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "approve",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -247,19 +219,6 @@
 		],
 		"name": "BatchMetadataUpdate",
 		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "sessionId",
-				"type": "uint256"
-			}
-		],
-		"name": "buyTicket",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -287,75 +246,6 @@
 		"type": "event"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_concertId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_organizer",
-				"type": "address"
-			},
-			{
-				"internalType": "string",
-				"name": "_title",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_maxWinners",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_price",
-				"type": "uint256"
-			}
-		],
-		"name": "createConcert",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_concertId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_sessionId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address[]",
-				"name": "_applications",
-				"type": "address[]"
-			}
-		],
-		"name": "createSession",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "sessionId",
-				"type": "uint256"
-			}
-		],
-		"name": "drawSession",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -367,37 +257,6 @@
 		],
 		"name": "MetadataUpdate",
 		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "sessionId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string[]",
-				"name": "uris",
-				"type": "string[]"
-			}
-		],
-		"name": "mintSessionTicket",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "concertId",
-				"type": "uint256"
-			}
-		],
-		"name": "openPublicSale",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -480,6 +339,614 @@
 		],
 		"name": "RandomFulfilled",
 		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "concertId",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "applicationCount",
+				"type": "uint256"
+			}
+		],
+		"name": "SessionCreated",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256[]",
+				"name": "tokenIds",
+				"type": "uint256[]"
+			}
+		],
+		"name": "SessionMinted",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			}
+		],
+		"name": "SetDrawn",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "Transfer",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "agent",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "bool",
+				"name": "allowed",
+				"type": "bool"
+			}
+		],
+		"name": "TransferAgentSet",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "requestId",
+				"type": "uint256"
+			}
+		],
+		"name": "VRFRequestSent",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "address[]",
+				"name": "winners",
+				"type": "address[]"
+			}
+		],
+		"name": "WinnersDrawn",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "COORDINATOR",
+		"outputs": [
+			{
+				"internalType": "contract VRFCoordinatorV2Interface",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "KEY_HASH",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "VRF_COORDINATOR",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "approve",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "availableTokens",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "balanceOf",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			}
+		],
+		"name": "buyTicket",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "concerts",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "concertId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "organizer",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "title",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "maxWinners",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "price",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "publicSale",
+				"type": "bool"
+			},
+			{
+				"internalType": "bool",
+				"name": "isResaleAllowed",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_concertId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_organizer",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "_title",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_maxWinners",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_price",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "_isResaleAllowed",
+				"type": "bool"
+			}
+		],
+		"name": "createConcert",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_concertId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_sessionId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint64",
+				"name": "_startAt",
+				"type": "uint64"
+			},
+			{
+				"internalType": "address[]",
+				"name": "_applications",
+				"type": "address[]"
+			}
+		],
+		"name": "createSession",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			}
+		],
+		"name": "drawSession",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "enter",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "enteredAt",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "getApproved",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			}
+		],
+		"name": "getConcertIdOfSession",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			}
+		],
+		"name": "getSessionInfo",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "concertId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint64",
+				"name": "startAt",
+				"type": "uint64"
+			},
+			{
+				"internalType": "address[]",
+				"name": "applications",
+				"type": "address[]"
+			},
+			{
+				"internalType": "address[]",
+				"name": "winners",
+				"type": "address[]"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "tokenIds",
+				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			}
+		],
+		"name": "isApprovedForAll",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "isTransferAgent",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string[]",
+				"name": "uris",
+				"type": "string[]"
+			}
+		],
+		"name": "mintSessionTicket",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "name",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "concertId",
+				"type": "uint256"
+			}
+		],
+		"name": "openPublicSale",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "ownerOf",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
 	},
 	{
 		"inputs": [
@@ -571,389 +1038,6 @@
 		"type": "function"
 	},
 	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "concertId",
-				"type": "uint256"
-			},
-			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "sessionId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "applicationCount",
-				"type": "uint256"
-			}
-		],
-		"name": "SessionCreated",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "sessionId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256[]",
-				"name": "tokenIds",
-				"type": "uint256[]"
-			}
-		],
-		"name": "SessionMinted",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			},
-			{
-				"internalType": "bool",
-				"name": "approved",
-				"type": "bool"
-			}
-		],
-		"name": "setApprovalForAll",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "sessionId",
-				"type": "uint256"
-			}
-		],
-		"name": "SetDrawn",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "Transfer",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "transferFrom",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "sessionId",
-				"type": "uint256"
-			},
-			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "requestId",
-				"type": "uint256"
-			}
-		],
-		"name": "VRFRequestSent",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "sessionId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "address[]",
-				"name": "winners",
-				"type": "address[]"
-			}
-		],
-		"name": "WinnersDrawn",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "availableTokens",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			}
-		],
-		"name": "balanceOf",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "concerts",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "concertId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "organizer",
-				"type": "address"
-			},
-			{
-				"internalType": "string",
-				"name": "title",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "maxWinners",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "price",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bool",
-				"name": "publicSale",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "getApproved",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "sessionId",
-				"type": "uint256"
-			}
-		],
-		"name": "getSessionInfo",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "concertId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address[]",
-				"name": "applications",
-				"type": "address[]"
-			},
-			{
-				"internalType": "address[]",
-				"name": "winners",
-				"type": "address[]"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "tokenIds",
-				"type": "uint256[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			}
-		],
-		"name": "isApprovedForAll",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "name",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "owner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "ownerOf",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -994,6 +1078,42 @@
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"internalType": "bool",
+				"name": "approved",
+				"type": "bool"
+			}
+		],
+		"name": "setApprovalForAll",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "agent",
+				"type": "address"
+			},
+			{
+				"internalType": "bool",
+				"name": "allowed",
+				"type": "bool"
+			}
+		],
+		"name": "setTransferAgent",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -1045,6 +1165,42 @@
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "transferFrom",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{

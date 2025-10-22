@@ -28,5 +28,6 @@ public class ConcertUploadDTO {
     private int capacity;
     private LocalDateTime applyStart;
     private LocalDateTime applyEnd;
+    private Boolean isResaleAllowed;
 
 }

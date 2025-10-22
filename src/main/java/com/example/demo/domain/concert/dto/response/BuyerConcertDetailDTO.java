@@ -37,6 +37,7 @@ public class BuyerConcertDetailDTO {
     private int capacity;
 
     private ConcertStatus concertStatus;
+    private Boolean isResaleAllowed;
 
     private List<BuyerSessionInfoDTO> sessionList;
 }
