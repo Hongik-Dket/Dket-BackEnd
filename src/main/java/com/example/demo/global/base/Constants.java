@@ -11,4 +11,7 @@ public class Constants {
     // OpenSea base url
     public static final String OPENSEA_BASE_URL = "https://testnets.opensea.io/assets/sepolia/";
 
+    // 리세일 티켓 예약 만료 시간(분 단위)
+    public static final int RESALE_RESERVATION_EXPIRATION_MINUTES = 5;
+
 }
