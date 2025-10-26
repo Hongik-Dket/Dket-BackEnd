@@ -40,7 +40,7 @@ public enum ErrorStatus implements BaseErrorCode {
     TICKET_INVALID_BUYER(HttpStatus.BAD_REQUEST, "TICKET_4002", "해당 티켓을 결제할 수 없는 사용자입니다."),
     TICKET_NOT_FOUND(HttpStatus.BAD_REQUEST, "TICKET_4003", "해당 티켓을 찾을 수 없습니다."),
     TICKET_WRONG_PARAMETER(HttpStatus.BAD_REQUEST, "TICKET_4004", "id 또는 number 중 하나만 입력해야 합니다."),
-    TICKET_INVALID_USER(HttpStatus.BAD_REQUEST, "TICKET_4005", "해당 티켓을 조회할 수 없는 사용자입니다."),
+    TICKET_INVALID_USER(HttpStatus.BAD_REQUEST, "TICKET_4005", "해당 티켓에 대한 권한이 없는 사용자입니다."),
     TICKET_INVALID(HttpStatus.BAD_REQUEST, "TICKET_4006", "유효하지 않은 티켓입니다."),
     TICKET_ALREADY_PAID(HttpStatus.BAD_REQUEST, "TICKET_4007", "이미 티켓을 결제했습니다."),
 
@@ -86,6 +86,13 @@ public enum ErrorStatus implements BaseErrorCode {
     WALLET_GET_BALANCE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "WALLET_5001", "잔액 조회에 실패했습니다."),
 
     PHOTOCARD_NOT_FOUND(HttpStatus.BAD_REQUEST, "PHOTOCARD_4001", "해당 포토카드를 찾을 수 없습니다."),
+
+    RESALE_NOT_FOUND(HttpStatus.BAD_REQUEST, "RESALE_4001", "해당 리세일 정보를 찾을 수 없습니다."),
+    RESALE_INVALID_PRICE(HttpStatus.BAD_REQUEST, "RESALE_4002", "리세일 판매가는 0이 아닌 양수이어야 합니다."),
+    RESALE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "RESALE_4002", "리세일이 불가한 공연입니다."),
+    RESALE_ALREADY_LISTED(HttpStatus.BAD_REQUEST, "RESALE_4003", "아직 판매 중인 리세일이 있는 티켓입니다."),
+    RESALE_PRICE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "RESALE_4004", "리세일 가격 상한을 초과하였습니다."),
+    RESALE_CONFLICT(HttpStatus.INTERNAL_SERVER_ERROR, "RESALE_5001", "리세일 락 획득에 실패했습니다."),
 
     ;
 

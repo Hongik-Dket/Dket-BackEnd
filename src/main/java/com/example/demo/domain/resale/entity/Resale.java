@@ -22,7 +22,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(
         indexes = {
-                @Index(name = "idx_resale_session_status", columnList = "session_id, resale_status")
+                @Index(name = "idx_resale_session_status", columnList = "session_id, resale_status"),
+                @Index(name = "idx_resale_ticket_status", columnList = "ticket_id, resale_status")
         }
 )
 public class Resale extends BaseEntity {
@@ -31,9 +32,6 @@ public class Resale extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "resale_id")
     private Long id;
-
-    @Version
-    private Long version;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ticket_id")

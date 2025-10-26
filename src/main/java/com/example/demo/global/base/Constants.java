@@ -1,5 +1,7 @@
 package com.example.demo.global.base;
 
+import java.math.BigDecimal;
+
 public class Constants {
 
     // 응모 마감 이후 결제 가능 기한(일 단위): 마감일 제외 2일 후 자정
@@ -13,5 +15,11 @@ public class Constants {
 
     // 리세일 티켓 예약 만료 시간(분 단위)
     public static final int RESALE_RESERVATION_EXPIRATION_MINUTES = 5;
+
+    // 리세일 판매가 상한 비율 (원가 × 1.2)
+    public static final BigDecimal RESALE_PRICE_LIMIT_RATE = BigDecimal.valueOf(1.20);
+
+    // 리세일 수익 중 개최자 로열티 비율 (10%)
+    public static final BigDecimal ORGANIZER_ROYALTY_RATE = BigDecimal.valueOf(0.10);
 
 }
