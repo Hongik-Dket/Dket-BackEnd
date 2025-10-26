@@ -19,4 +19,10 @@ public interface ResaleRepository extends JpaRepository<Resale, Long> {
             BigInteger tokenId,
             Collection<ResaleStatus> resaleStatuses
     );
+
+    boolean existsByTicketIdAndSellerIdAndResaleStatusIn(
+            Long ticketId,
+            Long sellerId,
+            Collection<ResaleStatus> statuses
+    );
 }

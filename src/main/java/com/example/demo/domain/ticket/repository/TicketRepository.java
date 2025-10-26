@@ -53,8 +53,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
             "ORDER BY CASE WHEN s.date >= :now THEN 0 ELSE 1 END, s.date ASC")
     List<Ticket> findAllSortedByDateAndFutureFirstWithPhotoCard(@Param("user") User user, @Param("now") LocalDate now);
 
-    Optional<Ticket> findByIdAndUserId(Long id, Long userId);
-
     boolean existsByUserIdAndSessionId(Long userId, Long sessionId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)

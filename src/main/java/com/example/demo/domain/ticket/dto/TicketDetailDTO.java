@@ -25,6 +25,8 @@ public class TicketDetailDTO {
     private Long photoCardId;
     private String NftUrl;
     private boolean isEntered;
+    private int price;
+    private Boolean isResaleListed;
     
     
 }
