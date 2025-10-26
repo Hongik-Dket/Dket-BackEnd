@@ -62,6 +62,10 @@ public class Resale extends BaseEntity {
 
     private LocalDateTime reservationExpiresAt;
 
+    private String txHash;
+
+    public void setTxHash(String txHash) { this.txHash = txHash; }
+
     public void setReservation(User user) {
         this.resaleStatus = ResaleStatus.RESERVED;
         this.reservedBy = user;

@@ -48,7 +48,7 @@ public class TicketServiceImpl implements TicketService {
     private final S3UploadService s3UploadService;
     private final DketNFTViewService dketNFTViewService;
 
-    @Value("${web3.contract-address}")
+    @Value("${web3.nft-contract-address}")
     private String contractAddress;
 
     @Override

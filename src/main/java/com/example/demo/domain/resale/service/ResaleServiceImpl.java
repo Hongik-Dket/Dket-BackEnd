@@ -1,15 +1,17 @@
 package com.example.demo.domain.resale.service;
 
 import com.example.demo.domain.concert.entity.Session;
-import com.example.demo.domain.resale.ResaleRepository;
+import com.example.demo.domain.resale.repository.ResaleRepository;
 import com.example.demo.domain.resale.dto.request.ResaleListingDTO;
 import com.example.demo.domain.resale.entity.Resale;
 import com.example.demo.domain.resale.enums.ResaleStatus;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.ticket.repository.TicketRepository;
 import com.example.demo.domain.user.entity.User;
+import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.base.Constants;
+import com.example.demo.global.infra.blockchain.service.DketResaleService;
 import com.example.demo.global.infra.blockchain.service.ExchangeService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
@@ -35,10 +37,11 @@ public class ResaleServiceImpl implements ResaleService {
     private final UserService userService;
     private final TicketRepository ticketRepository;
     private final ExchangeService exchangeService;
+    private final DketResaleService dketResaleService;
 
     @Override
     @Transactional
-    public void listResale(Long ticketId, ResaleListingDTO request) {
+    public void createResale(Long ticketId, ResaleListingDTO request) {
         User user = userService.getCurrentUser();
 
         Ticket ticket;
@@ -56,6 +59,21 @@ public class ResaleServiceImpl implements ResaleService {
 
         Resale resale = toResale(ticket, user, priceKrw, priceWei);
         resaleRepository.save(resale);
+    }
+
+    @Override
+    @Transactional
+    public void listResale(String ownerWalletAddress, BigInteger tokenId) {
+        String owner = ownerWalletAddress.toLowerCase();
+
+        Resale resale = resaleRepository
+                .findBySellerWalletAddressAndTicketTokenIdAndResaleStatusIn(
+                        owner, tokenId, EnumSet.of(ResaleStatus.AVAILABLE, ResaleStatus.RESERVED))
+                .orElseThrow(() -> new CustomException(ErrorStatus.RESALE_NOT_FOUND));
+
+        if (resale.getTxHash() == null) {
+            resale.setTxHash(dketResaleService.listResaleOnChain(resale));
+        }
     }
 
     private void validateResaleListing(Long sellerId, Ticket ticket, int priceKrw) {

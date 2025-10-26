@@ -22,7 +22,7 @@ public class ResaleController {
             @PathVariable("ticketId") Long ticketId,
             @RequestBody ResaleListingDTO request
     ) {
-        resaleService.listResale(ticketId, request);
+        resaleService.createResale(ticketId, request);
 
         return ApiResponse.onSuccess(_OK, null);
     }
