@@ -6,6 +6,8 @@ import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.domain.metadata.entity.Metadata;
 import com.example.demo.domain.metadata.repository.MetadataRepository;
+import com.example.demo.domain.resale.enums.ResaleStatus;
+import com.example.demo.domain.resale.repository.ResaleRepository;
 import com.example.demo.domain.ticket.dto.TicketDetailDTO;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.ticket.repository.TicketRepository;
@@ -26,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -47,6 +50,7 @@ public class TicketServiceImpl implements TicketService {
     private final QrCodeGenerator qrCodeGenerator;
     private final S3UploadService s3UploadService;
     private final DketNFTViewService dketNFTViewService;
+    private final ResaleRepository resaleRepository;
 
     @Value("${web3.nft-contract-address}")
     private String contractAddress;
@@ -123,7 +127,14 @@ public class TicketServiceImpl implements TicketService {
 
         validateTicket(ticket, ownerWalletAddress);
 
-        return toTicketDetailDTO(ticket, getNftUrl(ticket));
+        boolean isResaleListed = resaleRepository
+                .existsByTicketIdAndSellerIdAndResaleStatusIn(
+                        ticketId,
+                        user.getId(),
+                        EnumSet.of(ResaleStatus.AVAILABLE, ResaleStatus.RESERVED)
+                );
+
+        return toTicketDetailDTO(ticket, getNftUrl(ticket), isResaleListed);
     }
 
     @Override
@@ -140,7 +151,14 @@ public class TicketServiceImpl implements TicketService {
         validateOrganizer(ticket, user);
         validateTicket(ticket, ownerWalletAddress);
 
-        return toTicketDetailDTO(ticket, getNftUrl(ticket));
+        boolean isResaleListed = resaleRepository
+                .existsByTicketIdAndSellerIdAndResaleStatusIn(
+                        ticket.getId(),
+                        user.getId(),
+                        EnumSet.of(ResaleStatus.AVAILABLE, ResaleStatus.RESERVED)
+                );
+
+        return toTicketDetailDTO(ticket, getNftUrl(ticket), isResaleListed);
     }
 
     @Override
