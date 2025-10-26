@@ -48,7 +48,7 @@ public class TicketServiceImpl implements TicketService {
     private final S3UploadService s3UploadService;
     private final DketNFTViewService dketNFTViewService;
 
-    @Value("${web3.contract-address}")
+    @Value("${web3.nft-contract-address}")
     private String contractAddress;
 
     @Override
@@ -166,7 +166,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public String getNftUrl(Ticket ticket) {
-        return Constants.OPENSEA_BASE_URL + contractAddress + "/%s".formatted(ticket.getTokenId());
+        return Constants.ETHERSCAN_NFT_BASE_URL + contractAddress + "/%s".formatted(ticket.getTokenId());
     }
 
     private void validateOrganizer(Ticket ticket, User user) {

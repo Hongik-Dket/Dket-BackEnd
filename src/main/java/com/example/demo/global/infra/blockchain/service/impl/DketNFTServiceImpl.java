@@ -5,6 +5,7 @@ import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.domain.concert.service.SessionService;
 import com.example.demo.domain.metadata.service.MetadataService;
+import com.example.demo.domain.resale.service.ResaleService;
 import com.example.demo.domain.ticket.service.TicketService;
 import com.example.demo.global.event.ReadyToMintEvent;
 import com.example.demo.global.infra.blockchain.contracts.DketNFT;
@@ -58,17 +59,21 @@ public class DketNFTServiceImpl implements DketNFTService {
     private final SessionService sessionService;
     private final DketNFTViewService dketNFTViewService;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final ResaleService resaleService;
 
 
-    @Value("${web3.contract-address}")
-    private String contractAddress;
+    @Value("${web3.nft-contract-address}")
+    private String nftContractAddress;
+
+    @Value("${web3.resale-contract-address}")
+    private String resaleContractAddress;
 
     private DketNFT dketNFT;
 
     @PostConstruct
     public void init() {
         dketNFT = DketNFT.load(
-                contractAddress,
+                nftContractAddress,
                 web3j,
                 credentials,
                 new DefaultGasProvider()
@@ -79,6 +84,7 @@ public class DketNFTServiceImpl implements DketNFTService {
         listenToSetDrawn();
         listenToSessionMinted();
         listenToPaymentTransferred();
+        listenToApproval();
     }
 
     @Override
@@ -268,6 +274,21 @@ public class DketNFTServiceImpl implements DketNFTService {
                     log.error("paymentTransferred 이벤트 수신 중 예외 발생", error);
                 }
             );
+    }
+
+    private void listenToApproval() {
+        dketNFT.approvalEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST)
+                .subscribe(
+                        event -> {
+                            String approved = event.approved;
+                            if (!approved.equalsIgnoreCase(resaleContractAddress)) return;
+
+                            resaleService.listResale(event.owner, event.tokenId);
+                        },
+                        error -> {
+                            log.error("Approval 이벤트 수신 중 예외 발생", error);
+                        }
+                );
     }
 
     private void sendTransaction(String functionName, List<Type> inputParams) {

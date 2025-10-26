@@ -26,7 +26,7 @@ public class DketNFTViewServiceImpl implements DketNFTViewService {
     private final Web3j web3j;
     private final Credentials credentials;
 
-    @Value("${web3.contract-address}")
+    @Value("${web3.nft-contract-address}")
     private String contractAddress;
 
     private DketNFT dketNFT;
