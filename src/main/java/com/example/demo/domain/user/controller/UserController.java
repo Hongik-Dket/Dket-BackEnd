@@ -1,7 +1,6 @@
 package com.example.demo.domain.user.controller;
 
 import com.example.demo.domain.metadata.dto.PhotoCardDTO;
-import com.example.demo.domain.metadata.dto.PhotoCardDetailDTO;
 import com.example.demo.domain.ticket.dto.TicketDTO;
 import com.example.demo.domain.user.dto.WalletDTO;
 import com.example.demo.domain.user.service.MypageService;
@@ -39,9 +38,4 @@ public class UserController {
         return ApiResponse.onSuccess(_OK, mypageService.getMyPhotoCards());
     }
 
-    @Operation(summary = "포토카드 상세 조회하기")
-    @GetMapping("/photocards/{ticketId}")
-    public ApiResponse<PhotoCardDetailDTO> getPhotoCard(@PathVariable Long ticketId) {
-        return ApiResponse.onSuccess(_OK, mypageService.getMyPhotoCardDetail(ticketId));
-    }
 }
