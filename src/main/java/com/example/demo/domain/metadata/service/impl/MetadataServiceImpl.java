@@ -1,5 +1,6 @@
 package com.example.demo.domain.metadata.service.impl;
 
+import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.domain.metadata.dto.MetadataJson;
@@ -67,7 +68,7 @@ public class MetadataServiceImpl implements MetadataService {
 
         for (int i = 0; i < capacity; i++) {
             String seatCode = convertSeatCode(seatList.get(i));
-            String ticketNumber = generateTicketNumber(session.getConcert().getId(), sessionId, seatCode);
+            String ticketNumber = generateTicketNumber(session.getConcert(), sessionId, seatCode);
 
             Metadata metadata = Metadata.builder()
                     .session(session)
@@ -155,8 +156,17 @@ public class MetadataServiceImpl implements MetadataService {
         return String.format("%06d", seatNumber);
     }
 
-    private String generateTicketNumber(Long concertId, BigInteger sessionId, String seatCode) {
-        return "N" + String.format("%04d", concertId)
+    private String generateTicketNumber(Concert concert, BigInteger sessionId, String seatCode) {
+        Long concertId = concert.getId();
+        String ticketNumber;
+
+        if (concert.getIsResaleAllowed()) {
+            ticketNumber = "R";
+        } else {
+            ticketNumber = "N";
+        }
+
+        return ticketNumber + String.format("%04d", concertId)
                 + String.format("%05d", sessionId)
                 + seatCode;
     }
