@@ -1,5 +1,6 @@
 package com.example.demo.domain.resale.converter;
 
+import com.example.demo.domain.resale.dto.response.ResaleCardDTO;
 import com.example.demo.domain.resale.entity.Resale;
 import com.example.demo.domain.resale.enums.ResaleStatus;
 import com.example.demo.domain.ticket.entity.Ticket;
@@ -17,6 +18,17 @@ public class ResaleConverter {
                 .priceKrw(priceKrw)
                 .priceWei(priceWei)
                 .resaleStatus(ResaleStatus.AVAILABLE)
+                .build();
+    }
+
+    public static ResaleCardDTO toResaleCardDTO(Resale resale, String photoCardUrl){
+        return ResaleCardDTO.builder()
+                .resaleId(resale.getId())
+                .ticketId(resale.getTicket().getId())
+                .priceKrw(resale.getPriceKrw())
+                .seatCode(resale.getTicket().getMetadata().getSeatCode())
+                .resaleStatus(resale.getResaleStatus())
+                .photoCardUrl(photoCardUrl)
                 .build();
     }
 }

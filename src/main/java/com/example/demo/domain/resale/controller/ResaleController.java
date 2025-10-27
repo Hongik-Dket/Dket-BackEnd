@@ -1,11 +1,14 @@
 package com.example.demo.domain.resale.controller;
 
 import com.example.demo.domain.resale.dto.request.ResaleListingDTO;
+import com.example.demo.domain.resale.dto.response.ResaleCardDTO;
 import com.example.demo.domain.resale.service.ResaleService;
 import com.example.demo.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.example.demo.global.response.status.SuccessStatus._OK;
 
@@ -25,5 +28,13 @@ public class ResaleController {
         resaleService.createResale(ticketId, request);
 
         return ApiResponse.onSuccess(_OK, null);
+    }
+
+    @Operation(summary = "특정 세션 리세일 티켓 조회")
+    @GetMapping("")
+    public ApiResponse<List<ResaleCardDTO>> getSessionResales(
+            @RequestParam("sessionId") Long sessionId
+    ) {
+        return ApiResponse.onSuccess(_OK, resaleService.getSessionResales(sessionId));
     }
 }

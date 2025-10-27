@@ -1,6 +1,8 @@
 package com.example.demo.domain.resale.service;
 
 import com.example.demo.domain.concert.entity.Session;
+import com.example.demo.domain.concert.repository.SessionRepository;
+import com.example.demo.domain.resale.dto.response.ResaleCardDTO;
 import com.example.demo.domain.resale.repository.ResaleRepository;
 import com.example.demo.domain.resale.dto.request.ResaleListingDTO;
 import com.example.demo.domain.resale.entity.Resale;
@@ -13,6 +15,7 @@ import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.base.Constants;
 import com.example.demo.global.infra.blockchain.service.DketResaleService;
 import com.example.demo.global.infra.blockchain.service.ExchangeService;
+import com.example.demo.global.infra.ipfs.PinataService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import jakarta.persistence.LockTimeoutException;
@@ -25,8 +28,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.EnumSet;
+import java.util.List;
 
 import static com.example.demo.domain.resale.converter.ResaleConverter.toResale;
+import static com.example.demo.domain.resale.converter.ResaleConverter.toResaleCardDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +43,8 @@ public class ResaleServiceImpl implements ResaleService {
     private final TicketRepository ticketRepository;
     private final ExchangeService exchangeService;
     private final DketResaleService dketResaleService;
+    private final SessionRepository sessionRepository;
+    private final PinataService pinataService;
 
     @Override
     @Transactional
@@ -74,6 +81,22 @@ public class ResaleServiceImpl implements ResaleService {
         if (resale.getTxHash() == null) {
             resale.setTxHash(dketResaleService.listResaleOnChain(resale));
         }
+    }
+
+    @Override
+    public List<ResaleCardDTO> getSessionResales(Long sessionId) {
+        if (!sessionRepository.existsById(sessionId)) {
+            throw new CustomException(ErrorStatus.SESSION_NOT_FOUND);
+        }
+
+        List<Resale> resaleList = resaleRepository.findSessionResalesSorted(sessionId);
+
+        return resaleList.stream()
+                .map(resale -> toResaleCardDTO(
+                        resale,
+                        pinataService.cidToHttp(resale.getTicket().getMetadata().getPhotoCard().getCid())
+                ))
+                .toList();
     }
 
     private void validateResaleListing(Long sellerId, Ticket ticket, int priceKrw) {
