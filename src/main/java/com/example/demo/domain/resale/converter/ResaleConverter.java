@@ -1,6 +1,8 @@
 package com.example.demo.domain.resale.converter;
 
+import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.resale.dto.response.ResaleCardDTO;
+import com.example.demo.domain.resale.dto.response.ResaleDetailDTO;
 import com.example.demo.domain.resale.entity.Resale;
 import com.example.demo.domain.resale.enums.ResaleStatus;
 import com.example.demo.domain.ticket.entity.Ticket;
@@ -28,6 +30,23 @@ public class ResaleConverter {
                 .priceKrw(resale.getPriceKrw())
                 .seatCode(resale.getTicket().getMetadata().getSeatCode())
                 .resaleStatus(resale.getResaleStatus())
+                .photoCardUrl(photoCardUrl)
+                .build();
+    }
+
+    public static ResaleDetailDTO toResaleDetailDTO(Resale resale, String photoCardUrl){
+        Concert concert = resale.getSession().getConcert();
+
+        return ResaleDetailDTO.builder()
+                .resaleId(resale.getId())
+                .concertTitle(concert.getTitle())
+                .location(concert.getLocation())
+                .date(resale.getSession().getDate())
+                .startTime(concert.getStartTime())
+                .seatCode(resale.getTicket().getMetadata().getSeatCode())
+                .originalPrice(concert.getPriceKrw())
+                .priceKrw(resale.getPriceKrw())
+                .priceWei(resale.getPriceWei())
                 .photoCardUrl(photoCardUrl)
                 .build();
     }

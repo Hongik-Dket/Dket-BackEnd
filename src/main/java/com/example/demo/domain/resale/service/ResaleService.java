@@ -2,6 +2,7 @@ package com.example.demo.domain.resale.service;
 
 import com.example.demo.domain.resale.dto.request.ResaleListingDTO;
 import com.example.demo.domain.resale.dto.response.ResaleCardDTO;
+import com.example.demo.domain.resale.dto.response.ResaleDetailDTO;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -12,4 +13,6 @@ public interface ResaleService {
     void listResale(String ownerWalletAddress, BigInteger tokenId);
 
     List<ResaleCardDTO> getSessionResales(Long sessionId);
+
+    ResaleDetailDTO reserveResale(Long resaleId);
 }

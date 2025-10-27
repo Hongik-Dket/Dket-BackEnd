@@ -3,6 +3,7 @@ package com.example.demo.domain.resale.service;
 import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.domain.resale.dto.response.ResaleCardDTO;
+import com.example.demo.domain.resale.dto.response.ResaleDetailDTO;
 import com.example.demo.domain.resale.repository.ResaleRepository;
 import com.example.demo.domain.resale.dto.request.ResaleListingDTO;
 import com.example.demo.domain.resale.entity.Resale;
@@ -30,8 +31,7 @@ import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.List;
 
-import static com.example.demo.domain.resale.converter.ResaleConverter.toResale;
-import static com.example.demo.domain.resale.converter.ResaleConverter.toResaleCardDTO;
+import static com.example.demo.domain.resale.converter.ResaleConverter.*;
 
 @Service
 @RequiredArgsConstructor
@@ -99,6 +99,31 @@ public class ResaleServiceImpl implements ResaleService {
                 .toList();
     }
 
+    @Override
+    @Transactional
+    public ResaleDetailDTO reserveResale(Long resaleId) {
+        User user = userService.getCurrentUser();
+
+        Resale resale;
+
+        try {
+            resale = resaleRepository.findByIdForUpdate(resaleId)
+                    .orElseThrow(() -> new CustomException(ErrorStatus.RESALE_NOT_FOUND));
+        } catch (PessimisticLockException | LockTimeoutException e) {
+            throw new CustomException(ErrorStatus.RESALE_CONFLICT);
+        }
+
+        validateResaleReservation(resale, user);
+
+        resale.setReservation(user);
+
+        String photoCardUrl = pinataService.cidToHttp(resale.getTicket().getMetadata().getPhotoCard().getCid());
+
+        // todo: scheduling
+
+        return toResaleDetailDTO(resale, photoCardUrl);
+    }
+
     private void validateResaleListing(Long sellerId, Ticket ticket, int priceKrw) {
         if (priceKrw <= 0) {
             throw new CustomException(ErrorStatus.RESALE_INVALID_PRICE);
@@ -127,6 +152,18 @@ public class ResaleServiceImpl implements ResaleService {
             if (price.compareTo(basePrice.multiply(Constants.RESALE_PRICE_LIMIT_RATE)) > 0) {
                 throw new CustomException(ErrorStatus.RESALE_PRICE_LIMIT_EXCEEDED);
             }
+        }
+    }
+
+    private void validateResaleReservation(Resale resale, User user) {
+        if (!resale.getResaleStatus().equals(ResaleStatus.AVAILABLE) || resale.getReservedBy() != null) {
+            throw new CustomException(ErrorStatus.RESALE_ALREADY_RESERVED);
+        }
+
+        if ((resale.getSeller().equals(user))
+        || (resale.getSession().getConcert().getOrganizer().equals(user))
+        || (ticketRepository.existsByUserIdAndSessionId(user.getId(), resale.getSession().getId()))) {
+            throw new CustomException(ErrorStatus.TICKET_INVALID_BUYER);
         }
     }
 }

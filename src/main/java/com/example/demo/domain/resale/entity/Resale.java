@@ -73,7 +73,9 @@ public class Resale extends BaseEntity {
     }
 
     public void cancelReservation() {
-        this.resaleStatus = ResaleStatus.AVAILABLE;
+        if (this.resaleStatus == ResaleStatus.RESERVED) {
+            this.resaleStatus = ResaleStatus.AVAILABLE;
+        }
         this.reservedBy = null;
         this.reservationExpiresAt = null;
     }
