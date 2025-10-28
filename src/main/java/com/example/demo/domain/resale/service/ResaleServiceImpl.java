@@ -11,7 +11,6 @@ import com.example.demo.domain.resale.enums.ResaleStatus;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.ticket.repository.TicketRepository;
 import com.example.demo.domain.user.entity.User;
-import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.base.Constants;
 import com.example.demo.global.infra.blockchain.service.DketResaleService;
@@ -26,6 +25,8 @@ import jakarta.persistence.PessimisticLockException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -106,7 +107,6 @@ public class ResaleServiceImpl implements ResaleService {
     @Transactional
     public ResaleDetailDTO reserveResale(Long resaleId) {
         User user = userService.getCurrentUser();
-
         Resale resale;
 
         try {
@@ -124,6 +124,32 @@ public class ResaleServiceImpl implements ResaleService {
         String photoCardUrl = pinataService.cidToHttp(resale.getTicket().getMetadata().getPhotoCard().getCid());
 
         return toResaleDetailDTO(resale, photoCardUrl);
+    }
+
+    @Override
+    @Transactional
+    public void cancelResaleReservation(Long resaleId) {
+        User user = userService.getCurrentUser();
+        Resale resale;
+
+        try {
+            resale = resaleRepository.findByIdForUpdate(resaleId)
+                    .orElseThrow(() -> new CustomException(ErrorStatus.RESALE_NOT_FOUND));
+        } catch (PessimisticLockException | LockTimeoutException e) {
+            throw new CustomException(ErrorStatus.RESALE_CONFLICT);
+        }
+
+        if (!validateResaleReservationCancellation(resale, user)) {
+            return;
+        }
+        resale.cancelReservation();
+
+        String jobName = "CancelReservationJob_" + resaleId;
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override public void afterCommit() {
+                schedulingService.cancelJob(jobName);
+            }
+        });
     }
 
     private void validateResaleListing(Long sellerId, Ticket ticket, int priceKrw) {
@@ -167,5 +193,19 @@ public class ResaleServiceImpl implements ResaleService {
         || (ticketRepository.existsByUserIdAndSessionId(user.getId(), resale.getSession().getId()))) {
             throw new CustomException(ErrorStatus.TICKET_INVALID_BUYER);
         }
+    }
+
+    private boolean validateResaleReservationCancellation(Resale resale, User user) {
+        if ((resale.getResaleStatus() != ResaleStatus.RESERVED)
+        || (resale.getReservationExpiresAt() != null &&
+                resale.getReservationExpiresAt().isBefore(LocalDateTime.now()))) {
+            return false;
+        }
+
+        if (!resale.getReservedBy().getId().equals(user.getId())) {
+            throw new CustomException(ErrorStatus.RESALE_RESERVATION_FORBIDDEN);
+        }
+
+        return true;
     }
 }

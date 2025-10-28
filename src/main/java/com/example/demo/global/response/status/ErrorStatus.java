@@ -93,6 +93,7 @@ public enum ErrorStatus implements BaseErrorCode {
     RESALE_ALREADY_LISTED(HttpStatus.BAD_REQUEST, "RESALE_4003", "아직 판매 중인 리세일이 있는 티켓입니다."),
     RESALE_PRICE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "RESALE_4004", "리세일 가격 상한을 초과하였습니다."),
     RESALE_ALREADY_RESERVED(HttpStatus.BAD_REQUEST, "RESALE_4005", "이미 예약된 리세일입니다."),
+    RESALE_RESERVATION_FORBIDDEN(HttpStatus.FORBIDDEN, "RESALE_4006", "본인이 예약하지 않은 리세일입니다."),
     RESALE_CONFLICT(HttpStatus.INTERNAL_SERVER_ERROR, "RESALE_5001", "리세일 락 획득에 실패했습니다."),
 
     ;

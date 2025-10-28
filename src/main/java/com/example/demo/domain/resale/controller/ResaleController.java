@@ -47,4 +47,14 @@ public class ResaleController {
     ) {
         return ApiResponse.onSuccess(_OK, resaleService.reserveResale(resaleId));
     }
+
+    @Operation(summary = "리세일 예약 취소")
+    @DeleteMapping("/{resaleId}/reserve")
+    public ApiResponse<?> cancelResaleReservation(
+            @PathVariable("resaleId") Long resaleId
+    ) {
+        resaleService.cancelResaleReservation(resaleId);
+
+        return ApiResponse.onSuccess(_OK, null);
+    }
 }

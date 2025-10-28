@@ -15,4 +15,6 @@ public interface ResaleService {
     List<ResaleCardDTO> getSessionResales(Long sessionId);
 
     ResaleDetailDTO reserveResale(Long resaleId);
+
+    void cancelResaleReservation(Long resaleId);
 }
