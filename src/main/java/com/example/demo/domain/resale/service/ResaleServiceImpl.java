@@ -17,6 +17,8 @@ import com.example.demo.global.base.Constants;
 import com.example.demo.global.infra.blockchain.service.DketResaleService;
 import com.example.demo.global.infra.blockchain.service.ExchangeService;
 import com.example.demo.global.infra.ipfs.PinataService;
+import com.example.demo.global.infra.scheduling.SchedulingService;
+import com.example.demo.global.infra.scheduling.jobs.resale.CancelReservationJob;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import jakarta.persistence.LockTimeoutException;
@@ -45,6 +47,7 @@ public class ResaleServiceImpl implements ResaleService {
     private final DketResaleService dketResaleService;
     private final SessionRepository sessionRepository;
     private final PinataService pinataService;
+    private final SchedulingService schedulingService;
 
     @Override
     @Transactional
@@ -116,10 +119,9 @@ public class ResaleServiceImpl implements ResaleService {
         validateResaleReservation(resale, user);
 
         resale.setReservation(user);
+        schedulingService.scheduleResaleJob(resale, CancelReservationJob.class);
 
         String photoCardUrl = pinataService.cidToHttp(resale.getTicket().getMetadata().getPhotoCard().getCid());
-
-        // todo: scheduling
 
         return toResaleDetailDTO(resale, photoCardUrl);
     }

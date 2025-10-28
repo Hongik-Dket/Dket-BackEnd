@@ -5,6 +5,7 @@ import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.concert.enums.ConcertStatus;
 import com.example.demo.domain.concert.repository.ConcertRepository;
 import com.example.demo.domain.concert.repository.SessionRepository;
+import com.example.demo.domain.resale.entity.Resale;
 import com.example.demo.global.base.Constants;
 import com.example.demo.global.infra.scheduling.dto.SchedulingResponseDTO;
 import com.example.demo.global.infra.scheduling.jobs.concert.*;
@@ -136,6 +137,13 @@ public class SchedulingService {
         scheduleJob(jobName, jobClass, triggerTime, Map.of("sessionId", session.getId()));
     }
 
+    public void scheduleResaleJob(Resale resale, Class<? extends  Job> jobClass) {
+        String jobName = jobClass.getSimpleName() + "_" + resale.getId();
+        LocalDateTime triggerTime = resale.getReservationExpiresAt();
+
+        scheduleJob(jobName, jobClass, triggerTime, Map.of("resaleId", resale.getId()));
+    }
+
     public SchedulingResponseDTO getJobKeys() {
         Set<JobKey> jobKeys = new HashSet<>();
 
@@ -176,6 +184,21 @@ public class SchedulingService {
 
         } catch (SchedulerException e) {
             handleSchedulerException(e);
+        }
+    }
+
+    public void cancelJob(String jobName) {
+        try {
+            JobKey jobKey = JobKey.jobKey(jobName);
+            TriggerKey triggerKey = TriggerKey.triggerKey(jobName);
+
+            if (scheduler.checkExists(jobKey)) {
+                scheduler.unscheduleJob(triggerKey);
+                scheduler.deleteJob(jobKey);
+            }
+
+        } catch (SchedulerException e) {
+            throw new CustomException(ErrorStatus.JOB_CANCEL_FAILED);
         }
     }
 
