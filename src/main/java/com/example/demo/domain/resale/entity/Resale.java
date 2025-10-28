@@ -73,11 +73,16 @@ public class Resale extends BaseEntity {
     }
 
     public void cancelReservation() {
-        if (this.resaleStatus == ResaleStatus.RESERVED) {
+        if ((this.resaleStatus == ResaleStatus.RESERVED) || (this.resaleStatus == ResaleStatus.PENDING)) {
             this.resaleStatus = ResaleStatus.AVAILABLE;
         }
         this.reservedBy = null;
         this.reservationExpiresAt = null;
+    }
+
+    public void prepare() {
+        this.reservationExpiresAt = this.reservationExpiresAt.plusMinutes(Constants.RESALE_RESERVATION_EXPIRATION_MINUTES);
+        this.resaleStatus = ResaleStatus.PENDING;
     }
 
     public void sell() {

@@ -1,6 +1,7 @@
 package com.example.demo.domain.resale.service;
 
 import com.example.demo.domain.resale.dto.request.ResaleListingDTO;
+import com.example.demo.domain.resale.dto.response.ResaleAuthDTO;
 import com.example.demo.domain.resale.dto.response.ResaleCardDTO;
 import com.example.demo.domain.resale.dto.response.ResaleDetailDTO;
 
@@ -17,4 +18,6 @@ public interface ResaleService {
     ResaleDetailDTO reserveResale(Long resaleId);
 
     void cancelResaleReservation(Long resaleId);
+
+    ResaleAuthDTO authorizeResalePurchase(Long resaleId);
 }

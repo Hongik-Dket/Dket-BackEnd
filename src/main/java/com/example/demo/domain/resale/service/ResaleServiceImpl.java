@@ -2,6 +2,7 @@ package com.example.demo.domain.resale.service;
 
 import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.concert.repository.SessionRepository;
+import com.example.demo.domain.resale.dto.response.ResaleAuthDTO;
 import com.example.demo.domain.resale.dto.response.ResaleCardDTO;
 import com.example.demo.domain.resale.dto.response.ResaleDetailDTO;
 import com.example.demo.domain.resale.repository.ResaleRepository;
@@ -31,8 +32,10 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 
 import static com.example.demo.domain.resale.converter.ResaleConverter.*;
 
@@ -152,6 +155,47 @@ public class ResaleServiceImpl implements ResaleService {
         });
     }
 
+    @Override
+    @Transactional
+    public ResaleAuthDTO authorizeResalePurchase(Long resaleId) {
+        User user = userService.getCurrentUser();
+        Resale resale;
+
+        try {
+            resale = resaleRepository.findByIdForUpdate(resaleId)
+                    .orElseThrow(() -> new CustomException(ErrorStatus.RESALE_NOT_FOUND));
+        } catch (PessimisticLockException | LockTimeoutException e) {
+            throw new CustomException(ErrorStatus.RESALE_CONFLICT);
+        }
+
+        validateResalePurchase(resale, user);
+
+        resale.prepare();
+
+        String jobName = "CancelReservationJob_" + resaleId;
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override public void afterCommit() {
+                schedulingService.cancelJob(jobName);
+                schedulingService.scheduleResaleJob(resale, CancelReservationJob.class);
+            }
+        });
+
+        ZoneId zone = ZoneId.of("Asia/Seoul");
+        long expireAt = resale.getReservationExpiresAt()
+                .atZone(zone)
+                .toEpochSecond();
+
+        // todo: 서명 생성
+        String signature = "";
+
+        return ResaleAuthDTO.builder()
+                .tokenId(resale.getTicket().getTokenId())
+                .expireAt(BigInteger.valueOf(expireAt))
+                .signature(signature)
+                .build();
+
+    }
+
     private void validateResaleListing(Long sellerId, Ticket ticket, int priceKrw) {
         if (priceKrw <= 0) {
             throw new CustomException(ErrorStatus.RESALE_INVALID_PRICE);
@@ -207,5 +251,15 @@ public class ResaleServiceImpl implements ResaleService {
         }
 
         return true;
+    }
+
+    private void validateResalePurchase(Resale resale, User user) {
+        if ((resale.getResaleStatus() != ResaleStatus.RESERVED)
+                || ((resale.getReservationExpiresAt() != null)
+                        && (resale.getReservationExpiresAt().isBefore(LocalDateTime.now())))
+                || (!resale.getReservedBy().getId().equals(user.getId()))
+        ) {
+            throw new CustomException(ErrorStatus.RESALE_NOT_RESERVED_USER);
+        }
     }
 }

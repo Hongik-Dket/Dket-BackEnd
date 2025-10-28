@@ -2,6 +2,7 @@ package com.example.demo.domain.resale.controller;
 
 import com.beust.ah.A;
 import com.example.demo.domain.resale.dto.request.ResaleListingDTO;
+import com.example.demo.domain.resale.dto.response.ResaleAuthDTO;
 import com.example.demo.domain.resale.dto.response.ResaleCardDTO;
 import com.example.demo.domain.resale.dto.response.ResaleDetailDTO;
 import com.example.demo.domain.resale.service.ResaleService;
@@ -56,5 +57,13 @@ public class ResaleController {
         resaleService.cancelResaleReservation(resaleId);
 
         return ApiResponse.onSuccess(_OK, null);
+    }
+
+    @Operation(summary = "리세일 구매 서명 요청")
+    @PostMapping("/{resaleId}/purchase")
+    public ApiResponse<ResaleAuthDTO> authorizeResalePurchase(
+            @PathVariable("resaleId") Long resaleId
+    ) {
+      return ApiResponse.onSuccess(_OK, resaleService.authorizeResalePurchase(resaleId));
     }
 }
