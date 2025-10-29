@@ -1,5 +1,6 @@
 package com.example.demo.global.config;
 
+import com.example.demo.global.infra.blockchain.ResaleSigner;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,12 @@ public class Web3jConfig {
     @Value("${web3.private-key}")
     private String privateKey;
 
+    @Value("${web3.chain-id}")
+    private long chainId;
+
+    @Value("${web3.resale-contract-address}")
+    private String verifyingContract;          // DketResale
+
     @Bean
     public Web3j web3j() {
         return Web3j.build(new HttpService(networkUrl));
@@ -26,5 +33,10 @@ public class Web3jConfig {
     @Bean
     public Credentials credentials() {
         return Credentials.create(privateKey);
+    }
+
+    @Bean
+    public ResaleSigner resaleSigner() {
+        return new ResaleSigner(credentials(), chainId, verifyingContract);
     }
 }

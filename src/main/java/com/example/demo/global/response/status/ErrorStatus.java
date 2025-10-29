@@ -97,6 +97,11 @@ public enum ErrorStatus implements BaseErrorCode {
     RESALE_NOT_RESERVED_USER(HttpStatus.BAD_REQUEST, "RESALE_4007", "현재 사용자가 예약한 리세일이 아닙니다."),
     RESALE_CONFLICT(HttpStatus.INTERNAL_SERVER_ERROR, "RESALE_5001", "리세일 락 획득에 실패했습니다."),
 
+    RESALE_AUTH_NO_TEMPLATE(HttpStatus.NOT_FOUND, "RESALE_AUTH_4001", "서명 템플릿을 찾을 수 없습니다."),
+    RESALE_AUTH_INVALID_ADDRESS(HttpStatus.BAD_REQUEST, "RESALE_AUTH_4002", "잘못된 주소입니다."),
+    RESALE_AUTH_WRONG_PARAMETER(HttpStatus.BAD_REQUEST, "RESALE_AUTH_4003", "잘못된 파라미터입니다."),
+    RESALE_AUTH_SIGN_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "RESALE_AUTH_5001", "EIP-712 서명에 실패했습니다."),
+    RESALE_AUTH_TYPEDDATA_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "RESALE_AUTH_5002", "TypedDateJson 생성에 실패했습니다."),
     ;
 
     private final HttpStatus httpStatus;

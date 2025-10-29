@@ -14,6 +14,7 @@ import com.example.demo.domain.ticket.repository.TicketRepository;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.base.Constants;
+import com.example.demo.global.infra.blockchain.ResaleSigner;
 import com.example.demo.global.infra.blockchain.service.DketResaleService;
 import com.example.demo.global.infra.blockchain.service.ExchangeService;
 import com.example.demo.global.infra.ipfs.PinataService;
@@ -52,6 +53,7 @@ public class ResaleServiceImpl implements ResaleService {
     private final SessionRepository sessionRepository;
     private final PinataService pinataService;
     private final SchedulingService schedulingService;
+    private final ResaleSigner resaleSigner;
 
     @Override
     @Transactional
@@ -185,8 +187,13 @@ public class ResaleServiceImpl implements ResaleService {
                 .atZone(zone)
                 .toEpochSecond();
 
-        // todo: 서명 생성
-        String signature = "";
+        String signature = resaleSigner.signPermitPurchase(
+                user.getWalletAddress(),
+                resale.getId(),
+                resale.getTicket().getTokenId(),
+                resale.getPriceWei(),
+                BigInteger.valueOf(expireAt)
+        );
 
         return ResaleAuthDTO.builder()
                 .tokenId(resale.getTicket().getTokenId())
