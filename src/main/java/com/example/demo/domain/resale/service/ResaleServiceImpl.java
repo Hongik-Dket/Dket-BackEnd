@@ -203,6 +203,15 @@ public class ResaleServiceImpl implements ResaleService {
 
     }
 
+    @Override
+    @Transactional
+    public void completeResalePurchase(Long resaleId) {
+        Resale resale = resaleRepository.findById(resaleId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.RESALE_NOT_FOUND));
+
+        resale.sell();
+    }
+
     private void validateResaleListing(Long sellerId, Ticket ticket, int priceKrw) {
         if (priceKrw <= 0) {
             throw new CustomException(ErrorStatus.RESALE_INVALID_PRICE);

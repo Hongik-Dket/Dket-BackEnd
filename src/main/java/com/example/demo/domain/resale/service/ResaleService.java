@@ -20,4 +20,6 @@ public interface ResaleService {
     void cancelResaleReservation(Long resaleId);
 
     ResaleAuthDTO authorizeResalePurchase(Long resaleId);
+
+    void completeResalePurchase(Long resaleId);
 }

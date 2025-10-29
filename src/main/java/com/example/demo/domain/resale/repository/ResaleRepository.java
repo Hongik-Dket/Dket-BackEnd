@@ -51,4 +51,6 @@ public interface ResaleRepository extends JpaRepository<Resale, Long> {
     @Query("select r from Resale r where r.id = :id")
     @QueryHints(@QueryHint(name = "jakarta.persistence.lock.timeout", value = "3000"))
     Optional<Resale> findByIdForUpdate(@Param("id") Long id);
+
+    Optional<Resale> findById(Long id);
 }
