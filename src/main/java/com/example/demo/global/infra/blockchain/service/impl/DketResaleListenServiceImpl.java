@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.tx.gas.DefaultGasProvider;
 
@@ -38,7 +39,20 @@ public class DketResaleListenServiceImpl implements DketResaleListenService {
                 new DefaultGasProvider()
         );
 
+        listenToResaleListed();
         listenToResaleSold();
+    }
+
+    private void listenToResaleListed() {
+        dketResale.resaleListedEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST)
+                .subscribe(event -> {
+                    Long resaleId = event.resaleId.longValue();
+                    resaleService.completeResaleListing(resaleId);
+                },
+                error -> {
+                    log.error("resaleListed 이벤트 수신 중 예외 발생", error);
+                    }
+                );
     }
 
     private void listenToResaleSold() {

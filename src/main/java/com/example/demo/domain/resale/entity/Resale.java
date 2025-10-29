@@ -66,6 +66,17 @@ public class Resale extends BaseEntity {
 
     public void setTxHash(String txHash) { this.txHash = txHash; }
 
+    public void completeListing() {
+        if (resaleStatus.equals(ResaleStatus.LISTING)) {
+            this.resaleStatus = ResaleStatus.AVAILABLE;
+        }
+    }
+    public void cancelListing() {
+        if (resaleStatus.equals(ResaleStatus.LISTING)) {
+            this.resaleStatus = ResaleStatus.CANCELED;
+        }
+    }
+
     public void setReservation(User user) {
         this.resaleStatus = ResaleStatus.RESERVED;
         this.reservedBy = user;

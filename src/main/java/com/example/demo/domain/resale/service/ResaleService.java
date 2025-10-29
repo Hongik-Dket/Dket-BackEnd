@@ -13,6 +13,8 @@ public interface ResaleService {
 
     void listResale(String ownerWalletAddress, BigInteger tokenId);
 
+    void completeResaleListing(Long resaleId);
+
     List<ResaleCardDTO> getSessionResales(Long sessionId);
 
     ResaleDetailDTO reserveResale(Long resaleId);

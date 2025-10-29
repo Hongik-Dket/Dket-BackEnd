@@ -22,4 +22,7 @@ public class Constants {
     // 리세일 수익 중 개최자 로열티 비율 (10%)
     public static final BigDecimal ORGANIZER_ROYALTY_RATE = BigDecimal.valueOf(0.10);
 
+    // 리세일 온체인 등록 대기 시간(분 단위)
+    public static final int RESALE_LISTING_TIMEOUT = 10;
+
 }

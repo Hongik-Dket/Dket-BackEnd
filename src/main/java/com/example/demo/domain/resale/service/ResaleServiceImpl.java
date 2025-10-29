@@ -19,6 +19,7 @@ import com.example.demo.global.infra.blockchain.service.DketResaleService;
 import com.example.demo.global.infra.blockchain.service.ExchangeService;
 import com.example.demo.global.infra.ipfs.PinataService;
 import com.example.demo.global.infra.scheduling.SchedulingService;
+import com.example.demo.global.infra.scheduling.jobs.resale.CancelListingJob;
 import com.example.demo.global.infra.scheduling.jobs.resale.CancelReservationJob;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
@@ -84,12 +85,35 @@ public class ResaleServiceImpl implements ResaleService {
 
         Resale resale = resaleRepository
                 .findBySellerWalletAddressAndTicketTokenIdAndResaleStatusIn(
-                        owner, tokenId, EnumSet.of(ResaleStatus.AVAILABLE, ResaleStatus.RESERVED))
+                        owner, tokenId, EnumSet.of(ResaleStatus.LISTING))
                 .orElseThrow(() -> new CustomException(ErrorStatus.RESALE_NOT_FOUND));
 
         if (resale.getTxHash() == null) {
+            schedulingService.scheduleResaleJob(resale, CancelListingJob.class);
             resale.setTxHash(dketResaleService.listResaleOnChain(resale));
         }
+    }
+
+    @Override
+    @Transactional
+    public void completeResaleListing(Long resaleId) {
+        Resale resale;
+
+        try {
+            resale = resaleRepository.findByIdForUpdate(resaleId)
+                    .orElseThrow(() -> new CustomException(ErrorStatus.RESALE_NOT_FOUND));
+        } catch (PessimisticLockException | LockTimeoutException e) {
+            throw new CustomException(ErrorStatus.RESALE_CONFLICT);
+        }
+
+        resale.completeListing();
+
+        String jobName = "CancelListingJob_" + resaleId;
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override public void afterCommit() {
+                schedulingService.cancelJob(jobName);
+            }
+        });
     }
 
     @Override
@@ -210,6 +234,7 @@ public class ResaleServiceImpl implements ResaleService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.RESALE_NOT_FOUND));
 
         resale.sell();
+
     }
 
     private void validateResaleListing(Long sellerId, Ticket ticket, int priceKrw) {
@@ -227,7 +252,7 @@ public class ResaleServiceImpl implements ResaleService {
             throw new CustomException(ErrorStatus.RESALE_NOT_ALLOWED);
         }
 
-        if (resaleRepository.existsByTicketIdAndResaleStatusIn(ticket.getId(), EnumSet.of(ResaleStatus.AVAILABLE, ResaleStatus.RESERVED))) {
+        if (resaleRepository.existsByTicketIdAndResaleStatusIn(ticket.getId(), EnumSet.of(ResaleStatus.LISTING, ResaleStatus.AVAILABLE, ResaleStatus.RESERVED))) {
             throw new CustomException(ErrorStatus.RESALE_ALREADY_LISTED);
         }
 

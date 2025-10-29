@@ -19,7 +19,7 @@ public class ResaleConverter {
                 .seller(seller)
                 .priceKrw(priceKrw)
                 .priceWei(priceWei)
-                .resaleStatus(ResaleStatus.AVAILABLE)
+                .resaleStatus(ResaleStatus.LISTING)
                 .build();
     }
 

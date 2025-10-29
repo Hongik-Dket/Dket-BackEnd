@@ -138,9 +138,21 @@ public class SchedulingService {
     }
 
     public void scheduleResaleJob(Resale resale, Class<? extends  Job> jobClass) {
-        String jobName = jobClass.getSimpleName() + "_" + resale.getId();
-        LocalDateTime triggerTime = resale.getReservationExpiresAt();
+        String jobName = jobClass.getSimpleName();
+        LocalDateTime triggerTime = null;
 
+        switch (jobName) {
+            case "CancelListingJob":
+                triggerTime = LocalDateTime.now().plusMinutes(Constants.RESALE_LISTING_TIMEOUT);
+                break;
+            case "CancelReservationJob":
+                triggerTime = resale.getReservationExpiresAt();
+                break;
+            default:
+                throw new CustomException(ErrorStatus.INVALID_JOB_CLASS);
+        }
+
+        jobName += "_" + resale.getId();
         scheduleJob(jobName, jobClass, triggerTime, Map.of("resaleId", resale.getId()));
     }
 
