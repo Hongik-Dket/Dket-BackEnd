@@ -67,12 +67,12 @@ public class Resale extends BaseEntity {
     public void setTxHash(String txHash) { this.txHash = txHash; }
 
     public void completeListing() {
-        if (resaleStatus.equals(ResaleStatus.LISTING)) {
+        if (this.resaleStatus == ResaleStatus.LISTING) {
             this.resaleStatus = ResaleStatus.AVAILABLE;
         }
     }
     public void cancelListing() {
-        if (resaleStatus.equals(ResaleStatus.LISTING)) {
+        if (this.resaleStatus == ResaleStatus.LISTING) {
             this.resaleStatus = ResaleStatus.CANCELED;
         }
     }
@@ -92,7 +92,7 @@ public class Resale extends BaseEntity {
     }
 
     public void prepare() {
-        this.reservationExpiresAt = this.reservationExpiresAt.plusMinutes(Constants.RESALE_RESERVATION_EXPIRATION_MINUTES);
+        this.reservationExpiresAt = this.reservationExpiresAt.plusMinutes(Constants.ONCHAIN_TIMEOUT);
         this.resaleStatus = ResaleStatus.PENDING;
     }
 

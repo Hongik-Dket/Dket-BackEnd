@@ -143,7 +143,7 @@ public class SchedulingService {
 
         switch (jobName) {
             case "CancelListingJob":
-                triggerTime = LocalDateTime.now().plusMinutes(Constants.RESALE_LISTING_TIMEOUT);
+                triggerTime = LocalDateTime.now().plusMinutes(Constants.ONCHAIN_TIMEOUT);
                 break;
             case "CancelReservationJob":
                 triggerTime = resale.getReservationExpiresAt();

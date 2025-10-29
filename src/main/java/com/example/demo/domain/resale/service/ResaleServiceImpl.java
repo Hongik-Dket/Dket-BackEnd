@@ -76,6 +76,8 @@ public class ResaleServiceImpl implements ResaleService {
 
         Resale resale = toResale(ticket, user, priceKrw, priceWei);
         resaleRepository.save(resale);
+
+        schedulingService.scheduleResaleJob(resale, CancelListingJob.class);
     }
 
     @Override
@@ -89,7 +91,6 @@ public class ResaleServiceImpl implements ResaleService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.RESALE_NOT_FOUND));
 
         if (resale.getTxHash() == null) {
-            schedulingService.scheduleResaleJob(resale, CancelListingJob.class);
             resale.setTxHash(dketResaleService.listResaleOnChain(resale));
         }
     }
