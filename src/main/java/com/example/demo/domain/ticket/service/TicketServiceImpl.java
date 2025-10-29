@@ -131,7 +131,7 @@ public class TicketServiceImpl implements TicketService {
                 .existsByTicketIdAndSellerIdAndResaleStatusIn(
                         ticketId,
                         user.getId(),
-                        EnumSet.of(ResaleStatus.AVAILABLE, ResaleStatus.RESERVED)
+                        EnumSet.of(ResaleStatus.LISTING, ResaleStatus.AVAILABLE, ResaleStatus.RESERVED)
                 );
 
         return toTicketDetailDTO(ticket, getNftUrl(ticket), isResaleListed);
@@ -155,7 +155,7 @@ public class TicketServiceImpl implements TicketService {
                 .existsByTicketIdAndSellerIdAndResaleStatusIn(
                         ticket.getId(),
                         user.getId(),
-                        EnumSet.of(ResaleStatus.AVAILABLE, ResaleStatus.RESERVED)
+                        EnumSet.of(ResaleStatus.LISTING, ResaleStatus.AVAILABLE, ResaleStatus.RESERVED)
                 );
 
         return toTicketDetailDTO(ticket, getNftUrl(ticket), isResaleListed);

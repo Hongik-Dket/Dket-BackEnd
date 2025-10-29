@@ -37,7 +37,7 @@ public enum ErrorStatus implements BaseErrorCode {
     OAUTH_PROCESSING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "OAUTH_4002", "OAuth 로그인 처리에 실패했습니다."),
 
     TICKET_INVALID_SEAT(HttpStatus.BAD_REQUEST, "TICKET_4001", "좌석 코드는 0 이상 999999 이하의 숫자여야 합니다."),
-    TICKET_INVALID_BUYER(HttpStatus.BAD_REQUEST, "TICKET_4002", "해당 티켓을 결제할 수 없는 사용자입니다."),
+    TICKET_INVALID_BUYER(HttpStatus.BAD_REQUEST, "TICKET_4002", "해당 티켓을 구매할 수 없는 사용자입니다."),
     TICKET_NOT_FOUND(HttpStatus.BAD_REQUEST, "TICKET_4003", "해당 티켓을 찾을 수 없습니다."),
     TICKET_WRONG_PARAMETER(HttpStatus.BAD_REQUEST, "TICKET_4004", "id 또는 number 중 하나만 입력해야 합니다."),
     TICKET_INVALID_USER(HttpStatus.BAD_REQUEST, "TICKET_4005", "해당 티켓에 대한 권한이 없는 사용자입니다."),
@@ -92,8 +92,16 @@ public enum ErrorStatus implements BaseErrorCode {
     RESALE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "RESALE_4002", "리세일이 불가한 공연입니다."),
     RESALE_ALREADY_LISTED(HttpStatus.BAD_REQUEST, "RESALE_4003", "아직 판매 중인 리세일이 있는 티켓입니다."),
     RESALE_PRICE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "RESALE_4004", "리세일 가격 상한을 초과하였습니다."),
+    RESALE_ALREADY_RESERVED(HttpStatus.BAD_REQUEST, "RESALE_4005", "이미 예약된 리세일입니다."),
+    RESALE_RESERVATION_FORBIDDEN(HttpStatus.FORBIDDEN, "RESALE_4006", "본인이 예약하지 않은 리세일입니다."),
+    RESALE_NOT_RESERVED_USER(HttpStatus.BAD_REQUEST, "RESALE_4007", "현재 사용자가 예약한 리세일이 아닙니다."),
     RESALE_CONFLICT(HttpStatus.INTERNAL_SERVER_ERROR, "RESALE_5001", "리세일 락 획득에 실패했습니다."),
 
+    RESALE_AUTH_NO_TEMPLATE(HttpStatus.NOT_FOUND, "RESALE_AUTH_4001", "서명 템플릿을 찾을 수 없습니다."),
+    RESALE_AUTH_INVALID_ADDRESS(HttpStatus.BAD_REQUEST, "RESALE_AUTH_4002", "잘못된 주소입니다."),
+    RESALE_AUTH_WRONG_PARAMETER(HttpStatus.BAD_REQUEST, "RESALE_AUTH_4003", "잘못된 파라미터입니다."),
+    RESALE_AUTH_SIGN_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "RESALE_AUTH_5001", "EIP-712 서명에 실패했습니다."),
+    RESALE_AUTH_TYPEDDATA_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "RESALE_AUTH_5002", "TypedDateJson 생성에 실패했습니다."),
     ;
 
     private final HttpStatus httpStatus;

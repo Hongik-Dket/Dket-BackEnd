@@ -52,6 +52,7 @@ public class User extends BaseEntity {
     public void addConcert(Concert concert) { this.organizedConcerts.add(concert); }
     public void addApply(Apply apply) { this.applies.add(apply); }
     public void addTicket(Ticket ticket) { this.tickets.add(ticket); }
+    public void removeTicket(Ticket ticket) { this.tickets.remove(ticket); }
 
     public boolean isEligibleFor(AgeLimit ageLimit) {
         if (ageLimit == null) return true;

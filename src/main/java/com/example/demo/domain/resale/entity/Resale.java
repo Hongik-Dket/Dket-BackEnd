@@ -66,6 +66,17 @@ public class Resale extends BaseEntity {
 
     public void setTxHash(String txHash) { this.txHash = txHash; }
 
+    public void completeListing() {
+        if (this.resaleStatus == ResaleStatus.LISTING) {
+            this.resaleStatus = ResaleStatus.AVAILABLE;
+        }
+    }
+    public void cancelListing() {
+        if (this.resaleStatus == ResaleStatus.LISTING) {
+            this.resaleStatus = ResaleStatus.CANCELED;
+        }
+    }
+
     public void setReservation(User user) {
         this.resaleStatus = ResaleStatus.RESERVED;
         this.reservedBy = user;
@@ -73,9 +84,16 @@ public class Resale extends BaseEntity {
     }
 
     public void cancelReservation() {
-        this.resaleStatus = ResaleStatus.AVAILABLE;
+        if ((this.resaleStatus == ResaleStatus.RESERVED) || (this.resaleStatus == ResaleStatus.PENDING)) {
+            this.resaleStatus = ResaleStatus.AVAILABLE;
+        }
         this.reservedBy = null;
         this.reservationExpiresAt = null;
+    }
+
+    public void prepare() {
+        this.reservationExpiresAt = this.reservationExpiresAt.plusMinutes(Constants.ONCHAIN_TIMEOUT);
+        this.resaleStatus = ResaleStatus.PENDING;
     }
 
     public void sell() {
