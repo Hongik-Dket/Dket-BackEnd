@@ -234,7 +234,7 @@ public class ResaleServiceImpl implements ResaleService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.RESALE_NOT_FOUND));
 
         resale.sell();
-
+        resale.getTicket().resellTo(resale.getBuyer());
     }
 
     private void validateResaleListing(Long sellerId, Ticket ticket, int priceKrw) {

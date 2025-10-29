@@ -51,6 +51,13 @@ public class Ticket extends BaseEntity {
         user.addTicket(this);
     }
 
+    public void resellTo(User buyer) {
+        this.getUser().removeTicket(this);
+
+        this.user = buyer;
+        buyer.addTicket(this);
+    }
+
     public void setQrCode(String qrCode) { this.qrCode = qrCode; }
     public void enter() {this.enteredAt = LocalDateTime.now();}
 
