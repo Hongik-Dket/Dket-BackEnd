@@ -6,9 +6,13 @@ import com.example.demo.domain.concert.enums.ConcertStatus;
 import com.example.demo.domain.concert.repository.ConcertRepository;
 import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.domain.resale.entity.Resale;
+import com.example.demo.domain.resale.enums.ResaleStatus;
+import com.example.demo.domain.resale.repository.ResaleRepository;
 import com.example.demo.global.base.Constants;
 import com.example.demo.global.infra.scheduling.dto.SchedulingResponseDTO;
 import com.example.demo.global.infra.scheduling.jobs.concert.*;
+import com.example.demo.global.infra.scheduling.jobs.resale.CancelListingJob;
+import com.example.demo.global.infra.scheduling.jobs.resale.CancelReservationJob;
 import com.example.demo.global.infra.scheduling.jobs.session.ClosePaymentJob;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
@@ -31,6 +35,7 @@ public class SchedulingService {
     private final Scheduler scheduler;
     private final ConcertRepository concertRepository;
     private final SessionRepository sessionRepository;
+    private final ResaleRepository resaleRepository;
 
     private void scheduleJob(String jobName, Class<? extends Job> jobClass, LocalDateTime time, Map<String, Object> jobData) {
         try {
@@ -192,6 +197,20 @@ public class SchedulingService {
             List<Session> sessionList = sessionRepository.findByIsBuyableTrueAndIsDrawnTrueAndMetadataUploadedTrue();
             for (Session session : sessionList) {
                 scheduleSessionJob(session, ClosePaymentJob.class);
+            }
+
+            List<Resale> resaleList = resaleRepository.findByResaleStatusIn(
+                    EnumSet.of(ResaleStatus.LISTING, ResaleStatus.RESERVED, ResaleStatus.PENDING)
+            );
+            for (Resale resale : resaleList) {
+                switch (resale.getResaleStatus()) {
+                    case LISTING:
+                        scheduleResaleJob(resale, CancelListingJob.class);
+                        break;
+                    case RESERVED:
+                    case PENDING:
+                        scheduleResaleJob(resale, CancelReservationJob.class);
+                }
             }
 
         } catch (SchedulerException e) {

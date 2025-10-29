@@ -53,4 +53,6 @@ public interface ResaleRepository extends JpaRepository<Resale, Long> {
     Optional<Resale> findByIdForUpdate(@Param("id") Long id);
 
     Optional<Resale> findById(Long id);
+
+    List<Resale> findByResaleStatusIn(Collection<ResaleStatus> resaleStatuses);
 }
