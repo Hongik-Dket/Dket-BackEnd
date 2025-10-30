@@ -4,6 +4,7 @@ import com.example.demo.domain.apply.entity.Apply;
 import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.concert.enums.AgeLimit;
 import com.example.demo.domain.ticket.entity.Ticket;
+import com.example.demo.domain.user.enums.IdentityType;
 import com.example.demo.global.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,6 +35,10 @@ public class User extends BaseEntity {
 
     private LocalDateTime withdrawTime;
 
+    @Enumerated (EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(10)")
+    private IdentityType identityType;
+
     @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Concert> organizedConcerts = new ArrayList<>();
@@ -45,6 +50,8 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Ticket> tickets = new ArrayList<>();
+
+    public void setWalletAddress(String walletAddress) { this.walletAddress = walletAddress; }
 
     public void addConcert(Concert concert) { this.organizedConcerts.add(concert); }
     public void addApply(Apply apply) { this.applies.add(apply); }

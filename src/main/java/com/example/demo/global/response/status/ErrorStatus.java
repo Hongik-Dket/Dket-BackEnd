@@ -14,8 +14,6 @@ public enum ErrorStatus implements BaseErrorCode {
     COMMON_BAD_REQUEST(HttpStatus.BAD_REQUEST, "COMMON_4001", "잘못된 요청입니다."),
     COMMON_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "COMMON_4002", "인증이 필요합니다."),
     COMMON_WRONG_PARAMETER(HttpStatus.BAD_REQUEST, "COMMON_4003", "잘못된 파라미터 값 입니다."),
-    INVALID_INPUT(HttpStatus.BAD_REQUEST, "COMMON_4004", "입력값이 유효하지 않습니다."),
-    INVALID_WALLET_ADDRESS(HttpStatus.BAD_REQUEST, "COMMON_4005", "유효하지 않은 지갑 주소 형식입니다."),
 
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER_4001", "해당 유저를 찾을 수 없습니다."),
     USER_ALREADY_WITHDRAWN(HttpStatus.BAD_REQUEST, "USER_4002", "이미 탈퇴한 유저입니다."),
@@ -24,7 +22,10 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_INVALID_PROVIDER(HttpStatus.BAD_REQUEST, "USER_4005", "로그인 경로가 규칙에 맞지 않습니다."),
     USER_INVALID_PASSWORD_FORMAT(HttpStatus.BAD_REQUEST, "USER_4006", "비밀번호 설정 규칙에 맞지 않습니다."),
     USER_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "USER_4007", "비밀번호가 잘못되었습니다."),
-    USER_NICKNAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "USER_4008", "이미 존재하는 유저 닉네임입니다."),
+    USER_INVALID_PASSPORT(HttpStatus.BAD_REQUEST, "USER_4008", "유효하지 않은 여권 정보입니다."),
+    USER_WALLET_ALREADY_REGISTERED(HttpStatus.BAD_REQUEST, "USER_4009", "이미 등록된 지갑 주소입니다."),
+    USER_INVALID_INPUT(HttpStatus.BAD_REQUEST, "USER_4010", "입력값이 유효하지 않습니다."),
+    USER_INVALID_WALLET(HttpStatus.BAD_REQUEST, "USER_4011", "유효하지 않은 지갑 주소 형식입니다."),
 
     TOKEN_MISSING(HttpStatus.UNAUTHORIZED, "TOKEN_4001", "토큰이 누락되었습니다."),
     TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "TOKEN_4002", "해당 토큰을 찾을 수 없습니다."),

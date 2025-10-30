@@ -1,4 +1,4 @@
-package com.example.demo.global.security.dto;
+package com.example.demo.domain.user.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponseDTO {
-    private String token;
+public class UserInfoDTO {
+    private Long id;
 }
