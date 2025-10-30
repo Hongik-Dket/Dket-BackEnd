@@ -4,6 +4,7 @@ import com.example.demo.domain.apply.entity.Apply;
 import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.concert.enums.AgeLimit;
 import com.example.demo.domain.ticket.entity.Ticket;
+import com.example.demo.domain.user.enums.IdentityType;
 import com.example.demo.global.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -33,6 +34,10 @@ public class User extends BaseEntity {
     private String walletAddress;
 
     private LocalDateTime withdrawTime;
+
+    @Enumerated (EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(10)")
+    private IdentityType identityType;
 
     @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL)
     @Builder.Default
