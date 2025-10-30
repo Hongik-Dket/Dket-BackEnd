@@ -1,6 +1,5 @@
 package com.example.demo.global.security;
 
-import com.example.demo.global.security.dto.UserInfoDTO;
 import com.example.demo.global.security.dto.response.LoginResponseDTO;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.response.ApiResponse;
@@ -24,11 +23,5 @@ public class AuthController {
             @RequestBody PassportSignupDTO request
             ) {
         return ApiResponse.onSuccess(_OK, userService.signupWithPassport(request));
-    }
-
-    @Operation(summary = "현재 로그인한 사용자 확인하기")
-    @GetMapping("/user-info")
-    public ApiResponse<UserInfoDTO> getUserInfo() {
-        return ApiResponse.onSuccess(_OK, userService.getUserInfo());
     }
 }

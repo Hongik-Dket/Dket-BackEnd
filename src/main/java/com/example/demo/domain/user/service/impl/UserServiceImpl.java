@@ -4,7 +4,7 @@ import com.example.demo.domain.user.entity.PassportInfo;
 import com.example.demo.domain.user.enums.IdentityType;
 import com.example.demo.domain.user.repository.PassportInfoRepository;
 import com.example.demo.domain.user.dto.request.MetaMaskLoginDTO;
-import com.example.demo.global.security.dto.UserInfoDTO;
+import com.example.demo.domain.user.dto.response.UserInfoDTO;
 import com.example.demo.global.security.dto.response.LoginResponseDTO;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
