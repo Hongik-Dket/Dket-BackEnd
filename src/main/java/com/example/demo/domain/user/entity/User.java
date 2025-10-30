@@ -10,6 +10,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,10 +25,6 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
-
-    private String email;
-
-    private int age;
 
     private String name;
 
@@ -56,8 +53,17 @@ public class User extends BaseEntity {
 
     public boolean isEligibleFor(AgeLimit ageLimit) {
         if (ageLimit == null) return true;
+        if (birth == null) return false;
 
-        return this.age >= ageLimit.getMinimumAge();
+        LocalDate now = LocalDate.now();
+        int age = now.getYear() - birth.getYear();
+
+        if (now.getMonthValue() < birth.getMonthValue() ||
+                (now.getMonthValue() == birth.getMonthValue() && now.getDayOfMonth() < birth.getDayOfMonth())) {
+            age--;
+        }
+
+        return age >= ageLimit.getMinimumAge();
     }
 
 }
