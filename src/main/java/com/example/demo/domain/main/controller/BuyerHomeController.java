@@ -1,6 +1,7 @@
 package com.example.demo.domain.main.controller;
 
 import com.example.demo.domain.main.dto.BuyerHomeResponseDTO;
+import com.example.demo.domain.main.dto.ConcertCardDTO;
 import com.example.demo.domain.main.dto.ConcertCardListDTO;
 import com.example.demo.domain.main.service.BuyerHomeService;
 import com.example.demo.global.response.ApiResponse;
@@ -8,7 +9,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 import static com.example.demo.global.response.status.SuccessStatus._OK;
 
@@ -47,5 +51,13 @@ public class BuyerHomeController {
     @GetMapping("/entire")
     public ApiResponse<ConcertCardListDTO> getEntireConcerts() {
         return ApiResponse.onSuccess(_OK, buyerHomeService.getEntireConcertsForBuyer());
+    }
+
+    @Operation(summary = "구매자 - 검색")
+    @GetMapping("/search")
+    public ApiResponse<List<ConcertCardDTO>> searchConcerts(
+            @RequestParam("keyword") String keyword
+    ) {
+        return ApiResponse.onSuccess(_OK, buyerHomeService.searchConcert(keyword));
     }
 }

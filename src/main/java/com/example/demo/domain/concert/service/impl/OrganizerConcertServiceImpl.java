@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 
 import static com.example.demo.domain.concert.converter.ConcertConverter.*;
 import static com.example.demo.domain.metadata.converter.PhotoCardConverter.toPhotoCardInfoDTO;
+import static com.example.demo.global.util.StringUtil.normalize;
 
 @Service
 @Transactional(readOnly = true)
@@ -105,7 +106,9 @@ public class OrganizerConcertServiceImpl implements OrganizerConcertService {
         String posterUrl = s3UploadService.saveFile(poster);
         BigInteger priceWei = exchangeService.convertKrwToWei(BigDecimal.valueOf(request.getPriceKrw()));
 
-        Concert concert = toConcert(request, user, bannerUrl, posterUrl, priceWei);
+        String titleNorm = normalize(request.getTitle());
+
+        Concert concert = toConcert(request, user, bannerUrl, posterUrl, priceWei, titleNorm);
         concertRepository.save(concert);
         user.addConcert(concert);
 

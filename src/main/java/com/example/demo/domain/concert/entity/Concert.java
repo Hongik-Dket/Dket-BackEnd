@@ -23,6 +23,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(
+        indexes = {
+                @Index(name = "idx_concert_title_norm", columnList = "title_norm")
+        }
+)
 public class Concert extends BaseEntity {
 
     @Id
@@ -35,6 +40,7 @@ public class Concert extends BaseEntity {
     private User organizer;
 
     private String title;
+    private String titleNorm;
 
     @Enumerated (EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10)")
