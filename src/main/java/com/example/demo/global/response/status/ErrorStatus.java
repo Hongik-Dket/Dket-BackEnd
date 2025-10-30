@@ -24,7 +24,7 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_INVALID_PROVIDER(HttpStatus.BAD_REQUEST, "USER_4005", "로그인 경로가 규칙에 맞지 않습니다."),
     USER_INVALID_PASSWORD_FORMAT(HttpStatus.BAD_REQUEST, "USER_4006", "비밀번호 설정 규칙에 맞지 않습니다."),
     USER_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "USER_4007", "비밀번호가 잘못되었습니다."),
-    USER_NICKNAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "USER_4008", "이미 존재하는 유저 닉네임입니다."),
+    USER_INVALID_PASSPORT(HttpStatus.BAD_REQUEST, "USER_4008", "유효하지 않은 여권 정보입니다."),
 
     TOKEN_MISSING(HttpStatus.UNAUTHORIZED, "TOKEN_4001", "토큰이 누락되었습니다."),
     TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "TOKEN_4002", "해당 토큰을 찾을 수 없습니다."),

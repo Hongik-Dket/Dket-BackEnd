@@ -1,12 +1,15 @@
 package com.example.demo.domain.user.service;
 
-import com.example.demo.global.security.dto.LoginResponseDTO;
-import com.example.demo.domain.user.entity.User;
 import com.example.demo.global.security.dto.UserInfoDTO;
+import com.example.demo.global.security.dto.response.LoginResponseDTO;
+import com.example.demo.domain.user.entity.User;
+import com.example.demo.global.security.dto.request.PassportSignupDTO;
 
 public interface UserService {
 
     User getCurrentUser();
+
+    LoginResponseDTO signupWithPassport(PassportSignupDTO request);
 
     LoginResponseDTO loginWithWallet(String walletAddress);
 

@@ -1,18 +1,26 @@
 package com.example.demo.domain.user.service.impl;
 
-import com.example.demo.global.security.dto.LoginResponseDTO;
+import com.example.demo.domain.user.entity.PassportInfo;
+import com.example.demo.domain.user.enums.IdentityType;
+import com.example.demo.domain.user.repository.PassportInfoRepository;
+import com.example.demo.global.security.dto.UserInfoDTO;
+import com.example.demo.global.security.dto.response.LoginResponseDTO;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import com.example.demo.global.security.JwtProvider;
-import com.example.demo.global.security.dto.UserInfoDTO;
+import com.example.demo.global.security.dto.request.PassportSignupDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+
+import static com.example.demo.domain.user.converter.UserConverter.toPassportInfo;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,6 +29,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
+    private final PassportInfoRepository passportInfoRepository;
 
     @Override
     public User getCurrentUser() {
@@ -35,6 +44,36 @@ public class UserServiceImpl implements UserService {
 
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+    }
+
+    @Override
+    @Transactional
+    public LoginResponseDTO signupWithPassport(PassportSignupDTO request) {
+        if (passportInfoRepository.existsByPassportNumber(request.getPassportNumber())) {
+            throw new CustomException(ErrorStatus.USER_ALREADY_EXISTS);
+        }
+
+        if (!request.getPassportExpiry().isAfter(LocalDate.now())) {
+            throw new CustomException(ErrorStatus.USER_INVALID_PASSPORT);
+        }
+
+        String name = request.getFirstName() + " " +  request.getLastName();
+
+        User user = User.builder()
+                .name(name)
+                .birth(request.getBirthDate())
+                .identityType(IdentityType.PASSPORT)
+                .build();
+
+        userRepository.save(user);
+
+        PassportInfo passportInfo = toPassportInfo(user, request);
+        passportInfoRepository.save(passportInfo);
+
+        String token = jwtProvider.generateToken(user.getId());
+        return LoginResponseDTO.builder()
+                .token(token)
+                .build();
     }
 
     @Override

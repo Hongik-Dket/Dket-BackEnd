@@ -25,7 +25,7 @@ public class PassportInfo {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String passportName;
+    private String passportNumber;
 
     @Enumerated (EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10)")
