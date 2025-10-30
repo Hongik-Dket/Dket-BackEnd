@@ -55,7 +55,7 @@ public interface ConcertRepository extends JpaRepository<Concert, Long> {
             OR e.concertStatus = 'APPLY_CLOSED'
       )
     ORDER BY e.applyEnd DESC
-""")
+    """)
     Page<Concert> findRecentlyClosedApply(
             @Param("organizerId") Long organizerId,
             @Param("from") LocalDateTime from,
@@ -72,4 +72,20 @@ public interface ConcertRepository extends JpaRepository<Concert, Long> {
         e.endDate DESC
     """)
     Page<Concert> findSortedForOrganizer(@Param("organizerId") Long organizerId, Pageable pageable);
+
+    @Query("""
+        SELECT c
+        FROM Concert c
+        WHERE c.titleNorm LIKE concat('%', :keyword, '%')
+        ORDER BY
+            CASE WHEN c.concertStatus = :ended THEN 1 ELSE 0 END ASC,
+            c.startDate ASC,
+            c.startTime ASC,
+            c.endDate ASC,
+            c.endTime ASC,
+            c.title ASC,
+            c.id ASC
+    """)
+    List<Concert> searchByTitleWithChronology(@Param("keyword") String keyword,
+                                              @Param("ended") ConcertStatus ended);
 }

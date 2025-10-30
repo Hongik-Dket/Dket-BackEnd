@@ -30,7 +30,7 @@ public class MainConverter {
                 .build();
     }
 
-    private static List<ConcertCardDTO> toConcertCardDTOList(List<Concert> concerts, boolean poster) {
+    public static List<ConcertCardDTO> toConcertCardDTOList(List<Concert> concerts, boolean poster) {
         return concerts.stream()
                 .map((Concert concert) -> toConcertCardDTO(concert, poster))
                 .toList();

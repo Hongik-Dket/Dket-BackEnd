@@ -43,10 +43,14 @@ public class ConcertConverter {
                 .build();
     }
 
-    public static Concert toConcert(ConcertUploadDTO concertUploadDTO, User user, String bannerUrl, String posterUrl, BigInteger priceWei) {
+    public static Concert toConcert(
+            ConcertUploadDTO concertUploadDTO, User user,
+            String bannerUrl, String posterUrl, BigInteger priceWei, String titleNorm
+    ) {
         return Concert.builder()
                 .organizer(user)
                 .title(concertUploadDTO.getTitle())
+                .titleNorm(titleNorm)
                 .ageLimit(concertUploadDTO.getAgeLimit())
                 .location(concertUploadDTO.getLocation())
                 .description(concertUploadDTO.getDescription())
