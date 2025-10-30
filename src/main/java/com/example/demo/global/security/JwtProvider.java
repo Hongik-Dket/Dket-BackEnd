@@ -32,6 +32,18 @@ public class JwtProvider {
                 .compact();
     }
 
+    public String refreshToken(Long userId) {
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + (7 * 24 * 60 * 60 * 1000));
+
+        return Jwts.builder()
+                .setSubject(userId.toString())
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes()), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
     public Long extractUserId(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))

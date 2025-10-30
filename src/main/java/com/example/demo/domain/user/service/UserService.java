@@ -16,4 +16,6 @@ public interface UserService {
 
     UserInfoDTO getUserInfo();
 
+    LoginResponseDTO refreshToken(Long userId);
+
 }
