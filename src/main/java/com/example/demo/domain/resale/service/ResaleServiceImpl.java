@@ -5,6 +5,7 @@ import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.domain.resale.dto.response.ResaleAuthDTO;
 import com.example.demo.domain.resale.dto.response.ResaleCardDTO;
 import com.example.demo.domain.resale.dto.response.ResaleDetailDTO;
+import com.example.demo.domain.resale.dto.response.ResaleInfoDTO;
 import com.example.demo.domain.resale.repository.ResaleRepository;
 import com.example.demo.domain.resale.dto.request.ResaleListingDTO;
 import com.example.demo.domain.resale.entity.Resale;
@@ -58,7 +59,7 @@ public class ResaleServiceImpl implements ResaleService {
 
     @Override
     @Transactional
-    public void createResale(Long ticketId, ResaleListingDTO request) {
+    public ResaleInfoDTO createResale(Long ticketId, ResaleListingDTO request) {
         User user = userService.getCurrentUser();
 
         Ticket ticket;
@@ -78,6 +79,8 @@ public class ResaleServiceImpl implements ResaleService {
         resaleRepository.save(resale);
 
         schedulingService.scheduleResaleJob(resale, CancelListingJob.class);
+
+        return toResaleInfoDTO(resale);
     }
 
     @Override
