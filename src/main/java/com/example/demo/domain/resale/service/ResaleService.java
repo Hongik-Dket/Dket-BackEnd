@@ -4,12 +4,13 @@ import com.example.demo.domain.resale.dto.request.ResaleListingDTO;
 import com.example.demo.domain.resale.dto.response.ResaleAuthDTO;
 import com.example.demo.domain.resale.dto.response.ResaleCardDTO;
 import com.example.demo.domain.resale.dto.response.ResaleDetailDTO;
+import com.example.demo.domain.resale.dto.response.ResaleInfoDTO;
 
 import java.math.BigInteger;
 import java.util.List;
 
 public interface ResaleService {
-    void createResale(Long ticketId, ResaleListingDTO request);
+    ResaleInfoDTO createResale(Long ticketId, ResaleListingDTO request);
 
     void listResale(String ownerWalletAddress, BigInteger tokenId);
 
