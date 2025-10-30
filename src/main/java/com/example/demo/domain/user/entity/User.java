@@ -51,6 +51,8 @@ public class User extends BaseEntity {
     @Builder.Default
     private List<Ticket> tickets = new ArrayList<>();
 
+    public void setWalletAddress(String walletAddress) { this.walletAddress = walletAddress; }
+
     public void addConcert(Concert concert) { this.organizedConcerts.add(concert); }
     public void addApply(Apply apply) { this.applies.add(apply); }
     public void addTicket(Ticket ticket) { this.tickets.add(ticket); }

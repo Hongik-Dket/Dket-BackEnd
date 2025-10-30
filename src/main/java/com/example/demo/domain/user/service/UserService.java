@@ -1,5 +1,6 @@
 package com.example.demo.domain.user.service;
 
+import com.example.demo.domain.user.dto.request.MetaMaskLoginDTO;
 import com.example.demo.global.security.dto.UserInfoDTO;
 import com.example.demo.global.security.dto.response.LoginResponseDTO;
 import com.example.demo.domain.user.entity.User;
@@ -11,7 +12,7 @@ public interface UserService {
 
     LoginResponseDTO signupWithPassport(PassportSignupDTO request);
 
-    LoginResponseDTO loginWithWallet(String walletAddress);
+    void loginWithWallet(MetaMaskLoginDTO request);
 
     UserInfoDTO getUserInfo();
 

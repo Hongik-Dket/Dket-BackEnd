@@ -3,6 +3,7 @@ package com.example.demo.domain.user.service.impl;
 import com.example.demo.domain.user.entity.PassportInfo;
 import com.example.demo.domain.user.enums.IdentityType;
 import com.example.demo.domain.user.repository.PassportInfoRepository;
+import com.example.demo.domain.user.dto.request.MetaMaskLoginDTO;
 import com.example.demo.global.security.dto.UserInfoDTO;
 import com.example.demo.global.security.dto.response.LoginResponseDTO;
 import com.example.demo.domain.user.entity.User;
@@ -78,29 +79,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public LoginResponseDTO loginWithWallet(String walletAddress) {
+    public void loginWithWallet(MetaMaskLoginDTO request) {
+        String walletAddress = request.getWalletAddress();
+
         if (walletAddress == null || walletAddress.isBlank()) {
-            throw new CustomException(ErrorStatus.INVALID_INPUT);
+            throw new CustomException(ErrorStatus.USER_INVALID_INPUT);
         }
 
         if (!walletAddress.matches("^0x[a-fA-F0-9]{40}$")) {
-            throw new CustomException(ErrorStatus.INVALID_WALLET_ADDRESS);
+            throw new CustomException(ErrorStatus.USER_INVALID_WALLET);
         }
 
-        User user = userRepository.findByWalletAddress(walletAddress).orElse(null);
-
-        if (user == null) {
-            user = User.builder()
-                    .walletAddress(walletAddress)
-                    .build();
-            userRepository.save(user);
+        walletAddress = walletAddress.toLowerCase();
+        if (userRepository.existsByWalletAddress(walletAddress)) {
+            throw new CustomException(ErrorStatus.USER_WALLET_ALREADY_REGISTERED);
         }
 
-        String token = jwtProvider.generateToken(user.getId());
-        return LoginResponseDTO.builder()
-                .token(token)
-                .build();
-
+        getCurrentUser().setWalletAddress(walletAddress);
     }
 
     @Override
