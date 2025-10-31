@@ -16,8 +16,6 @@ import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.base.Constants;
 import com.example.demo.global.infra.blockchain.service.DketNFTViewService;
-import com.example.demo.global.infra.image.QrCodeGenerator;
-import com.example.demo.global.infra.image.S3UploadService;
 import com.example.demo.global.infra.ipfs.PinataService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
@@ -27,8 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -48,8 +44,6 @@ public class TicketServiceImpl implements TicketService {
     private final ApplyRepository applyRepository;
     private final UserRepository userRepository;
     private final TicketRepository ticketRepository;
-    private final QrCodeGenerator qrCodeGenerator;
-    private final S3UploadService s3UploadService;
     private final DketNFTViewService dketNFTViewService;
     private final ResaleRepository resaleRepository;
     private final PinataService pinataService;
@@ -100,9 +94,6 @@ public class TicketServiceImpl implements TicketService {
 
         applyRepository.findBySessionIdAndUserId(sessionId, user.getId())
                 .ifPresent(apply -> apply.setApplyStatus(ApplyStatus.PAID));
-
-        String qrCodeUrl = s3UploadService.saveFile(qrCodeGenerator.generateQrCodeFile(ticket.getId()));
-        ticket.setQrCode(qrCodeUrl);
 
         int paidCount = ticketRepository.countBySessionIdAndPaidAtIsNotNull(sessionId);
         if (paidCount == session.getConcert().getCapacity()) {

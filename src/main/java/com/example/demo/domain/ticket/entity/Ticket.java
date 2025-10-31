@@ -43,8 +43,6 @@ public class Ticket extends BaseEntity {
 
     private LocalDateTime enteredAt;
 
-    private String qrCode;
-
     public void paidBy(User user) {
         this.paidAt = LocalDateTime.now();
         this.user = user;
@@ -58,7 +56,6 @@ public class Ticket extends BaseEntity {
         buyer.addTicket(this);
     }
 
-    public void setQrCode(String qrCode) { this.qrCode = qrCode; }
     public void enter() {this.enteredAt = LocalDateTime.now();}
 
 }
