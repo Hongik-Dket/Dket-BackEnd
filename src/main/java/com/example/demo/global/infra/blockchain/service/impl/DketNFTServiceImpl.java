@@ -6,6 +6,7 @@ import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.domain.concert.service.SessionService;
 import com.example.demo.domain.metadata.service.MetadataService;
 import com.example.demo.domain.resale.service.ResaleService;
+import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.ticket.service.TicketService;
 import com.example.demo.global.event.ReadyToMintEvent;
 import com.example.demo.global.infra.blockchain.contracts.DketNFT;
@@ -139,6 +140,16 @@ public class DketNFTServiceImpl implements DketNFTService {
             dketNFT.openPublicSale(BigInteger.valueOf(concert.getId())).send();
         } catch (Exception e) {
             log.error("Concert [{}] 온체인 선착순 판매 전환 실패", concert.getId(), e);
+            throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
+        }
+    }
+
+    @Override
+    public void enterTicketOnChain(Ticket ticket) {
+        try {
+            dketNFT.enter(ticket.getTokenId()).send();
+        } catch (Exception e) {
+            log.error("Ticket [{}] 입장 실패", ticket.getId(), e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
         }
     }

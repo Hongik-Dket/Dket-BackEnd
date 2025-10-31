@@ -56,6 +56,6 @@ public class Ticket extends BaseEntity {
         buyer.addTicket(this);
     }
 
-    public void enter() {this.enteredAt = LocalDateTime.now();}
+    public void enter() { this.enteredAt = LocalDateTime.now();}
 
 }

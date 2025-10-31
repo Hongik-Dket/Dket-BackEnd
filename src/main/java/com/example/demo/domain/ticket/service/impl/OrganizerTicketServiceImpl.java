@@ -8,6 +8,7 @@ import com.example.demo.domain.ticket.repository.TicketRepository;
 import com.example.demo.domain.ticket.service.OrganizerTicketService;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.UserService;
+import com.example.demo.global.infra.blockchain.service.DketNFTService;
 import com.example.demo.global.infra.blockchain.service.DketNFTViewService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
@@ -27,6 +28,7 @@ public class OrganizerTicketServiceImpl implements OrganizerTicketService {
     private final UserService userService;
     private final DketNFTViewService dketNFTViewService;
     private final ResaleRepository resaleRepository;
+    private final DketNFTService dketNFTService;
 
     @Override
     @Transactional
@@ -35,14 +37,11 @@ public class OrganizerTicketServiceImpl implements OrganizerTicketService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.TICKET_NOT_FOUND));
 
         User user = userService.getCurrentUser();
-
         validateOrganizer(ticket, user);
-
-        if (ticket.getEnteredAt() != null) {
-            throw new CustomException(ErrorStatus.TICKET_ALREADY_ENTERED);
-        }
+        validateTicket(ticket);     // Todo: 영지식 증명 생성한 외국인의 경우 enterAt != null이므로 별도 처리 필요
 
         ticket.enter();
+        dketNFTService.enterTicketOnChain(ticket);
     }
 
     @Override
