@@ -2,6 +2,7 @@ package com.example.demo.domain.user.controller;
 
 import com.example.demo.domain.metadata.dto.PhotoCardDTO;
 import com.example.demo.domain.ticket.dto.response.TicketCardDTO;
+import com.example.demo.domain.user.dto.response.PassportInfoDTO;
 import com.example.demo.domain.user.dto.response.WalletDTO;
 import com.example.demo.domain.user.service.MypageService;
 import com.example.demo.domain.user.service.UserService;
@@ -38,6 +39,12 @@ public class UserController {
     @GetMapping("/user-info")
     public ApiResponse<UserInfoDTO> getUserInfo() {
         return ApiResponse.onSuccess(_OK, userService.getUserInfo());
+    }
+
+    @Operation(summary = "여권 정보 확인하기")
+    @GetMapping("/passport")
+    public ApiResponse<PassportInfoDTO> getPassportInfo() {
+        return ApiResponse.onSuccess(_OK, userService.getPassportInfo());
     }
 
     @Operation(summary = "지갑 정보 조회하기")

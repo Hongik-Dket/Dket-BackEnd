@@ -1,5 +1,6 @@
 package com.example.demo.domain.user.service.impl;
 
+import com.example.demo.domain.user.dto.response.PassportInfoDTO;
 import com.example.demo.domain.user.entity.PassportInfo;
 import com.example.demo.domain.user.enums.IdentityType;
 import com.example.demo.domain.user.repository.PassportInfoRepository;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 
 import static com.example.demo.domain.user.converter.UserConverter.toPassportInfo;
+import static com.example.demo.domain.user.converter.UserConverter.toPassportInfoDTO;
 
 @Service
 @Transactional(readOnly = true)
@@ -96,6 +98,20 @@ public class UserServiceImpl implements UserService {
         }
 
         getCurrentUser().setWalletAddress(walletAddress);
+    }
+
+    @Override
+    public PassportInfoDTO getPassportInfo(){
+        User user = getCurrentUser();
+
+        if (user.getIdentityType() != IdentityType.PASSPORT) {
+            throw new CustomException(ErrorStatus.USER_NOT_REGISTERED_WITH_PASSPORT);
+        }
+
+        PassportInfo passport = passportInfoRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new CustomException(ErrorStatus.PASSPORT_INFO_NOT_FOUND));
+
+        return toPassportInfoDTO(passport);
     }
 
     @Override
