@@ -1,4 +1,4 @@
-package com.example.demo.domain.ticket.dto;
+package com.example.demo.domain.ticket.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import java.time.LocalTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TicketDTO {
+public class TicketCardDTO {
 
     private Long ticketId;
     private String concertTitle;

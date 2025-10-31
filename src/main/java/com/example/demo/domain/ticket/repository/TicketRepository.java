@@ -33,8 +33,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
     Optional<Ticket> findByTokenId(Long tokenId);
 
-    Optional<Ticket> findByMetadata(Metadata metadata);
-
     int countBySessionIdAndPaidAtIsNotNull(Long sessionId);
 
     List<Ticket> findByUserIdAndSessionIdIn(Long userId, List<Long> sessionIds);
@@ -59,4 +57,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Query("select t from Ticket t where t.id = :id")
     @QueryHints(@QueryHint(name = "jakarta.persistence.lock.timeout", value = "3000"))
     Optional<Ticket> findByIdForUpdate(@Param("id") Long id);
+
+    Optional<Ticket> findByIdAndUserId(Long id, Long userId);
 }

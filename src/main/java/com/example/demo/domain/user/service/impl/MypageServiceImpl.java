@@ -1,7 +1,7 @@
 package com.example.demo.domain.user.service.impl;
 
 import com.example.demo.domain.metadata.dto.PhotoCardDTO;
-import com.example.demo.domain.ticket.dto.TicketDTO;
+import com.example.demo.domain.ticket.dto.response.TicketCardDTO;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.ticket.repository.TicketRepository;
 import com.example.demo.domain.user.dto.response.WalletDTO;
@@ -44,7 +44,7 @@ public class MypageServiceImpl implements MypageService {
     }
 
     @Override
-    public List<TicketDTO> getMyTickets() {
+    public List<TicketCardDTO> getMyTickets() {
         User user = userService.getCurrentUser();
 
         return ticketRepository.findAllSortedByDateAndFutureFirst(user, LocalDate.now())
