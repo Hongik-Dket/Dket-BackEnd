@@ -1,10 +1,12 @@
 package com.example.demo.domain.concert.controller;
 
 import com.example.demo.domain.concert.dto.request.ConcertUploadDTO;
+import com.example.demo.domain.concert.dto.response.EntryCodeDTO;
 import com.example.demo.domain.concert.dto.response.OrganizerConcertDetailDTO;
 import com.example.demo.domain.concert.dto.response.ResponseDTO;
 import com.example.demo.domain.concert.dto.response.OrganizerSessionInfoDTO;
 import com.example.demo.domain.concert.service.OrganizerConcertService;
+import com.example.demo.domain.concert.service.SessionService;
 import com.example.demo.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,15 +25,16 @@ import static com.example.demo.global.response.status.SuccessStatus._OK;
 public class OrganizerConcertController {
 
     private final OrganizerConcertService organizerConcertService;
+    private final SessionService sessionService;
 
     @Operation(summary = "개최자 - 공연 상세 조회")
-    @GetMapping("{concertId}")
+    @GetMapping("/{concertId}")
     public ApiResponse<OrganizerConcertDetailDTO> getConcertDetailForOrganizer(@PathVariable Long concertId) {
         return ApiResponse.onSuccess(_OK, organizerConcertService.getConcertDetailForOrganizer(concertId));
     }
 
     @Operation(summary = "개최자 - 회차 상세 조회")
-    @GetMapping("{concertId}/{sessionId}")
+    @GetMapping("/{concertId}/{sessionId}")
     public ApiResponse<OrganizerSessionInfoDTO> getSessionInfoForOrganizer(
             @PathVariable Long concertId, @PathVariable Long sessionId) {
         return ApiResponse.onSuccess(_OK, organizerConcertService.getSessionInfoForOrganizer(concertId, sessionId));
@@ -48,6 +51,14 @@ public class OrganizerConcertController {
             @RequestPart(name = "photocardList") List<MultipartFile> photoCardList
     ) {
         return ApiResponse.onSuccess(_OK, organizerConcertService.uploadConcert(request, banner, poster, photoCardList));
+    }
+
+    @Operation(summary = "개최자 - 입장 인증 번호 확인하기")
+    @GetMapping("/{concertId}/{sessionId}/enter")
+    public ApiResponse<EntryCodeDTO> getEntryCode(
+            @PathVariable Long concertId, @PathVariable Long sessionId
+    ) {
+        return ApiResponse.onSuccess(_OK, sessionService.getEntryCode(concertId, sessionId));
     }
 
 }

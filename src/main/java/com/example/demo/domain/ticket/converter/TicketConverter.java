@@ -1,7 +1,7 @@
 package com.example.demo.domain.ticket.converter;
 
-import com.example.demo.domain.ticket.dto.TicketDTO;
-import com.example.demo.domain.ticket.dto.TicketDetailDTO;
+import com.example.demo.domain.ticket.dto.response.TicketCardDTO;
+import com.example.demo.domain.ticket.dto.response.TicketDetailDTO;
 import com.example.demo.domain.ticket.entity.Ticket;
 
 import java.time.LocalDateTime;
@@ -30,8 +30,8 @@ public class TicketConverter {
                 .build();
     }
 
-    public static TicketDTO toTicketDTO(Ticket ticket) {
-        return TicketDTO.builder()
+    public static TicketCardDTO toTicketDTO(Ticket ticket) {
+        return TicketCardDTO.builder()
                 .ticketId(ticket.getId())
                 .concertTitle(ticket.getSession().getConcert().getTitle())
                 .posterUrl(ticket.getSession().getConcert().getPosterUrl())

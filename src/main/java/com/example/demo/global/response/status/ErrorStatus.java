@@ -44,6 +44,7 @@ public enum ErrorStatus implements BaseErrorCode {
     TICKET_INVALID_USER(HttpStatus.BAD_REQUEST, "TICKET_4005", "해당 티켓에 대한 권한이 없는 사용자입니다."),
     TICKET_INVALID(HttpStatus.BAD_REQUEST, "TICKET_4006", "유효하지 않은 티켓입니다."),
     TICKET_ALREADY_PAID(HttpStatus.BAD_REQUEST, "TICKET_4007", "이미 티켓을 결제했습니다."),
+    TICKET_WRONG_ENTRY_CODE(HttpStatus.BAD_REQUEST, "TICKET_4008", "잘못된 입장 인증 번호입니다."),
 
     CONCERT_NOT_FOUND(HttpStatus.BAD_REQUEST, "CONCERT_4001", "해당 공연을 찾을 수 없습니다."),
     CONCERT_ORGANIZER_MISMATCH(HttpStatus.BAD_REQUEST, "CONCERT_4002", "해당 공연의 개최자가 아닙니다."),
@@ -55,6 +56,7 @@ public enum ErrorStatus implements BaseErrorCode {
     SESSION_DRAW_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "SESSION_5001", "해당 세션 추첨에 실패했습니다."),
     SESSION_MINTING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "SESSION_5002", "해당 세션 티켓 발행에 실패했습니다."),
     SESSION_CANNOT_BUY(HttpStatus.BAD_REQUEST, "SESSION_4003", "티켓을 구매할 수 없는 세션입니다."),
+    SESSION_NOT_TODAY(HttpStatus.BAD_REQUEST, "SESSION_4004", "오늘 진행되는 세션이 아닙니다."),
 
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IMAGE_5001", "이미지 업로드에 실패하였습니다."),
     IMAGE_GENERATE_QRCODE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IMAGE_5002", "QR 코드 생성에 실패했습니다."),

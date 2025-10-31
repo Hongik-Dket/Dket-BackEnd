@@ -1,7 +1,7 @@
 package com.example.demo.domain.user.controller;
 
 import com.example.demo.domain.metadata.dto.PhotoCardDTO;
-import com.example.demo.domain.ticket.dto.TicketDTO;
+import com.example.demo.domain.ticket.dto.response.TicketCardDTO;
 import com.example.demo.domain.user.dto.response.WalletDTO;
 import com.example.demo.domain.user.service.MypageService;
 import com.example.demo.domain.user.service.UserService;
@@ -48,7 +48,7 @@ public class UserController {
 
     @Operation(summary = "내 티켓 목록 조회하기")
     @GetMapping("/tickets")
-    public ApiResponse<List<TicketDTO>> getTickets() {
+    public ApiResponse<List<TicketCardDTO>> getTickets() {
         return ApiResponse.onSuccess(_OK, mypageService.getMyTickets());
     }
 

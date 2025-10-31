@@ -1,6 +1,6 @@
 package com.example.demo.domain.ticket.controller;
 
-import com.example.demo.domain.ticket.service.TicketService;
+import com.example.demo.domain.ticket.service.OrganizerTicketService;
 import com.example.demo.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -16,12 +16,12 @@ import static com.example.demo.global.response.status.SuccessStatus._OK;
 @RequiredArgsConstructor
 public class OrganizerTicketController {
 
-    private final TicketService ticketService;
+    private final OrganizerTicketService organizerTicketService;
 
     @Operation(summary = "공연 입장")
     @PatchMapping("/{ticketId}/enter")
     public ApiResponse<?> enterTicket(@PathVariable("ticketId") Long ticketId) {
-        ticketService.enterTicket(ticketId);
+        organizerTicketService.enterTicket(ticketId);
 
         return ApiResponse.onSuccess(_OK, null);
     }
