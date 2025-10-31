@@ -40,7 +40,7 @@ public enum ErrorStatus implements BaseErrorCode {
     TICKET_INVALID_SEAT(HttpStatus.BAD_REQUEST, "TICKET_4001", "좌석 코드는 0 이상 999999 이하의 숫자여야 합니다."),
     TICKET_INVALID_BUYER(HttpStatus.BAD_REQUEST, "TICKET_4002", "해당 티켓을 구매할 수 없는 사용자입니다."),
     TICKET_NOT_FOUND(HttpStatus.BAD_REQUEST, "TICKET_4003", "해당 티켓을 찾을 수 없습니다."),
-    TICKET_WRONG_PARAMETER(HttpStatus.BAD_REQUEST, "TICKET_4004", "id 또는 number 중 하나만 입력해야 합니다."),
+    TICKET_ALREADY_ENTERED(HttpStatus.BAD_REQUEST, "TICKET_4004", "이미 입장한 티켓입니다."),
     TICKET_INVALID_USER(HttpStatus.BAD_REQUEST, "TICKET_4005", "해당 티켓에 대한 권한이 없는 사용자입니다."),
     TICKET_INVALID(HttpStatus.BAD_REQUEST, "TICKET_4006", "유효하지 않은 티켓입니다."),
     TICKET_ALREADY_PAID(HttpStatus.BAD_REQUEST, "TICKET_4007", "이미 티켓을 결제했습니다."),

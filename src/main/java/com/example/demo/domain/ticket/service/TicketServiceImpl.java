@@ -16,8 +16,7 @@ import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.base.Constants;
 import com.example.demo.global.infra.blockchain.service.DketNFTViewService;
-import com.example.demo.global.infra.image.QrCodeGenerator;
-import com.example.demo.global.infra.image.S3UploadService;
+import com.example.demo.global.infra.ipfs.PinataService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -47,10 +44,9 @@ public class TicketServiceImpl implements TicketService {
     private final ApplyRepository applyRepository;
     private final UserRepository userRepository;
     private final TicketRepository ticketRepository;
-    private final QrCodeGenerator qrCodeGenerator;
-    private final S3UploadService s3UploadService;
     private final DketNFTViewService dketNFTViewService;
     private final ResaleRepository resaleRepository;
+    private final PinataService pinataService;
 
     @Value("${web3.nft-contract-address}")
     private String contractAddress;
@@ -99,9 +95,6 @@ public class TicketServiceImpl implements TicketService {
         applyRepository.findBySessionIdAndUserId(sessionId, user.getId())
                 .ifPresent(apply -> apply.setApplyStatus(ApplyStatus.PAID));
 
-        String qrCodeUrl = s3UploadService.saveFile(qrCodeGenerator.generateQrCodeFile(ticket.getId()));
-        ticket.setQrCode(qrCodeUrl);
-
         int paidCount = ticketRepository.countBySessionIdAndPaidAtIsNotNull(sessionId);
         if (paidCount == session.getConcert().getCapacity()) {
             session.setIsBuyable(false);
@@ -109,7 +102,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public TicketDetailDTO getTicketById(Long ticketId) {
+    public TicketDetailDTO getTicketDetail(Long ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.TICKET_NOT_FOUND));
 
@@ -120,8 +113,7 @@ public class TicketServiceImpl implements TicketService {
             throw new CustomException(ErrorStatus.TICKET_NOT_FOUND);
         }
 
-        if (!(ownerWalletAddress.equals(user.getWalletAddress()))
-                && !(ticket.getSession().getConcert().getOrganizer().getId().equals(user.getId()))) {
+        if (!(ownerWalletAddress.equals(user.getWalletAddress()))) {
             throw new CustomException(ErrorStatus.TICKET_INVALID_USER);
         }
 
@@ -134,31 +126,9 @@ public class TicketServiceImpl implements TicketService {
                         EnumSet.of(ResaleStatus.LISTING, ResaleStatus.AVAILABLE, ResaleStatus.RESERVED)
                 );
 
-        return toTicketDetailDTO(ticket, getNftUrl(ticket), isResaleListed);
-    }
+        String photoCardUrl = pinataService.cidToHttp(ticket.getMetadata().getPhotoCard().getCid());
 
-    @Override
-    public TicketDetailDTO getTicketByNumber(String ticketNumber) {
-        Metadata metadata = metadataRepository.findByTicketNumber(ticketNumber)
-                .orElseThrow(() -> new CustomException(ErrorStatus.METADATA_NOT_FOUND));
-
-        Ticket ticket = ticketRepository.findByMetadata(metadata)
-                .orElseThrow(() -> new CustomException(ErrorStatus.TICKET_NOT_FOUND));
-
-        User user = userService.getCurrentUser();
-        String ownerWalletAddress = dketNFTViewService.getOwnerWallet(ticket.getTokenId());
-
-        validateOrganizer(ticket, user);
-        validateTicket(ticket, ownerWalletAddress);
-
-        boolean isResaleListed = resaleRepository
-                .existsByTicketIdAndSellerIdAndResaleStatusIn(
-                        ticket.getId(),
-                        user.getId(),
-                        EnumSet.of(ResaleStatus.LISTING, ResaleStatus.AVAILABLE, ResaleStatus.RESERVED)
-                );
-
-        return toTicketDetailDTO(ticket, getNftUrl(ticket), isResaleListed);
+        return toTicketDetailDTO(ticket, getNftUrl(ticket), isResaleListed, photoCardUrl);
     }
 
     @Override
@@ -171,12 +141,8 @@ public class TicketServiceImpl implements TicketService {
 
         validateOrganizer(ticket, user);
 
-        if (
-            !(ticket.getSession().getDate().equals(LocalDate.now()) &&
-                    ticket.getSession().getConcert().getStartTime().isAfter(LocalTime.now()))
-                    || ticket.getEnteredAt() != null
-        ) {
-            throw new CustomException(ErrorStatus.TICKET_INVALID);
+        if (ticket.getEnteredAt() != null) {
+            throw new CustomException(ErrorStatus.TICKET_ALREADY_ENTERED);
         }
 
         ticket.enter();
