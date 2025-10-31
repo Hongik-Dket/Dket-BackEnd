@@ -60,9 +60,7 @@ public class MypageServiceImpl implements MypageService {
 
         List<PhotoCardDTO> result = new ArrayList<>();
         for (Ticket ticket : ticketList) {
-            String ipfsUrl = pinataService.cidToHttp(ticket.getMetadata().getPhotoCard().getCid());
-
-            result.add(toPhotoCardDTO(ticket, ipfsUrl));
+            result.add(toPhotoCardDTO(ticket));
         }
         return result;
     }

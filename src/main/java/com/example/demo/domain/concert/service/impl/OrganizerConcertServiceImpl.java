@@ -67,8 +67,7 @@ public class OrganizerConcertServiceImpl implements OrganizerConcertService {
 
         List<PhotoCardInfoDTO> photoCardInfoDTOList = concert.getPhotoCards().stream()
                 .map(photoCard -> {
-                    String url = pinataService.cidToHttp(photoCard.getCid());
-                    return toPhotoCardInfoDTO(photoCard, url);
+                    return toPhotoCardInfoDTO(photoCard);
                 })
                 .collect(Collectors.toList());
 

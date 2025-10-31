@@ -7,18 +7,18 @@ import com.example.demo.domain.ticket.entity.Ticket;
 
 public class PhotoCardConverter {
 
-    public static PhotoCardDTO toPhotoCardDTO(Ticket ticket, String ipfsUrl) {
+    public static PhotoCardDTO toPhotoCardDTO(Ticket ticket) {
         return PhotoCardDTO.builder()
                 .photoCardId(ticket.getMetadata().getPhotoCard().getId())
-                .imageUrl(ipfsUrl)
+                .imageUrl(ticket.getMetadata().getPhotoCard().getUrl())
                 .ticketId(ticket.getId())
                 .build();
     }
 
-    public static PhotoCardInfoDTO toPhotoCardInfoDTO(PhotoCard photoCard, String ipfsUrl) {
+    public static PhotoCardInfoDTO toPhotoCardInfoDTO(PhotoCard photoCard) {
         return PhotoCardInfoDTO.builder()
                 .photoCardId(photoCard.getId())
-                .imageUrl(ipfsUrl)
+                .imageUrl(photoCard.getUrl())
                 .build();
     }
 }

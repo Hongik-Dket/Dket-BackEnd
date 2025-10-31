@@ -22,9 +22,12 @@ public class PhotoCardServiceImpl implements PhotoCardService {
     @Transactional
     public void createPhotoCards(Concert concert, List<MultipartFile> images) {
         for (MultipartFile image : images) {
+            String cid = pinataService.uploadPhotoCard(image);
+
             PhotoCard photoCard = PhotoCard.builder()
                     .concert(concert)
-                    .cid(pinataService.uploadPhotoCard(image))
+                    .cid(cid)
+                    .url(pinataService.cidToHttp(cid))
                     .build();
 
             concert.addPhotoCard(photoCard);

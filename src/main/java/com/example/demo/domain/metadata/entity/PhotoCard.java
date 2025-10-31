@@ -26,4 +26,6 @@ public class PhotoCard extends BaseEntity {
 
     private String cid;
 
+    private String url;
+
 }
