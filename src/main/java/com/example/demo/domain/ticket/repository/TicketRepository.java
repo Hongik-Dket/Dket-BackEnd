@@ -59,4 +59,11 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     Optional<Ticket> findByIdForUpdate(@Param("id") Long id);
 
     Optional<Ticket> findByIdAndUserId(Long id, Long userId);
+
+    @Query("""
+        SELECT t
+        FROM Ticket t
+        WHERE t.metadata.ticketNumber = :ticketNumber
+    """)
+    Optional<Ticket> findByTicketNumber(@Param("ticketNumber") String ticketNumber);
 }

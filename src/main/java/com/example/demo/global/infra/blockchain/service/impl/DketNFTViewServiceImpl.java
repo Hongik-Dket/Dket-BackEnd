@@ -44,7 +44,7 @@ public class DketNFTViewServiceImpl implements DketNFTViewService {
     @Override
     public String getOwnerWallet(BigInteger tokenId) {
         try {
-            return dketNFT.ownerOf(tokenId).send();
+            return dketNFT.ownerOf(tokenId).send().trim().toLowerCase();
         } catch (ContractCallException e) {
             log.error("Token [{}] owner 호출 실패: {}", tokenId, e.getMessage(), e);
             throw new CustomException(ErrorStatus.TOKEN_INVALID);
@@ -63,6 +63,21 @@ public class DketNFTViewServiceImpl implements DketNFTViewService {
             throw new CustomException(ErrorStatus.TOKEN_INVALID);
         } catch (Exception e) {
             log.error("Token [{}] TokenUri 트랜잭션 실패: {}", tokenId, e.getMessage(), e);
+            throw new CustomException(ErrorStatus.BLOCKCHAIN_ESTIMATE_GAS_FAILED);
+        }
+    }
+
+    @Override
+    public boolean isEntered(BigInteger tokenId) {
+        try {
+            BigInteger enterAt = dketNFT.enteredAt(tokenId).send();
+
+            return enterAt != null && enterAt.signum() > 0;
+        } catch (ContractCallException e) {
+            log.error("Token [{}] enteredAt 호출 실패: {}", tokenId, e.getMessage(), e);
+            throw new CustomException(ErrorStatus.TOKEN_INVALID);
+        } catch (Exception e) {
+            log.error("Token [{}] enteredAt 트랜잭션 실패: {}", tokenId, e.getMessage(), e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_ESTIMATE_GAS_FAILED);
         }
     }

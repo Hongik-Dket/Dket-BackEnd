@@ -7,4 +7,6 @@ public interface DketNFTViewService {
     String getOwnerWallet(BigInteger tokenId);
 
     String getTokenUri(BigInteger tokenId);
+
+    boolean isEntered(BigInteger tokenId);
 }
