@@ -1,13 +1,11 @@
 package com.example.demo.domain.ticket.controller;
 
+import com.example.demo.domain.ticket.dto.response.TicketResponseDTO;
 import com.example.demo.domain.ticket.service.OrganizerTicketService;
 import com.example.demo.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.example.demo.global.response.status.SuccessStatus._OK;
 
@@ -24,5 +22,13 @@ public class OrganizerTicketController {
         organizerTicketService.enterTicket(ticketId);
 
         return ApiResponse.onSuccess(_OK, null);
+    }
+
+    @Operation(summary = "티켓 번호로 검증하기")
+    @GetMapping("")
+    public ApiResponse<TicketResponseDTO> validateTicketWithoutProof(
+            @RequestParam("ticketNumber") String ticketNumber
+    ) {
+        return ApiResponse.onSuccess(_OK, organizerTicketService.validateTicketWithoutProof(ticketNumber));
     }
 }

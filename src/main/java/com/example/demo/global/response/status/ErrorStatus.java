@@ -46,6 +46,7 @@ public enum ErrorStatus implements BaseErrorCode {
     TICKET_INVALID(HttpStatus.BAD_REQUEST, "TICKET_4006", "유효하지 않은 티켓입니다."),
     TICKET_ALREADY_PAID(HttpStatus.BAD_REQUEST, "TICKET_4007", "이미 티켓을 결제했습니다."),
     TICKET_WRONG_ENTRY_CODE(HttpStatus.BAD_REQUEST, "TICKET_4008", "잘못된 입장 인증 번호입니다."),
+    TICKET_RESALE_PENDING(HttpStatus.BAD_REQUEST, "TICKET_4009", "리세일 거래가 진행 중인 티켓은 사용할 수 없습니다."),
 
     CONCERT_NOT_FOUND(HttpStatus.BAD_REQUEST, "CONCERT_4001", "해당 공연을 찾을 수 없습니다."),
     CONCERT_ORGANIZER_MISMATCH(HttpStatus.BAD_REQUEST, "CONCERT_4002", "해당 공연의 개최자가 아닙니다."),
