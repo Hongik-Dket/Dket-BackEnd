@@ -11,7 +11,7 @@ public interface TicketService {
 
     void completeTicket(String address, Long sessionId, Long tokenId);
 
-    TicketDetailDTO getTicketById(Long ticketId);
+    TicketDetailDTO getTicketDetail(Long ticketId);
 
     TicketDetailDTO getTicketByNumber(String ticketNumber);
 

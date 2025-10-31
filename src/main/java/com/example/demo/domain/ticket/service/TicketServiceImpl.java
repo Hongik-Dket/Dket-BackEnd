@@ -18,6 +18,7 @@ import com.example.demo.global.base.Constants;
 import com.example.demo.global.infra.blockchain.service.DketNFTViewService;
 import com.example.demo.global.infra.image.QrCodeGenerator;
 import com.example.demo.global.infra.image.S3UploadService;
+import com.example.demo.global.infra.ipfs.PinataService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +52,7 @@ public class TicketServiceImpl implements TicketService {
     private final S3UploadService s3UploadService;
     private final DketNFTViewService dketNFTViewService;
     private final ResaleRepository resaleRepository;
+    private final PinataService pinataService;
 
     @Value("${web3.nft-contract-address}")
     private String contractAddress;
@@ -109,7 +111,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public TicketDetailDTO getTicketById(Long ticketId) {
+    public TicketDetailDTO getTicketDetail(Long ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.TICKET_NOT_FOUND));
 
@@ -120,8 +122,7 @@ public class TicketServiceImpl implements TicketService {
             throw new CustomException(ErrorStatus.TICKET_NOT_FOUND);
         }
 
-        if (!(ownerWalletAddress.equals(user.getWalletAddress()))
-                && !(ticket.getSession().getConcert().getOrganizer().getId().equals(user.getId()))) {
+        if (!(ownerWalletAddress.equals(user.getWalletAddress()))) {
             throw new CustomException(ErrorStatus.TICKET_INVALID_USER);
         }
 
@@ -134,7 +135,9 @@ public class TicketServiceImpl implements TicketService {
                         EnumSet.of(ResaleStatus.LISTING, ResaleStatus.AVAILABLE, ResaleStatus.RESERVED)
                 );
 
-        return toTicketDetailDTO(ticket, getNftUrl(ticket), isResaleListed);
+        String photoCardUrl = pinataService.cidToHttp(ticket.getMetadata().getPhotoCard().getCid());
+
+        return toTicketDetailDTO(ticket, getNftUrl(ticket), isResaleListed, photoCardUrl);
     }
 
     @Override
@@ -158,7 +161,7 @@ public class TicketServiceImpl implements TicketService {
                         EnumSet.of(ResaleStatus.LISTING, ResaleStatus.AVAILABLE, ResaleStatus.RESERVED)
                 );
 
-        return toTicketDetailDTO(ticket, getNftUrl(ticket), isResaleListed);
+        return toTicketDetailDTO(ticket, getNftUrl(ticket), isResaleListed, null);
     }
 
     @Override

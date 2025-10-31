@@ -21,12 +21,10 @@ public class TicketDetailDTO {
     private LocalDate birth;
     private String ticketNumber;
     private String seatNumber;
-    private String qrCodeUrl;
-    private Long photoCardId;
     private String NftUrl;
     private boolean isEntered;
     private int price;
     private Boolean isResaleListed;
-    
+    private String photoCardUrl;
     
 }

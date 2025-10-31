@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public class TicketConverter {
 
-    public static TicketDetailDTO toTicketDetailDTO(Ticket ticket, String NftUrl, Boolean isResaleListed) {
+    public static TicketDetailDTO toTicketDetailDTO(Ticket ticket, String NftUrl, Boolean isResaleListed, String photoCardUrl) {
         LocalDateTime concertDateTime = LocalDateTime.of(
                 ticket.getSession().getDate(),
                 ticket.getSession().getConcert().getStartTime()
@@ -22,12 +22,11 @@ public class TicketConverter {
                 .birth(ticket.getUser().getBirth())
                 .ticketNumber(ticket.getMetadata().getTicketNumber())
                 .seatNumber(ticket.getMetadata().getSeatCode())
-                .qrCodeUrl(ticket.getQrCode())
-                .photoCardId(ticket.getMetadata().getPhotoCard().getId())
                 .NftUrl(NftUrl)
                 .isEntered(ticket.getEnteredAt() != null)
                 .price(ticket.getSession().getConcert().getPriceKrw())
                 .isResaleListed(isResaleListed)
+                .photoCardUrl(photoCardUrl)
                 .build();
     }
 
