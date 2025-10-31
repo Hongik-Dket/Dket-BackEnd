@@ -13,8 +13,6 @@ public interface TicketService {
 
     TicketDetailDTO getTicketDetail(Long ticketId);
 
-    TicketDetailDTO getTicketByNumber(String ticketNumber);
-
     void enterTicket(Long ticketId);
 
     String getNftUrl(Ticket ticket);

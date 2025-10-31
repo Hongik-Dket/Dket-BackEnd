@@ -141,30 +141,6 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public TicketDetailDTO getTicketByNumber(String ticketNumber) {
-        Metadata metadata = metadataRepository.findByTicketNumber(ticketNumber)
-                .orElseThrow(() -> new CustomException(ErrorStatus.METADATA_NOT_FOUND));
-
-        Ticket ticket = ticketRepository.findByMetadata(metadata)
-                .orElseThrow(() -> new CustomException(ErrorStatus.TICKET_NOT_FOUND));
-
-        User user = userService.getCurrentUser();
-        String ownerWalletAddress = dketNFTViewService.getOwnerWallet(ticket.getTokenId());
-
-        validateOrganizer(ticket, user);
-        validateTicket(ticket, ownerWalletAddress);
-
-        boolean isResaleListed = resaleRepository
-                .existsByTicketIdAndSellerIdAndResaleStatusIn(
-                        ticket.getId(),
-                        user.getId(),
-                        EnumSet.of(ResaleStatus.LISTING, ResaleStatus.AVAILABLE, ResaleStatus.RESERVED)
-                );
-
-        return toTicketDetailDTO(ticket, getNftUrl(ticket), isResaleListed, null);
-    }
-
-    @Override
     @Transactional
     public void enterTicket(Long ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
