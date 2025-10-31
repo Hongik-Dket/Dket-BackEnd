@@ -38,6 +38,8 @@ public class Session extends BaseEntity {
     private Boolean metadataUploaded;
     private Boolean isBuyable;
 
+    private String entryCode;
+
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Apply> applyList = new ArrayList<>();
@@ -54,6 +56,7 @@ public class Session extends BaseEntity {
     public void setIsDrawn() { this.isDrawn = true; }
     public void setMetadataUploaded() { this.metadataUploaded = true; }
     public void setIsBuyable(boolean isBuyable) { this.isBuyable = isBuyable; }
+    public void setEntryCode(String entryCode) { this.entryCode = entryCode; }
 
     public void addApply(Apply apply) { this.applyList.add(apply); }
     public void addTicket(Ticket ticket) { this.ticketList.add(ticket); }

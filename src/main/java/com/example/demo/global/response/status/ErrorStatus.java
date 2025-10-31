@@ -55,6 +55,7 @@ public enum ErrorStatus implements BaseErrorCode {
     SESSION_DRAW_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "SESSION_5001", "해당 세션 추첨에 실패했습니다."),
     SESSION_MINTING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "SESSION_5002", "해당 세션 티켓 발행에 실패했습니다."),
     SESSION_CANNOT_BUY(HttpStatus.BAD_REQUEST, "SESSION_4003", "티켓을 구매할 수 없는 세션입니다."),
+    SESSION_NOT_TODAY(HttpStatus.BAD_REQUEST, "SESSION_4004", "오늘 진행되는 세션이 아닙니다."),
 
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IMAGE_5001", "이미지 업로드에 실패하였습니다."),
     IMAGE_GENERATE_QRCODE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IMAGE_5002", "QR 코드 생성에 실패했습니다."),

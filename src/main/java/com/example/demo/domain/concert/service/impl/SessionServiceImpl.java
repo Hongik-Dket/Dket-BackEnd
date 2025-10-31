@@ -3,9 +3,11 @@ package com.example.demo.domain.concert.service.impl;
 import com.example.demo.domain.apply.entity.Apply;
 import com.example.demo.domain.apply.enums.ApplyStatus;
 import com.example.demo.domain.apply.repository.ApplyRepository;
+import com.example.demo.domain.concert.dto.response.EntryCodeDTO;
 import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.concert.enums.ConcertStatus;
+import com.example.demo.domain.concert.repository.ConcertRepository;
 import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.domain.concert.service.SessionService;
 import com.example.demo.domain.concert.dto.response.PriceWeiDTO;
@@ -25,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Random;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,6 +40,7 @@ public class SessionServiceImpl implements SessionService {
     private final ApplicationEventPublisher eventPublisher;
     private final UserService userService;
     private final TicketRepository ticketRepository;
+    private final ConcertRepository concertRepository;
 
     @Override
     @Transactional
@@ -103,6 +107,38 @@ public class SessionServiceImpl implements SessionService {
         return PriceWeiDTO.builder()
                 .priceWei(session.getConcert().getPriceWei())
                 .sessionId(sessionId)
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public EntryCodeDTO getEntryCode(Long concertId, Long sessionId) {
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
+
+        Concert concert = concertRepository.findById(concertId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.CONCERT_NOT_FOUND));
+
+        if (!session.getConcert().getId().equals(concert.getId())) {
+            throw new CustomException(ErrorStatus.CONCERT_SESSION_MISMATCH);
+        }
+
+        User user = userService.getCurrentUser();
+        if (!concert.getOrganizer().getId().equals(user.getId())) {
+            throw new CustomException(ErrorStatus.CONCERT_ORGANIZER_MISMATCH);
+        }
+
+        if (!session.getDate().equals(LocalDate.now())) {
+            throw new CustomException(ErrorStatus.SESSION_NOT_TODAY);
+        }
+
+        if (session.getEntryCode() == null) {
+            String entryCode = String.format("%04d", new Random().nextInt(10000));
+            session.setEntryCode(entryCode);
+        }
+
+        return EntryCodeDTO.builder()
+                .entryCode(session.getEntryCode())
                 .build();
     }
 
