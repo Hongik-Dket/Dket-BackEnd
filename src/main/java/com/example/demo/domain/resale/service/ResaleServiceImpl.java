@@ -18,7 +18,6 @@ import com.example.demo.global.base.Constants;
 import com.example.demo.global.infra.blockchain.ResaleSigner;
 import com.example.demo.global.infra.blockchain.service.DketResaleService;
 import com.example.demo.global.infra.blockchain.service.ExchangeService;
-import com.example.demo.global.infra.ipfs.PinataService;
 import com.example.demo.global.infra.scheduling.SchedulingService;
 import com.example.demo.global.infra.scheduling.jobs.resale.CancelListingJob;
 import com.example.demo.global.infra.scheduling.jobs.resale.CancelReservationJob;
@@ -38,7 +37,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Map;
 
 import static com.example.demo.domain.resale.converter.ResaleConverter.*;
 
@@ -53,7 +51,6 @@ public class ResaleServiceImpl implements ResaleService {
     private final ExchangeService exchangeService;
     private final DketResaleService dketResaleService;
     private final SessionRepository sessionRepository;
-    private final PinataService pinataService;
     private final SchedulingService schedulingService;
     private final ResaleSigner resaleSigner;
 
@@ -129,10 +126,7 @@ public class ResaleServiceImpl implements ResaleService {
         List<Resale> resaleList = resaleRepository.findSessionResalesSorted(sessionId);
 
         return resaleList.stream()
-                .map(resale -> toResaleCardDTO(
-                        resale,
-                        pinataService.cidToHttp(resale.getTicket().getMetadata().getPhotoCard().getCid())
-                ))
+                .map(resale -> toResaleCardDTO(resale))
                 .toList();
     }
 
@@ -154,9 +148,7 @@ public class ResaleServiceImpl implements ResaleService {
         resale.setReservation(user);
         schedulingService.scheduleResaleJob(resale, CancelReservationJob.class);
 
-        String photoCardUrl = pinataService.cidToHttp(resale.getTicket().getMetadata().getPhotoCard().getCid());
-
-        return toResaleDetailDTO(resale, photoCardUrl);
+        return toResaleDetailDTO(resale);
     }
 
     @Override

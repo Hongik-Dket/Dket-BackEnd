@@ -31,18 +31,18 @@ public class ResaleConverter {
                 .build();
     }
 
-    public static ResaleCardDTO toResaleCardDTO(Resale resale, String photoCardUrl){
+    public static ResaleCardDTO toResaleCardDTO(Resale resale){
         return ResaleCardDTO.builder()
                 .resaleId(resale.getId())
                 .ticketId(resale.getTicket().getId())
                 .priceKrw(resale.getPriceKrw())
                 .seatCode(resale.getTicket().getMetadata().getSeatCode())
                 .resaleStatus(resale.getResaleStatus())
-                .photoCardUrl(photoCardUrl)
+                .photoCardUrl(resale.getTicket().getMetadata().getPhotoCard().getUrl())
                 .build();
     }
 
-    public static ResaleDetailDTO toResaleDetailDTO(Resale resale, String photoCardUrl){
+    public static ResaleDetailDTO toResaleDetailDTO(Resale resale){
         Concert concert = resale.getSession().getConcert();
 
         return ResaleDetailDTO.builder()
@@ -55,7 +55,7 @@ public class ResaleConverter {
                 .originalPrice(concert.getPriceKrw())
                 .priceKrw(resale.getPriceKrw())
                 .priceWei(resale.getPriceWei())
-                .photoCardUrl(photoCardUrl)
+                .photoCardUrl(resale.getTicket().getMetadata().getPhotoCard().getUrl())
                 .build();
     }
 }

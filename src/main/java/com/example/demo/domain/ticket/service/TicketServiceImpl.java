@@ -126,9 +126,7 @@ public class TicketServiceImpl implements TicketService {
                         EnumSet.of(ResaleStatus.LISTING, ResaleStatus.AVAILABLE, ResaleStatus.RESERVED)
                 );
 
-        String photoCardUrl = pinataService.cidToHttp(ticket.getMetadata().getPhotoCard().getCid());
-
-        return toTicketDetailDTO(ticket, getNftUrl(ticket), isResaleListed, photoCardUrl);
+        return toTicketDetailDTO(ticket, getNftUrl(ticket), isResaleListed);
     }
 
     @Override
