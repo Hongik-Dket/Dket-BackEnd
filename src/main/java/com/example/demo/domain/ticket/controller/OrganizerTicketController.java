@@ -4,19 +4,22 @@ import com.example.demo.domain.ticket.service.TicketService;
 import com.example.demo.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import static com.example.demo.global.response.status.SuccessStatus._OK;
 
 @RestController
-@RequestMapping("/api/tickets")
+@RequestMapping("/api/organizer/tickets")
 @RequiredArgsConstructor
-public class TicketController {
+public class OrganizerTicketController {
 
     private final TicketService ticketService;
 
     @Operation(summary = "공연 입장")
-    @PatchMapping("organizer/{ticketId}/enter")
+    @PatchMapping("/{ticketId}/enter")
     public ApiResponse<?> enterTicket(@PathVariable("ticketId") Long ticketId) {
         ticketService.enterTicket(ticketId);
 

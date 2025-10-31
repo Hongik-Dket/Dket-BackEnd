@@ -150,12 +150,8 @@ public class TicketServiceImpl implements TicketService {
 
         validateOrganizer(ticket, user);
 
-        if (
-            !(ticket.getSession().getDate().equals(LocalDate.now()) &&
-                    ticket.getSession().getConcert().getStartTime().isAfter(LocalTime.now()))
-                    || ticket.getEnteredAt() != null
-        ) {
-            throw new CustomException(ErrorStatus.TICKET_INVALID);
+        if (ticket.getEnteredAt() != null) {
+            throw new CustomException(ErrorStatus.TICKET_ALREADY_ENTERED);
         }
 
         ticket.enter();
