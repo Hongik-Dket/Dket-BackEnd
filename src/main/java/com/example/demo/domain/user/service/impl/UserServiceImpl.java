@@ -111,7 +111,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByWalletAddress(walletAddress)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
-        String token = jwtProvider.generateToken(user.getId());
+        String token = jwtProvider.refreshToken(user.getId());
         return LoginResponseDTO.builder()
                 .token(token)
                 .build();
