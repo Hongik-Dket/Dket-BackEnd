@@ -25,12 +25,12 @@ public class UserController {
     private final UserService userService;
     private final MypageService mypageService;
 
-    @Operation(summary = "메타마스크로 로그인하기")
-    @PostMapping("/login/metamask/complete")
-    public ApiResponse<?> completeMetaMaskLogin(
+    @Operation(summary = "메타마스크 연결하기")
+    @PostMapping("/signup/metamask/complete")
+    public ApiResponse<?> connectMetaMaskWallet(
             @RequestBody MetaMaskLoginDTO request
     ) {
-        userService.loginWithWallet(request);
+        userService.connectWallet(request);
 
         return ApiResponse.onSuccess(_OK, null);
     }

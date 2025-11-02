@@ -13,7 +13,9 @@ public interface UserService {
 
     LoginResponseDTO signupWithPassport(PassportSignupDTO request);
 
-    void loginWithWallet(MetaMaskLoginDTO request);
+    void connectWallet(MetaMaskLoginDTO request);
+
+    LoginResponseDTO loginWithMetaMask(MetaMaskLoginDTO request);
 
     PassportInfoDTO getPassportInfo();
 

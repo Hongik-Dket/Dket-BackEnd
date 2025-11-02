@@ -1,5 +1,6 @@
 package com.example.demo.global.security;
 
+import com.example.demo.domain.user.dto.request.MetaMaskLoginDTO;
 import com.example.demo.global.security.dto.response.LoginResponseDTO;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.response.ApiResponse;
@@ -23,6 +24,14 @@ public class AuthController {
             @RequestBody PassportSignupDTO request
             ) {
         return ApiResponse.onSuccess(_OK, userService.signupWithPassport(request));
+    }
+
+    @Operation(summary = "메타마스크로 로그인")
+    @PostMapping("/login/metamask")
+    public ApiResponse<LoginResponseDTO> loginWithMetaMask(
+            @RequestBody MetaMaskLoginDTO request
+    ) {
+        return ApiResponse.onSuccess(_OK, userService.loginWithMetaMask(request));
     }
 
     @Operation(summary = "개발용 리프레쉬 토큰 발급")

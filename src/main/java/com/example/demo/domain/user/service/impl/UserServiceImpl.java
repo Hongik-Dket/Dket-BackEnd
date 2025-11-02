@@ -24,6 +24,7 @@ import java.time.LocalDate;
 
 import static com.example.demo.domain.user.converter.UserConverter.toPassportInfo;
 import static com.example.demo.domain.user.converter.UserConverter.toPassportInfoDTO;
+import static com.example.demo.global.util.StringUtil.normalize;
 
 @Service
 @Transactional(readOnly = true)
@@ -81,23 +82,39 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void loginWithWallet(MetaMaskLoginDTO request) {
+    public void connectWallet(MetaMaskLoginDTO request) {
         String walletAddress = request.getWalletAddress();
 
-        if (walletAddress == null || walletAddress.isBlank()) {
+        if (walletAddress == null || walletAddress.isBlank()
+                || !walletAddress.matches("^0x[a-fA-F0-9]{40}$")) {
             throw new CustomException(ErrorStatus.USER_INVALID_INPUT);
         }
 
-        if (!walletAddress.matches("^0x[a-fA-F0-9]{40}$")) {
-            throw new CustomException(ErrorStatus.USER_INVALID_WALLET);
-        }
-
-        walletAddress = walletAddress.toLowerCase();
+        walletAddress = normalize(walletAddress);
         if (userRepository.existsByWalletAddress(walletAddress)) {
             throw new CustomException(ErrorStatus.USER_WALLET_ALREADY_REGISTERED);
         }
 
         getCurrentUser().setWalletAddress(walletAddress);
+    }
+
+    @Override
+    public LoginResponseDTO loginWithMetaMask(MetaMaskLoginDTO request) {
+        String walletAddress = request.getWalletAddress();
+
+        if (walletAddress == null || walletAddress.isBlank()
+                || !walletAddress.matches("^0x[a-fA-F0-9]{40}$")) {
+            throw new CustomException(ErrorStatus.USER_INVALID_INPUT);
+        }
+
+        walletAddress = normalize(walletAddress);
+        User user = userRepository.findByWalletAddress(walletAddress)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        String token = jwtProvider.generateToken(user.getId());
+        return LoginResponseDTO.builder()
+                .token(token)
+                .build();
     }
 
     @Override
