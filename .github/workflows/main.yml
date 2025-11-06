@@ -33,6 +33,18 @@ jobs:
           ${{ secrets.APPLICATION }}
           EOF
 
+      - name: Build native lib (Ubuntu 22.04 / glibc 2.35)
+        run: |
+          docker build -f Dockerfile.builder -t poseidon-builder .
+          docker run --rm -v "$PWD:/work" poseidon-builder \
+          bash -lc 'source $HOME/.cargo/env; cd native/poseidon; cargo build --release --target x86_64-unknown-linux-gnu'
+      
+          cp native/poseidon/target/x86_64-unknown-linux-gnu/release/libposeidon.so \
+          src/main/resources/libposeidon.so
+
+          file src/main/resources/libposeidon.so || true
+          ldd  src/main/resources/libposeidon.so || true
+
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
