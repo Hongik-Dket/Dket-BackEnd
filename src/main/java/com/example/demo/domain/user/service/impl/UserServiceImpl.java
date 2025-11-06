@@ -1,7 +1,7 @@
 package com.example.demo.domain.user.service.impl;
 
 import com.example.demo.domain.user.dto.response.PassportInfoDTO;
-import com.example.demo.domain.user.entity.PassportInfo;
+import com.example.demo.domain.user.entity.PassportIdentity;
 import com.example.demo.domain.user.enums.IdentityType;
 import com.example.demo.domain.user.repository.PassportInfoRepository;
 import com.example.demo.domain.user.dto.request.MetaMaskLoginDTO;
@@ -71,8 +71,8 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
 
-        PassportInfo passportInfo = toPassportInfo(user, request);
-        passportInfoRepository.save(passportInfo);
+        PassportIdentity passportIdentity = toPassportInfo(user, request);
+        passportInfoRepository.save(passportIdentity);
 
         String token = jwtProvider.generateToken(user.getId());
         return LoginResponseDTO.builder()
@@ -125,7 +125,7 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(ErrorStatus.USER_NOT_REGISTERED_WITH_PASSPORT);
         }
 
-        PassportInfo passport = passportInfoRepository.findByUserId(user.getId())
+        PassportIdentity passport = passportInfoRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.PASSPORT_INFO_NOT_FOUND));
 
         return toPassportInfoDTO(passport);

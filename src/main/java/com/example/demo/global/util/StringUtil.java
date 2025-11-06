@@ -20,16 +20,4 @@ public final class StringUtil {
         return t;
     }
 
-    public static String canonical(String input) {
-        return input == null ? "" : input.trim().toUpperCase();
-    }
-
-    public static String yyyyMMdd(LocalDate d) {
-        return d == null ? "" : d.toString().replace("-", "");
-    }
-
-    public static String digits(String s) {
-        return s == null ? "" : s.replaceAll("[^0-9]", "");
-    }
-
 }

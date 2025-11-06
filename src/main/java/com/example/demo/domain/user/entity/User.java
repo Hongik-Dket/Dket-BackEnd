@@ -42,8 +42,11 @@ public class User extends BaseEntity {
     @Column(length = 66)
     private String icCommitment;
 
-    @Column(length = 32)
+    @Column(length = 64)
     private String icAlgoVersion;
+
+    @Column(length = 34)
+    private String icUserSalt;
 
     @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL)
     @Builder.Default

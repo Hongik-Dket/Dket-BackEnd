@@ -1,4 +1,4 @@
-package com.example.demo.global.crypto;
+package com.example.demo.global.zkp.poseidon;
 
 import java.math.BigInteger;
 

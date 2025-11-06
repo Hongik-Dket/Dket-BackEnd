@@ -1,6 +1,5 @@
-package com.example.demo.global.crypto.impl;
+package com.example.demo.global.zkp.poseidon;
 
-import com.example.demo.global.crypto.Poseidon;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
