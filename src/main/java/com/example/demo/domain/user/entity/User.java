@@ -39,6 +39,12 @@ public class User extends BaseEntity {
     @Column(columnDefinition = "VARCHAR(10)")
     private IdentityType identityType;
 
+    @Column(length = 66)
+    private String icCommitment;
+
+    @Column(length = 32)
+    private String icAlgoVersion;
+
     @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Concert> organizedConcerts = new ArrayList<>();

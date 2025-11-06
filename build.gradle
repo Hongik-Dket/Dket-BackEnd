@@ -57,3 +57,32 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// Poseidon JNI 네이티브 빌드 설정
+import org.gradle.internal.os.OperatingSystem
+
+def os = OperatingSystem.current()
+def libName = os.isWindows() ? "poseidon.dll" : (os.isMacOsX() ? "libposeidon.dylib" : "libposeidon.so")
+def nativeDir = "$projectDir/native/poseidon"
+def targetLib = "$nativeDir/target/release/${libName}"
+def javaLibDir = "$projectDir/src/main/resources"
+
+tasks.register("buildPoseidonNative") {
+    group = "build"
+    description = "Rust Poseidon JNI 라이브러리를 빌드하고 리소스 경로로 복사합니다."
+    doLast {
+        exec {
+            workingDir nativeDir
+            commandLine "cargo", "build", "--release"
+        }
+        copy {
+            from(targetLib)
+            into(javaLibDir)
+        }
+        println "Copied ${libName} to ${javaLibDir}"
+    }
+}
+
+tasks.named("build") {
+    dependsOn("buildPoseidonNative")
+}
