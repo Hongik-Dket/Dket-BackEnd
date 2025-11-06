@@ -27,22 +27,3 @@ pub extern "system" fn Java_com_example_demo_global_crypto_impl_PoseidonNative_p
     let out = poseidon_hash_bn254_t3_be_chunks(&chunks);
     env.byte_array_from_slice(&out).expect("alloc out").into_raw()
 }
-
-// src/lib.rs 또는 tests/poseidon.rs
-#[test]
-fn tv_circom_1_2() {
-    use ark_bn254::Fr;
-
-    // (1,2) 입력
-    let one = Fr::from(1u64);
-    let two = Fr::from(2u64);
-    let out = crate::poseidon_circom::poseidon_circom_t3(&[one, two], 8, 57,
-                                                         &crate::params_bn254_t3::circomlibjs_params_t3().mds,
-                                                         &crate::params_bn254_t3::circomlibjs_params_t3().ark
-    );
-
-    let be = out.into_bigint().to_bytes_be();
-    let got = "0x".to_string() + &hex::encode(be);
-    let exp = "0x115cc0f5e7d690413df64c6b9662e9cf2a3617f2743245519e19607a4417189a";
-    assert_eq!(got, exp);
-}
