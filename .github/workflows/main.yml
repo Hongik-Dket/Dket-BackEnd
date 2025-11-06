@@ -37,9 +37,12 @@ jobs:
         run: |
           docker build -f Dockerfile.builder -t poseidon-builder .
           docker run --rm \
-            -u $(id -u):$(id -g) \
+            -e HOST_UID=$(id -u) -e HOST_GID=$(id -g) \
             -v "$PWD:/work" poseidon-builder \
-            bash -lc 'source $HOME/.cargo/env; cd native/poseidon; cargo build --release --target x86_64-unknown-linux-gnu'
+            bash -lc '/root/.cargo/bin/cargo --version; \
+            cd native/poseidon; \
+            /root/.cargo/bin/cargo build --release --target x86_64-unknown-linux-gnu; \
+            chown -R $HOST_UID:$HOST_GID target'
       
           cp native/poseidon/target/x86_64-unknown-linux-gnu/release/libposeidon.so \
             src/main/resources/libposeidon.so
