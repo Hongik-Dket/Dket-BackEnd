@@ -1,6 +1,5 @@
 use ark_bn254::Fr;
-use ark_ff::PrimeField;
-use ark_ff::{Field, BigInteger};
+use ark_ff::{PrimeField, BigInteger};
 
 #[inline]
 fn fr(hex: &str) -> Fr {
@@ -100,65 +99,19 @@ pub fn circomlibjs_params_t3() -> PoseidonParams {
     PoseidonParams { full_rounds, partial_rounds, alpha, mds, ark }
 }
 
-#[inline]
-fn sbox_alpha(x: Fr, alpha: u64) -> Fr {
-    x.pow([alpha])
-}
-
-fn poseidon_permute(state: &mut [Fr; 3], p: &PoseidonParams) {
-    let t = 3usize;
-    let total = p.full_rounds + p.partial_rounds;
-    let half_full = p.full_rounds / 2;
-
-    for r in 0..total {
-        // 1) add ark
-        for i in 0..t {
-            state[i] += p.ark[r][i];
-        }
-
-        // 2) sbox
-        if r < half_full || r >= half_full + p.partial_rounds {
-            for i in 0..t {
-                state[i] = sbox_alpha(state[i], p.alpha);
-            }
-        } else {
-            state[0] = sbox_alpha(state[0], p.alpha);
-        }
-
-        // 3) MDS
-        let prev = *state;
-        for i in 0..t {
-            let mut acc = Fr::from(0u64);
-            for j in 0..t {
-                acc += p.mds[i][j] * prev[j];
-            }
-            state[i] = acc;
-        }
-    }
-}
-
 pub fn poseidon_hash_bn254_t3_be_chunks(be_chunks32: &[&[u8]]) -> [u8; 32] {
-    let params = circomlibjs_params_t3();
-    let mut state = [Fr::from(0u64); 3];
-    let mut idx = 0usize;
+    use crate::poseidon_circom::poseidon_circom_t3;
 
+    let p = circomlibjs_params_t3();
+    let mut inputs = Vec::with_capacity(be_chunks32.len());
     for &chunk in be_chunks32 {
         debug_assert_eq!(chunk.len(), 32);
-        let x = Fr::from_be_bytes_mod_order(chunk);
-        state[1 + idx] += x;
-        idx += 1;
-
-        if idx == 2 {
-            poseidon_permute(&mut state, &params);
-            idx = 0;
-        }
+        inputs.push(Fr::from_be_bytes_mod_order(chunk));
     }
 
-    if idx != 0 {
-        poseidon_permute(&mut state, &params);
-    }
+    let out = poseidon_circom_t3(&inputs, p.full_rounds, p.partial_rounds, &p.mds, &p.ark);
 
-    let be = state[0].into_bigint().to_bytes_be();
+    let be = out.into_bigint().to_bytes_be();
     let mut out32 = [0u8; 32];
     let start = 32 - be.len();
     out32[start..].copy_from_slice(&be);

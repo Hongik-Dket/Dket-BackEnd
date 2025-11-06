@@ -28,7 +28,6 @@ pub extern "system" fn Java_com_example_demo_global_crypto_impl_PoseidonNative_p
     env.byte_array_from_slice(&out).expect("alloc out").into_raw()
 }
 
-use ark_ff::{PrimeField, BigInteger};
 // src/lib.rs 또는 tests/poseidon.rs
 #[test]
 fn tv_circom_1_2() {
