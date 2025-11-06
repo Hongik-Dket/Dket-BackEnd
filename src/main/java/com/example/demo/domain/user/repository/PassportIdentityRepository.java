@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface PassportInfoRepository extends JpaRepository<PassportIdentity, Long> {
+public interface PassportIdentityRepository extends JpaRepository<PassportIdentity, Long> {
     boolean existsByPassportNumber(String passportNumber);
 
     Optional<PassportIdentity> findByUserId(Long userId);

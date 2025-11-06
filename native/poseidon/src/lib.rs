@@ -8,7 +8,7 @@ mod poseidon_circom;
 use params_bn254_t3::poseidon_hash_bn254_t3_be_chunks;
 
 #[no_mangle]
-pub extern "system" fn Java_com_example_demo_global_crypto_impl_PoseidonNative_poseidonHash(
+pub extern "system" fn Java_com_example_demo_global_zkp_poseidon_PoseidonNative_poseidonHash(
     env: JNIEnv,
     _class: JClass,
     concatenated32be: JByteArray,
