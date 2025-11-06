@@ -9,7 +9,6 @@ import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.MypageService;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.infra.blockchain.service.WalletService;
-import com.example.demo.global.infra.ipfs.PinataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +28,6 @@ public class MypageServiceImpl implements MypageService {
 
     private final UserService userService;
     private final WalletService walletService;
-    private final PinataService pinataService;
     private final TicketRepository ticketRepository;
 
     @Override

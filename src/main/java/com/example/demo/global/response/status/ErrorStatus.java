@@ -27,6 +27,7 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_INVALID_INPUT(HttpStatus.BAD_REQUEST, "USER_4010", "입력값이 유효하지 않습니다."),
     USER_INVALID_WALLET(HttpStatus.BAD_REQUEST, "USER_4011", "유효하지 않은 지갑 주소 형식입니다."),
     USER_NOT_REGISTERED_WITH_PASSPORT(HttpStatus.BAD_REQUEST, "USER_4012", "여권 기반 가입자가 아닙니다."),
+    USER_INVALID_SIGNUP(HttpStatus.BAD_REQUEST, "USER_4013", "가입 정보가 유효하지 않습니다."),
 
     TOKEN_MISSING(HttpStatus.UNAUTHORIZED, "TOKEN_4001", "토큰이 누락되었습니다."),
     TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "TOKEN_4002", "해당 토큰을 찾을 수 없습니다."),
@@ -108,7 +109,7 @@ public enum ErrorStatus implements BaseErrorCode {
     RESALE_AUTH_SIGN_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "RESALE_AUTH_5001", "EIP-712 서명에 실패했습니다."),
     RESALE_AUTH_TYPEDDATA_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "RESALE_AUTH_5002", "TypedDateJson 생성에 실패했습니다."),
 
-    PASSPORT_INFO_NOT_FOUND(HttpStatus.BAD_REQUEST, "PASSPORT_INFO_4001", "해당 여권 정보를 찾을 수 없습니다."),
+    PASSPORT_IDENTITY_NOT_FOUND(HttpStatus.BAD_REQUEST, "PASSPORT_INFO_4001", "해당 여권 정보를 찾을 수 없습니다."),
 
 
     ;

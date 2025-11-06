@@ -1,6 +1,9 @@
 package com.example.demo.global.base;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+
+import static com.example.demo.global.zkp.ic.util.Keccak.keccak256;
 
 public class Constants {
 
@@ -19,10 +22,10 @@ public class Constants {
     // 리세일 판매가 상한 비율 (원가 × 1.2)
     public static final BigDecimal RESALE_PRICE_LIMIT_RATE = BigDecimal.valueOf(1.20);
 
-    // 리세일 수익 중 개최자 로열티 비율 (10%)
-    public static final BigDecimal ORGANIZER_ROYALTY_RATE = BigDecimal.valueOf(0.10);
-
     // 온체인 기록 대기 시간(분 단위)
     public static final int ONCHAIN_TIMEOUT = 10;
+
+    // DOMAIN_TAG = keccak256("ICv1")
+    public static final byte[] DOMAIN_TAG_HASH = keccak256("ICv1".getBytes(StandardCharsets.UTF_8));
 
 }

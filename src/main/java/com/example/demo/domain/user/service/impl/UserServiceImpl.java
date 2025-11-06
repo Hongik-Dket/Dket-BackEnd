@@ -1,9 +1,9 @@
 package com.example.demo.domain.user.service.impl;
 
 import com.example.demo.domain.user.dto.response.PassportInfoDTO;
-import com.example.demo.domain.user.entity.PassportInfo;
+import com.example.demo.domain.user.entity.PassportIdentity;
 import com.example.demo.domain.user.enums.IdentityType;
-import com.example.demo.domain.user.repository.PassportInfoRepository;
+import com.example.demo.domain.user.repository.PassportIdentityRepository;
 import com.example.demo.domain.user.dto.request.MetaMaskLoginDTO;
 import com.example.demo.domain.user.dto.response.UserInfoDTO;
 import com.example.demo.global.security.dto.response.LoginResponseDTO;
@@ -14,6 +14,7 @@ import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import com.example.demo.global.security.JwtProvider;
 import com.example.demo.global.security.dto.request.PassportSignupDTO;
+import com.example.demo.global.zkp.ic.IcService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +26,7 @@ import java.time.LocalDate;
 import static com.example.demo.domain.user.converter.UserConverter.toPassportInfo;
 import static com.example.demo.domain.user.converter.UserConverter.toPassportInfoDTO;
 import static com.example.demo.global.util.StringUtil.normalize;
+import static com.example.demo.global.zkp.ic.IcService.newSalt16;
 
 @Service
 @Transactional(readOnly = true)
@@ -33,7 +35,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
-    private final PassportInfoRepository passportInfoRepository;
+    private final PassportIdentityRepository passportIdentityRepository;
+    private final IcService icService;
 
     @Override
     public User getCurrentUser() {
@@ -53,7 +56,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public LoginResponseDTO signupWithPassport(PassportSignupDTO request) {
-        if (passportInfoRepository.existsByPassportNumber(request.getPassportNumber())) {
+        if (passportIdentityRepository.existsByPassportNumber(request.getPassportNumber())) {
             throw new CustomException(ErrorStatus.USER_ALREADY_EXISTS);
         }
 
@@ -71,8 +74,8 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
 
-        PassportInfo passportInfo = toPassportInfo(user, request);
-        passportInfoRepository.save(passportInfo);
+        PassportIdentity passportIdentity = toPassportInfo(user, request);
+        passportIdentityRepository.save(passportIdentity);
 
         String token = jwtProvider.generateToken(user.getId());
         return LoginResponseDTO.builder()
@@ -95,7 +98,28 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(ErrorStatus.USER_WALLET_ALREADY_REGISTERED);
         }
 
-        getCurrentUser().setWalletAddress(walletAddress);
+        User user = getCurrentUser();
+        user.setWalletAddress(walletAddress);
+
+        LocalDate birth = user.getBirth();
+        byte[] salt16 = newSalt16();
+        IcService.IcCommitment ic = null;
+
+        if (user.getIdentityType().equals(IdentityType.PASSPORT)) {
+            PassportIdentity identity = passportIdentityRepository.findByUserId(user.getId())
+                    .orElseThrow(() -> new CustomException(ErrorStatus.PASSPORT_IDENTITY_NOT_FOUND));
+
+            ic = icService.createFromPassport(identity, birth, salt16, walletAddress);
+
+        } else if (user.getIdentityType().equals(IdentityType.PASS)) {
+
+            // Todo: PASS 구현 후 ic 생성
+
+        } else {
+            throw new CustomException(ErrorStatus.USER_INVALID_SIGNUP);
+        }
+
+        user.createIc(ic);
     }
 
     @Override
@@ -125,8 +149,8 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(ErrorStatus.USER_NOT_REGISTERED_WITH_PASSPORT);
         }
 
-        PassportInfo passport = passportInfoRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new CustomException(ErrorStatus.PASSPORT_INFO_NOT_FOUND));
+        PassportIdentity passport = passportIdentityRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new CustomException(ErrorStatus.PASSPORT_IDENTITY_NOT_FOUND));
 
         return toPassportInfoDTO(passport);
     }

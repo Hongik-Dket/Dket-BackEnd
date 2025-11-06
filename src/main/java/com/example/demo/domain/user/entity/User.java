@@ -6,6 +6,7 @@ import com.example.demo.domain.concert.enums.AgeLimit;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.user.enums.IdentityType;
 import com.example.demo.global.base.BaseEntity;
+import com.example.demo.global.zkp.ic.IcService;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,6 +40,12 @@ public class User extends BaseEntity {
     @Column(columnDefinition = "VARCHAR(10)")
     private IdentityType identityType;
 
+    @Column(length = 66)
+    private String icCommitment;
+
+    @Column(length = 34)
+    private String icUserSalt;
+
     @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Concert> organizedConcerts = new ArrayList<>();
@@ -71,6 +78,11 @@ public class User extends BaseEntity {
         }
 
         return age >= ageLimit.getMinimumAge();
+    }
+
+    public void createIc(IcService.IcCommitment ic) {
+        this.icCommitment = ic.icCommitment();
+        this.icUserSalt = ic.icUserSalt();
     }
 
 }

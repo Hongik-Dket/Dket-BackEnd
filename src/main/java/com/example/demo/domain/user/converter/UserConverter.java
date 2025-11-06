@@ -1,14 +1,14 @@
 package com.example.demo.domain.user.converter;
 
 import com.example.demo.domain.user.dto.response.PassportInfoDTO;
-import com.example.demo.domain.user.entity.PassportInfo;
+import com.example.demo.domain.user.entity.PassportIdentity;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.global.security.dto.request.PassportSignupDTO;
 
 public class UserConverter {
 
-    public static PassportInfo toPassportInfo(User user, PassportSignupDTO passportJoinDTO) {
-        return PassportInfo.builder()
+    public static PassportIdentity toPassportInfo(User user, PassportSignupDTO passportJoinDTO) {
+        return PassportIdentity.builder()
                 .user(user)
                 .passportNumber(passportJoinDTO.getPassportNumber())
                 .gender(passportJoinDTO.getGender())
@@ -19,16 +19,16 @@ public class UserConverter {
                 .build();
     }
 
-    public static PassportInfoDTO toPassportInfoDTO(PassportInfo passportInfo) {
+    public static PassportInfoDTO toPassportInfoDTO(PassportIdentity passportIdentity) {
         return PassportInfoDTO.builder()
-                .userId(passportInfo.getUser().getId())
-                .passportNumber(passportInfo.getPassportNumber())
-                .gender(passportInfo.getGender())
-                .firstName(passportInfo.getFirstName())
-                .lastName(passportInfo.getLastName())
-                .birth(passportInfo.getUser().getBirth())
-                .nationality(passportInfo.getNationality())
-                .passportExpiry(passportInfo.getPassportExpiryDate())
+                .userId(passportIdentity.getUser().getId())
+                .passportNumber(passportIdentity.getPassportNumber())
+                .gender(passportIdentity.getGender())
+                .firstName(passportIdentity.getFirstName())
+                .lastName(passportIdentity.getLastName())
+                .birth(passportIdentity.getUser().getBirth())
+                .nationality(passportIdentity.getNationality())
+                .passportExpiry(passportIdentity.getPassportExpiryDate())
                 .build();
     }
 }
