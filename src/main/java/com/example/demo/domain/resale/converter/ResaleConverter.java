@@ -27,7 +27,7 @@ public class ResaleConverter {
     public static ResaleInfoDTO toResaleInfoDTO(Resale resale){
         return ResaleInfoDTO.builder()
                 .resaleId(resale.getId())
-                .tokenId(resale.getTicket().getId())
+                .tokenId(resale.getTicket().getTokenId())
                 .build();
     }
 
