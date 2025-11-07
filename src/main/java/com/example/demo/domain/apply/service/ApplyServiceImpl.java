@@ -13,10 +13,13 @@ import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
+import com.example.demo.global.zkp.poseidon.Poseidon;
+import com.example.demo.global.zkp.util.Hexes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Service
@@ -28,6 +31,7 @@ public class ApplyServiceImpl implements ApplyService {
     private final ConcertRepository concertRepository;
     private final SessionRepository sessionRepository;
     private final UserService userService;
+    private final Poseidon poseidon;
 
     @Override
     @Transactional
@@ -46,7 +50,6 @@ public class ApplyServiceImpl implements ApplyService {
     public ApplyResponseDTO applyToSession(Long concertId, Long sessionId) {
         User user = userService.getCurrentUser();
 
-        // 1. Concert 존재 확인
         Concert concert = concertRepository.findById(concertId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.CONCERT_NOT_FOUND));
 
@@ -54,19 +57,16 @@ public class ApplyServiceImpl implements ApplyService {
             throw new CustomException(ErrorStatus.APPLY_SELF_HOSTING_NOT_ALLOWED);
         }
 
-        // 2. Session 존재, Concert 일치 여부 확인
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
         if (!session.getConcert().getId().equals(concertId)) {
             throw new CustomException(ErrorStatus.CONCERT_SESSION_MISMATCH);
         }
 
-        // 3. 공연 상태 및 응모 기간 확인
         if (!concert.getConcertStatus().equals(ConcertStatus.APPLY_OPEN)) {
             throw new CustomException(ErrorStatus.APPLY_INVALID_PERIOD);
         }
 
-        // 4. 중복 응모 방지
         boolean alreadyApplied = applyRepository.existsByUserIdAndSessionId(user.getId(), sessionId);
         if (alreadyApplied) {
             throw new CustomException(ErrorStatus.APPLY_ALREADY_DONE);
@@ -76,11 +76,17 @@ public class ApplyServiceImpl implements ApplyService {
             throw new CustomException(ErrorStatus.APPLY_AGE_RESTRICTED);
         }
 
-        // 5. 저장
+        BigInteger ic = new BigInteger(1, Hexes.hexToBytes(user.getIcCommitment()));
+        BigInteger sid = BigInteger.valueOf(sessionId);
+        BigInteger h = poseidon.hash(ic, sid);
+
+        String leafHex = Hexes.to0xHex(Hexes.bigIntToBe32(h));
+
         Apply apply = Apply.builder()
                 .session(session)
                 .user(user)
                 .applyStatus(ApplyStatus.APPLIED)
+                .leafHex(leafHex)
                 .build();
 
         applyRepository.save(apply);
