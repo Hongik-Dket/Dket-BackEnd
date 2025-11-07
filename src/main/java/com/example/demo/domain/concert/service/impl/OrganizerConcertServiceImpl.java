@@ -115,7 +115,7 @@ public class OrganizerConcertServiceImpl implements OrganizerConcertService {
         sessionService.createSessions(concert);
 
         schedulingService.scheduleConcertJob(concert, OpenApplyJob.class);
-        concert.setTxHash(dketNFTService.recordConcertOnChain(concert));
+        concert.setTxHash(dketNFTService.recordConcertOnChain(concert, concert.getSessions()));
 
         return ResponseDTO.builder()
                 .concertId(concert.getId())
