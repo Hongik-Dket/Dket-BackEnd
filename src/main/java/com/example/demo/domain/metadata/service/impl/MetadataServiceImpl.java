@@ -10,6 +10,7 @@ import com.example.demo.domain.metadata.repository.MetadataRepository;
 import com.example.demo.domain.metadata.repository.PhotoCardRepository;
 import com.example.demo.domain.metadata.service.MetadataCommandService;
 import com.example.demo.domain.metadata.service.MetadataService;
+import com.example.demo.global.event.ReadyToMintEvent;
 import com.example.demo.global.infra.ipfs.PinataService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
@@ -17,9 +18,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -47,6 +51,7 @@ public class MetadataServiceImpl implements MetadataService {
     private final PinataService pinataService;
     private final MetadataCommandService metadataCommandService;
     private final ObjectMapper objectMapper;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -100,7 +105,12 @@ public class MetadataServiceImpl implements MetadataService {
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                 .thenRun(() -> {
-                    metadataCommandService.finishUpload(session.getId());
+                    TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+                        @Override
+                        public void afterCommit() {
+                            eventPublisher.publishEvent(new ReadyToMintEvent(session.getId()));
+                        }
+                    });
                 });
     }
 

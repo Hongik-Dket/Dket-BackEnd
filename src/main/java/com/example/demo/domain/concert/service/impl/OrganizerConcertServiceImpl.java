@@ -19,7 +19,6 @@ import com.example.demo.global.base.Constants;
 import com.example.demo.global.infra.blockchain.service.DketNFTService;
 import com.example.demo.global.infra.image.S3UploadService;
 import com.example.demo.global.infra.blockchain.service.ExchangeService;
-import com.example.demo.global.infra.ipfs.PinataService;
 import com.example.demo.global.infra.scheduling.SchedulingService;
 import com.example.demo.global.infra.scheduling.jobs.concert.OpenApplyJob;
 import com.example.demo.global.response.exception.CustomException;
@@ -53,7 +52,6 @@ public class OrganizerConcertServiceImpl implements OrganizerConcertService {
     private final DketNFTService dketNFTService;
     private final ExchangeService exchangeService;
     private final PhotoCardService photoCardService;
-    private final PinataService pinataService;
     private final SessionService sessionService;
 
     @Override

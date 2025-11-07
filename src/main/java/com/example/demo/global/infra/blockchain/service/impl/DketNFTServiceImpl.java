@@ -38,13 +38,11 @@ import org.web3j.tx.RawTransactionManager;
 import org.web3j.tx.gas.DefaultGasProvider;
 
 import java.math.BigInteger;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -129,28 +127,11 @@ public class DketNFTServiceImpl implements DketNFTService {
     }
 
     @Override
-    public String recordSessionOnChain(Session session) {
+    public void setDrawnOnChain(Session session) {
         try {
-            List<String> applications = session.getApplyList().stream()
-                    .map(apply -> apply.getUser().getWalletAddress())
-                    .collect(Collectors.toList());
-
-            ZoneId zone = ZoneId.of("Asia/Seoul");
-            long startAt = session.getDate()
-                    .atTime(session.getConcert().getStartTime())
-                    .atZone(zone)
-                    .toEpochSecond();
-
-            var tx = dketNFT.createSession(
-                    BigInteger.valueOf(session.getConcert().getId()),
-                    BigInteger.valueOf(session.getId()),
-                    BigInteger.valueOf(startAt),
-                    applications
-            ).send();
-
-            return tx.getTransactionHash();
+            dketNFT.setDrawn(BigInteger.valueOf(session.getId())).send();
         } catch (Exception e) {
-            log.error("Session [{}] 온체인 기록 실패", session.getId(), e);
+            log.error("Session [{}] setDrawn 실패", session.getId(), e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
         }
     }
@@ -184,55 +165,9 @@ public class DketNFTServiceImpl implements DketNFTService {
 
                     List<Long> metadataIds = metadataService.createMetadata(sessionId, randomWord);
                     metadataService.uploadAllMetadataAsync(metadataIds);
-
-                    scheduler.schedule(() -> {
-                        try {
-                            drawSession(sessionId);
-                        } catch (Exception e) {
-                            log.error("Session [{}] 추첨 지연 실패", sessionId, e);
-                        }
-                    }, 3, TimeUnit.SECONDS);
                 },
                 error -> {
                     log.error("randomFulfilled 이벤트 수신 중 에러 발생", error);
-                }
-            );
-    }
-
-    @Transactional
-    protected void drawSession(BigInteger sessionId) {
-        List<Type> input = List.of(new Uint256(sessionId));
-        sendTransaction("drawSession", input);
-    }
-
-    private void listenToWinnersDrawn() {
-        dketNFT.winnersDrawnEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST)
-            .subscribe(
-                event -> {
-                    BigInteger sessionId = event.sessionId;
-                    List<String> winners = event.winners;
-
-                    if (winners == null || winners.isEmpty()) {
-                        throw new CustomException(ErrorStatus.SESSION_DRAW_FAILED);
-                    }
-
-                    sessionService.saveWinners(sessionId.longValue(), winners);
-                },
-                error -> {
-                    log.error("winnersDrawn 이벤트 수신 중 예외 발생", error);
-                }
-            );
-    }
-
-    private void listenToSetDrawn() {
-        dketNFT.setDrawnEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST)
-            .subscribe(
-                event -> {
-                    Long sessionId = event.sessionId.longValue();
-                    sessionService.completeDraw(sessionId);
-                },
-                error -> {
-                    log.error("setDrawn 이벤트 수신 중 예외 발생", error);
                 }
             );
     }
@@ -255,10 +190,10 @@ public class DketNFTServiceImpl implements DketNFTService {
         List<Type> input = Arrays.asList(
                 new Uint256(sessionId),
                 new DynamicArray<>(
-                    Utf8String.class,
-                    metadataUris.stream()
-                        .map(Utf8String::new)
-                        .collect(Collectors.toList())
+                        Utf8String.class,
+                        metadataUris.stream()
+                                .map(Utf8String::new)
+                                .collect(Collectors.toList())
                 )
         );
         sendTransaction("mintSessionTicket", input);
@@ -266,20 +201,20 @@ public class DketNFTServiceImpl implements DketNFTService {
 
     private void listenToSessionMinted() {
         dketNFT.sessionMintedEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST)
-            .subscribe(
-                event -> {
-                    List<BigInteger> tokenIds = event.tokenIds;
+                .subscribe(
+                        event -> {
+                            List<BigInteger> tokenIds = event.tokenIds;
 
-                    if (tokenIds == null || tokenIds.isEmpty()) {
-                        throw new CustomException(ErrorStatus.SESSION_MINTING_FAILED);
-                    }
+                            if (tokenIds == null || tokenIds.isEmpty()) {
+                                throw new CustomException(ErrorStatus.SESSION_MINTING_FAILED);
+                            }
 
-                    registerMintedTickets(tokenIds);
-                },
-                error -> {
-                    log.error("sessionMinted 이벤트 수신 중 예외 발생", error);
-                }
-            );
+                            registerMintedTickets(tokenIds);
+                        },
+                        error -> {
+                            log.error("sessionMinted 이벤트 수신 중 예외 발생", error);
+                        }
+                );
     }
 
     private void registerMintedTickets(List<BigInteger> tokenIds) {
@@ -290,6 +225,38 @@ public class DketNFTServiceImpl implements DketNFTService {
         }
 
         ticketService.batchRegisterTicket(tokenIds, cidList);
+    }
+
+    private void listenToSetDrawn() {
+        dketNFT.setDrawnEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST)
+                .subscribe(
+                        event -> {
+                            Long sessionId = event.sessionId.longValue();
+                            sessionService.completeDraw(sessionId);
+                        },
+                        error -> {
+                            log.error("setDrawn 이벤트 수신 중 예외 발생", error);
+                        }
+                );
+    }
+
+    private void listenToWinnersDrawn() {
+        dketNFT.winnersDrawnEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST)
+            .subscribe(
+                event -> {
+                    BigInteger sessionId = event.sessionId;
+                    List<String> winners = event.winners;
+
+                    if (winners == null || winners.isEmpty()) {
+                        throw new CustomException(ErrorStatus.SESSION_DRAW_FAILED);
+                    }
+
+                    sessionService.saveWinners(sessionId.longValue(), winners);
+                },
+                error -> {
+                    log.error("winnersDrawn 이벤트 수신 중 예외 발생", error);
+                }
+            );
     }
 
     private void listenToPaymentTransferred() {

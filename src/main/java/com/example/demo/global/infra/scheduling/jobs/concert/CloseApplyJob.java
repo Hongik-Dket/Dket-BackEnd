@@ -34,14 +34,17 @@ public class CloseApplyJob implements Job {
 
         concert.setConcertStatus(ConcertStatus.APPLY_CLOSED);
 
-        for (Session session : concert.getSessions()) {
-            session.setTxHash(dketNFTService.recordSessionOnChain(session));
-        }
-
+        int emptyCount = 0;
         List<Session> sessions = concert.getSessions();
-        long emptyCount = sessions.stream()
-                .filter(session -> session.getApplyList().isEmpty())
-                .count();
+
+        for (Session session : sessions) {
+            if (session.getApplyList().isEmpty()) {
+                emptyCount++;
+                dketNFTService.setDrawnOnChain(session);
+            } else {
+                // TODO: setApplicantsListCommitment
+            }
+        }
 
         if (emptyCount == sessions.size()) {
             dketNFTService.openPublicSaleOnChain(concert);

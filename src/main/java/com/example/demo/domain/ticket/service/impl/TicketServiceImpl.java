@@ -58,7 +58,12 @@ public class TicketServiceImpl implements TicketService {
             metadata.getSession().addTicket(ticket);
         }
 
-        metadataList.get(0).getSession().setIsBuyable(true);
+        Session session = metadataList.get(0).getSession();
+        session.setIsMinted();
+
+        if (session.isDrawn()) {
+            session.setIsBuyable(true);
+        }
     }
 
     @Override

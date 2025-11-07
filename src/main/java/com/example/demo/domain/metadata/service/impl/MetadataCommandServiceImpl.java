@@ -21,8 +21,6 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 public class MetadataCommandServiceImpl implements MetadataCommandService {
 
     private final MetadataRepository metadataRepository;
-    private final SessionRepository sessionRepository;
-    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -31,24 +29,6 @@ public class MetadataCommandServiceImpl implements MetadataCommandService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.METADATA_NOT_FOUND));
 
         metadata.setCid(cid);
-    }
-
-    @Override
-    @Transactional
-    public void finishUpload(Long sessionId) {
-        Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
-
-        session.setMetadataUploaded();
-
-        if (session.getIsDrawn()) {
-            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-                @Override
-                public void afterCommit() {
-                    eventPublisher.publishEvent(new ReadyToMintEvent(session.getId()));
-                }
-            });
-        }
     }
 
 }

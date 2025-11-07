@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,11 +32,12 @@ public class Session extends BaseEntity {
 
     private LocalDate date;
 
-    private String txHash;
-
-    private Boolean isDrawn;
-    private Boolean metadataUploaded;
-    private Boolean isBuyable;
+    @Builder.Default
+    private boolean isDrawn = false;
+    @Builder.Default
+    private boolean isMinted = false;
+    @Builder.Default
+    private boolean isBuyable = false;
 
     private String entryCode;
 
@@ -58,9 +58,8 @@ public class Session extends BaseEntity {
     @Builder.Default
     private List<Metadata> metadataList = new ArrayList<>();
 
-    public void setTxHash(String txHash) { this.txHash = txHash; }
     public void setIsDrawn() { this.isDrawn = true; }
-    public void setMetadataUploaded() { this.metadataUploaded = true; }
+    public void setIsMinted() { this.isMinted = true; }
     public void setIsBuyable(boolean isBuyable) { this.isBuyable = isBuyable; }
     public void setEntryCode(String entryCode) { this.entryCode = entryCode; }
 

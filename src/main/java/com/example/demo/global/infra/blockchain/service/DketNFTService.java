@@ -9,7 +9,7 @@ import java.util.List;
 public interface DketNFTService {
     String recordConcertOnChain(Concert concert , List<Session> sessionList);
 
-    String recordSessionOnChain(Session session);
+    void setDrawnOnChain(Session session);
 
     void openPublicSaleOnChain(Concert concert);
 

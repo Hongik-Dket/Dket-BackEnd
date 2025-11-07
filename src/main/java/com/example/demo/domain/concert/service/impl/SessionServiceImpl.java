@@ -48,7 +48,7 @@ public class SessionServiceImpl implements SessionService {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
 
-        if (session.getIsDrawn())
+        if (session.isDrawn())
             throw new CustomException(ErrorStatus.SESSION_ALREADY_DRAWN);
 
         applyRepository.batchUpdateApplyStatusBySessionIdAndWalletAddresses(
@@ -72,8 +72,8 @@ public class SessionServiceImpl implements SessionService {
 
         session.setIsDrawn();
 
-        if(session.getMetadataUploaded()) {
-            eventPublisher.publishEvent(new ReadyToMintEvent(session.getId()));
+        if (session.isMinted()) {
+            session.setIsBuyable(true);
         }
     }
 
@@ -84,9 +84,6 @@ public class SessionServiceImpl implements SessionService {
             Session session = Session.builder()
                     .concert(concert)
                     .date(date)
-                    .isDrawn(false)
-                    .metadataUploaded(false)
-                    .isBuyable(false)
                     .build();
 
             concert.addSession(session);
@@ -149,7 +146,7 @@ public class SessionServiceImpl implements SessionService {
             throw new CustomException(ErrorStatus.TICKET_INVALID_BUYER);
         }
 
-        if (!session.getIsBuyable()) {
+        if (!session.isBuyable()) {
             throw new CustomException(ErrorStatus.SESSION_CANNOT_BUY);
         }
 
