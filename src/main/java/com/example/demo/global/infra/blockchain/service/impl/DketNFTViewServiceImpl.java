@@ -1,6 +1,5 @@
 package com.example.demo.global.infra.blockchain.service.impl;
 
-import com.example.demo.global.infra.blockchain.contracts.DketNFT;
 import com.example.demo.global.infra.blockchain.service.DketNFTViewService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;

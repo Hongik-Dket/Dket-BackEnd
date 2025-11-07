@@ -38,6 +38,8 @@ import org.web3j.tx.RawTransactionManager;
 import org.web3j.tx.gas.DefaultGasProvider;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -89,15 +91,34 @@ public class DketNFTServiceImpl implements DketNFTService {
     }
 
     @Override
-    public String recordConcertOnChain(Concert concert) {
+    public String recordConcertOnChain(Concert concert, List<Session> sessionList) {
         try {
+            ZoneId zone = ZoneId.of("Asia/Seoul");
+            LocalTime startTime = concert.getStartTime();
+
+            List<BigInteger> sessionIds = new ArrayList<>();
+            List<BigInteger> startAts = new ArrayList<>();
+
+            for (Session session : sessionList) {
+                sessionIds.add(BigInteger.valueOf(session.getId()));
+
+                long startAt = session.getDate()
+                        .atTime(startTime)
+                        .atZone(zone)
+                        .toEpochSecond();
+
+                startAts.add(BigInteger.valueOf(startAt));
+            }
+
             var tx = dketNFT.createConcert(
                     BigInteger.valueOf(concert.getId()),
                     concert.getOrganizer().getWalletAddress(),
                     concert.getTitle(),
                     BigInteger.valueOf(concert.getCapacity()),
                     concert.getPriceWei(),
-                    concert.getIsResaleAllowed()
+                    concert.getIsResaleAllowed(),
+                    sessionIds,
+                    startAts
             ).send();
 
             return tx.getTransactionHash();
