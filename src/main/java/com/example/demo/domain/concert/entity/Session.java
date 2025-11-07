@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +41,11 @@ public class Session extends BaseEntity {
 
     private String entryCode;
 
+    @Column(columnDefinition = "BINARY(32)")
+    private byte[] winnersRoot;
+    @Column(columnDefinition = "BINARY(32)")
+    private byte[] ownersRoot;
+
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Apply> applyList = new ArrayList<>();
@@ -67,5 +73,8 @@ public class Session extends BaseEntity {
                 .filter(ticket -> ticket.getPaidAt() != null)
                 .count();
     }
+
+    public boolean hasWinnersRoot() { return winnersRoot != null && winnersRoot.length == 32; }
+    public boolean hasOwnersRoot() { return ownersRoot != null && ownersRoot.length == 32; }
 
 }

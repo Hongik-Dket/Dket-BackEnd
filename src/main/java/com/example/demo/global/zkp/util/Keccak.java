@@ -1,4 +1,4 @@
-package com.example.demo.global.zkp.ic.util;
+package com.example.demo.global.zkp.util;
 
 import org.web3j.crypto.Hash;
 
