@@ -1,7 +1,6 @@
 package com.example.demo.global.infra.blockchain.service.impl;
 
 import com.example.demo.domain.apply.entity.ApplicantsSnapshot;
-import com.example.demo.domain.apply.repository.ApplicantsSnapshotRepository;
 import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.concert.repository.SessionRepository;
@@ -10,7 +9,7 @@ import com.example.demo.domain.metadata.service.MetadataService;
 import com.example.demo.domain.resale.service.ResaleService;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.ticket.service.TicketService;
-import com.example.demo.global.event.ReadyToCommitApplicants;
+import com.example.demo.global.event.ReadyToDraw;
 import com.example.demo.global.event.ReadyToMint;
 import com.example.demo.global.infra.blockchain.contracts.DketNFT;
 import com.example.demo.global.infra.blockchain.service.DketNFTService;
@@ -21,6 +20,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,7 +62,7 @@ public class DketNFTServiceImpl implements DketNFTService {
     private final SessionService sessionService;
     private final DketNFTViewService dketNFTViewService;
     private final ResaleService resaleService;
-    private final ApplicantsSnapshotRepository applicantsSnapshotRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
 
     @Value("${web3.nft-contract-address}")
@@ -125,6 +125,34 @@ public class DketNFTServiceImpl implements DketNFTService {
             return tx.getTransactionHash();
         } catch (Exception e) {
             log.error("Concert [{}] 온체인 기록 실패", concert.getId(), e);
+            throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
+        }
+    }
+
+    @Override
+    public void setApplicantsListCommitment(Session session, ApplicantsSnapshot snapshot) {
+        try {
+            dketNFT.setApplicantsListCommitment(
+                    BigInteger.valueOf(session.getId()),
+                    hexToBytes(snapshot.getListHash()),
+                    BigInteger.valueOf(Integer.toUnsignedLong(snapshot.getTotalCount()))
+            ).send();
+        } catch (Exception e) {
+            log.error("Session [{}] setApplicantsListCommitment 실패", session.getId(), e);
+            throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
+        }
+    }
+
+    @Override
+    public void drawWinnersOnChain(Session session, int count, List<byte[]> leaves) {
+        try {
+            dketNFT.drawWinners(
+                    BigInteger.valueOf(session.getId()),
+                    BigInteger.valueOf(Integer.toUnsignedLong(count)),
+                    leaves
+            ).send();
+        } catch (Exception e) {
+            log.error("Session [{}] drawWinners 실패", session.getId(), e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
         }
     }
@@ -230,32 +258,12 @@ public class DketNFTServiceImpl implements DketNFTService {
         ticketService.batchRegisterTicket(tokenIds, cidList);
     }
 
-    @EventListener
-    public void setApplicantsListCommitment(ReadyToCommitApplicants event) {
-        Session session = sessionRepository.findById(event.getSessionId())
-                .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
-
-        ApplicantsSnapshot snapshot = applicantsSnapshotRepository.findById(event.getApplicantsSnapshotId())
-                .orElseThrow(() -> new CustomException(ErrorStatus.SNAPSHOT_NOT_FOUND));
-
-        try {
-            dketNFT.setApplicantsListCommitment(
-                    BigInteger.valueOf(session.getId()),
-                    hexToBytes(snapshot.getListHash()),
-                    BigInteger.valueOf(Integer.toUnsignedLong(snapshot.getTotalCount()))
-            ).send();
-        } catch (Exception e) {
-            log.error("Session [{}] setApplicantsListCommitment 실패", session.getId(), e);
-            throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
-        }
-    }
-
     private void listenToApplicantsListCommitted() {
         dketNFT.applicantsListCommittedEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST)
                 .subscribe(
                         event -> {
                             Long sessionId = event.sessionId.longValue();
-                            sessionService.drawWinners(sessionId);
+                            eventPublisher.publishEvent(new ReadyToDraw(sessionId));
                         },
                         error -> {
                             log.error("applicantsListCommitted 이벤트 수신 중 예외 발생", error);

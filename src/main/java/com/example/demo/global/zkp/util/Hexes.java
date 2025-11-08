@@ -1,10 +1,7 @@
 package com.example.demo.global.zkp.util;
 
-import com.example.demo.global.response.exception.CustomException;
-import com.example.demo.global.response.status.ErrorStatus;
-import org.web3j.abi.datatypes.generated.Bytes32;
-
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 public final class Hexes {
@@ -65,17 +62,11 @@ public final class Hexes {
         return out;
     }
 
-    public static Bytes32[] toBytes32Array(List<String> hexes) {
-        Bytes32[] out = new Bytes32[hexes.size()];
-
-        for (int i = 0; i < hexes.size(); i++){
-            byte[] b = hexToBytes(hexes.get(i));
-            if (b.length != 32) {
-                throw new CustomException(ErrorStatus.COMMON_WRONG_PARAMETER);
-            }
-
-            out[i] = new Bytes32(b);
+    public static List<byte[]> toBytesList(List<String> hexStrings) {
+        List<byte[]> result = new ArrayList<>();
+        for (String hex : hexStrings) {
+            result.add(hexToBytes(hex));
         }
-        return out;
+        return result;
     }
 }

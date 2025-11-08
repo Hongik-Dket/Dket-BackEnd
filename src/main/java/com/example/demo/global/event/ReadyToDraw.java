@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReadyToCommitApplicants {
-
+public class ReadyToDraw {
     private Long sessionId;
-    private Long applicantsSnapshotId;
-
 }

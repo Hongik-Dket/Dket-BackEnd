@@ -14,12 +14,11 @@ import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.web3j.abi.datatypes.generated.Bytes32;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.demo.global.zkp.util.Hexes.toBytes32Array;
+import static com.example.demo.global.zkp.util.Hexes.toBytesList;
 import static com.example.demo.global.zkp.util.Keccak.keccakListHash;
 
 @Service
@@ -75,7 +74,8 @@ public class ApplicantsSnapshotServiceImpl implements ApplicantsSnapshotService 
         return snapshot;
     }
 
-    public Bytes32[] buildLeavesForDraw(Session session) {
+    @Override
+    public List<byte[]> buildLeavesForDraw(Session session) {
         ApplicantsSnapshot snapshot = applicantsSnapshotRepository.findBySessionId(session.getId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.SNAPSHOT_NOT_FOUND));
 
@@ -87,7 +87,7 @@ public class ApplicantsSnapshotServiceImpl implements ApplicantsSnapshotService 
             throw new CustomException(ErrorStatus.SNAPSHOT_INVALID);
         }
 
-        return toBytes32Array(leaves);
+        return toBytesList(leaves);
     }
 
 }
