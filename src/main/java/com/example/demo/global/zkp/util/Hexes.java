@@ -1,6 +1,11 @@
 package com.example.demo.global.zkp.util;
 
+import com.example.demo.global.response.exception.CustomException;
+import com.example.demo.global.response.status.ErrorStatus;
+import org.web3j.abi.datatypes.generated.Bytes32;
+
 import java.math.BigInteger;
+import java.util.List;
 
 public final class Hexes {
     private Hexes() {}
@@ -56,6 +61,20 @@ public final class Hexes {
             System.arraycopy(raw, raw.length - 32, out, 0, 32);
         } else {
             System.arraycopy(raw, 0, out, 32 - raw.length, raw.length);
+        }
+        return out;
+    }
+
+    public static Bytes32[] toBytes32Array(List<String> hexes) {
+        Bytes32[] out = new Bytes32[hexes.size()];
+
+        for (int i = 0; i < hexes.size(); i++){
+            byte[] b = hexToBytes(hexes.get(i));
+            if (b.length != 32) {
+                throw new CustomException(ErrorStatus.COMMON_WRONG_PARAMETER);
+            }
+
+            out[i] = new Bytes32(b);
         }
         return out;
     }

@@ -4,6 +4,7 @@ import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.concert.enums.ConcertStatus;
 import com.example.demo.domain.concert.repository.ConcertRepository;
+import com.example.demo.domain.concert.service.SessionService;
 import com.example.demo.global.infra.blockchain.service.DketNFTService;
 import com.example.demo.global.infra.scheduling.SchedulingService;
 import com.example.demo.global.response.exception.CustomException;
@@ -23,6 +24,7 @@ public class CloseApplyJob implements Job {
     private final ConcertRepository concertRepository;
     private final SchedulingService schedulingService;
     private final DketNFTService dketNFTService;
+    private final SessionService sessionService;
 
     @Override
     @Transactional
@@ -42,7 +44,7 @@ public class CloseApplyJob implements Job {
                 emptyCount++;
                 dketNFTService.setDrawnOnChain(session);
             } else {
-                // TODO: setApplicantsListCommitment
+                sessionService.commitApplicants(session);
             }
         }
 

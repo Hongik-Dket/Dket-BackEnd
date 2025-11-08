@@ -13,7 +13,7 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
 
     Optional<Session> findByIdAndConcertId(Long id, Long concertId);
 
-    List<Session> findByIsBuyableTrueAndIsDrawnTrueAndMetadataUploadedTrue();
+    List<Session> findByIsBuyableTrueAndIsDrawnTrueAndIsMintedTrue();
 
     boolean existsById(Long id);
 }

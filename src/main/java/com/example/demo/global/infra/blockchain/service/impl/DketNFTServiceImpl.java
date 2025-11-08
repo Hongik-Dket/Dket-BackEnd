@@ -1,5 +1,7 @@
 package com.example.demo.global.infra.blockchain.service.impl;
 
+import com.example.demo.domain.apply.entity.ApplicantsSnapshot;
+import com.example.demo.domain.apply.repository.ApplicantsSnapshotRepository;
 import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.concert.repository.SessionRepository;
@@ -8,7 +10,8 @@ import com.example.demo.domain.metadata.service.MetadataService;
 import com.example.demo.domain.resale.service.ResaleService;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.ticket.service.TicketService;
-import com.example.demo.global.event.ReadyToMintEvent;
+import com.example.demo.global.event.ReadyToCommitApplicants;
+import com.example.demo.global.event.ReadyToMint;
 import com.example.demo.global.infra.blockchain.contracts.DketNFT;
 import com.example.demo.global.infra.blockchain.service.DketNFTService;
 import com.example.demo.global.infra.blockchain.service.DketNFTViewService;
@@ -41,10 +44,9 @@ import java.math.BigInteger;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
+import static com.example.demo.global.zkp.util.Hexes.hexToBytes;
 
 @Slf4j
 @Service
@@ -59,8 +61,8 @@ public class DketNFTServiceImpl implements DketNFTService {
     private final TicketService ticketService;
     private final SessionService sessionService;
     private final DketNFTViewService dketNFTViewService;
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final ResaleService resaleService;
+    private final ApplicantsSnapshotRepository applicantsSnapshotRepository;
 
 
     @Value("${web3.nft-contract-address}")
@@ -82,6 +84,7 @@ public class DketNFTServiceImpl implements DketNFTService {
 
         listenToRandomFulfilled();
         listenToWinnersDrawn();
+        listenToApplicantsListCommitted();
         listenToSetDrawn();
         listenToSessionMinted();
         listenToPaymentTransferred();
@@ -173,7 +176,7 @@ public class DketNFTServiceImpl implements DketNFTService {
     }
 
     @EventListener
-    public void handleMetadataUploaded(ReadyToMintEvent event) {
+    public void handleMetadataUploaded(ReadyToMint event) {
         Session session = sessionRepository.findById(event.getSessionId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
 
@@ -227,6 +230,39 @@ public class DketNFTServiceImpl implements DketNFTService {
         ticketService.batchRegisterTicket(tokenIds, cidList);
     }
 
+    @EventListener
+    public void setApplicantsListCommitment(ReadyToCommitApplicants event) {
+        Session session = sessionRepository.findById(event.getSessionId())
+                .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
+
+        ApplicantsSnapshot snapshot = applicantsSnapshotRepository.findById(event.getApplicantsSnapshotId())
+                .orElseThrow(() -> new CustomException(ErrorStatus.SNAPSHOT_NOT_FOUND));
+
+        try {
+            dketNFT.setApplicantsListCommitment(
+                    BigInteger.valueOf(session.getId()),
+                    hexToBytes(snapshot.getListHash()),
+                    BigInteger.valueOf(Integer.toUnsignedLong(snapshot.getTotalCount()))
+            ).send();
+        } catch (Exception e) {
+            log.error("Session [{}] setApplicantsListCommitment 실패", session.getId(), e);
+            throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
+        }
+    }
+
+    private void listenToApplicantsListCommitted() {
+        dketNFT.applicantsListCommittedEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST)
+                .subscribe(
+                        event -> {
+                            Long sessionId = event.sessionId.longValue();
+                            sessionService.drawWinners(sessionId);
+                        },
+                        error -> {
+                            log.error("applicantsListCommitted 이벤트 수신 중 예외 발생", error);
+                        }
+                );
+    }
+
     private void listenToSetDrawn() {
         dketNFT.setDrawnEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST)
                 .subscribe(
@@ -241,22 +277,22 @@ public class DketNFTServiceImpl implements DketNFTService {
     }
 
     private void listenToWinnersDrawn() {
-        dketNFT.winnersDrawnEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST)
-            .subscribe(
-                event -> {
-                    BigInteger sessionId = event.sessionId;
-                    List<String> winners = event.winners;
-
-                    if (winners == null || winners.isEmpty()) {
-                        throw new CustomException(ErrorStatus.SESSION_DRAW_FAILED);
-                    }
-
-                    sessionService.saveWinners(sessionId.longValue(), winners);
-                },
-                error -> {
-                    log.error("winnersDrawn 이벤트 수신 중 예외 발생", error);
-                }
-            );
+//        dketNFT.winnersDrawnEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST)
+//            .subscribe(
+//                event -> {
+//                    BigInteger sessionId = event.sessionId;
+//                    List<String> winners = event.winners;
+//
+//                    if (winners == null || winners.isEmpty()) {
+//                        throw new CustomException(ErrorStatus.SESSION_DRAW_FAILED);
+//                    }
+//
+//                    sessionService.saveWinners(sessionId.longValue(), winners);
+//                },
+//                error -> {
+//                    log.error("winnersDrawn 이벤트 수신 중 예외 발생", error);
+//                }
+//            );
     }
 
     private void listenToPaymentTransferred() {

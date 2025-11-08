@@ -6,6 +6,6 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReadyToMintEvent {
+public class ReadyToMint {
     private Long sessionId;
 }

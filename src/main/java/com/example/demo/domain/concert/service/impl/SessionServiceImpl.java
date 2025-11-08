@@ -1,8 +1,10 @@
 package com.example.demo.domain.concert.service.impl;
 
+import com.example.demo.domain.apply.entity.ApplicantsSnapshot;
 import com.example.demo.domain.apply.entity.Apply;
 import com.example.demo.domain.apply.enums.ApplyStatus;
 import com.example.demo.domain.apply.repository.ApplyRepository;
+import com.example.demo.domain.apply.service.ApplicantsSnapshotService;
 import com.example.demo.domain.concert.dto.response.EntryCodeDTO;
 import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.concert.entity.Session;
@@ -14,7 +16,7 @@ import com.example.demo.domain.concert.dto.response.PriceWeiDTO;
 import com.example.demo.domain.ticket.repository.TicketRepository;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.UserService;
-import com.example.demo.global.event.ReadyToMintEvent;
+import com.example.demo.global.event.ReadyToCommitApplicants;
 import com.example.demo.global.infra.scheduling.SchedulingService;
 import com.example.demo.global.infra.scheduling.jobs.concert.OpenPublicJob;
 import com.example.demo.global.infra.scheduling.jobs.session.ClosePaymentJob;
@@ -24,10 +26,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,10 +42,28 @@ public class SessionServiceImpl implements SessionService {
     private final SessionRepository sessionRepository;
     private final ApplyRepository applyRepository;
     private final SchedulingService schedulingService;
-    private final ApplicationEventPublisher eventPublisher;
     private final UserService userService;
     private final TicketRepository ticketRepository;
     private final ConcertRepository concertRepository;
+    private final ApplicantsSnapshotService applicantsSnapshotService;
+    private final ApplicationEventPublisher eventPublisher;
+
+    @Override
+    public void commitApplicants(Session session) {
+        ApplicantsSnapshot snapshot = applicantsSnapshotService.createSnapshot(session);
+
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+            @Override
+            public void afterCommit() {
+                eventPublisher.publishEvent(new ReadyToCommitApplicants(session.getId(), snapshot.getId()));
+            }
+        });
+    }
+
+    @Override
+    public void drawWinners(Long sessionId) {
+
+    }
 
     @Override
     @Transactional
@@ -141,6 +164,10 @@ public class SessionServiceImpl implements SessionService {
 
     private void validateBuyer(Session session, User user) {
         Concert concert = session.getConcert();
+
+        if (user.getId().equals(concert.getOrganizer().getId())) {
+            throw new CustomException(ErrorStatus.CONCERT_ORGANIZER_PURCHASE_FORBIDDEN);
+        }
 
         if (!user.isEligibleFor(concert.getAgeLimit())) {
             throw new CustomException(ErrorStatus.TICKET_INVALID_BUYER);

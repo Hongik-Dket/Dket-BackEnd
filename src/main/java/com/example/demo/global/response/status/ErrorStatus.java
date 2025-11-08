@@ -53,6 +53,7 @@ public enum ErrorStatus implements BaseErrorCode {
     CONCERT_ORGANIZER_MISMATCH(HttpStatus.BAD_REQUEST, "CONCERT_4002", "해당 공연의 개최자가 아닙니다."),
     CONCERT_SESSION_MISMATCH(HttpStatus.BAD_REQUEST, "CONCERT_4003", "해당 공연의 회차가 아닙니다."),
     CONCERT_INVALID_SCHEDULE(HttpStatus.BAD_REQUEST, "CONCERT_4004", "잘못된 응모 기간 혹은 공연 기간입니다."),
+    CONCERT_ORGANIZER_PURCHASE_FORBIDDEN(HttpStatus.BAD_REQUEST, "CONCERT_4005", "자신이 개최한 공연 티켓은 구매할 수 없습니다."),
 
     SESSION_NOT_FOUND(HttpStatus.BAD_REQUEST, "SESSION_4001", "해당 회차를 찾을 수 없습니다."),
     SESSION_ALREADY_DRAWN(HttpStatus.BAD_REQUEST, "SESSION_4002", "이미 추첨 완료된 세션입니다."),
@@ -82,6 +83,8 @@ public enum ErrorStatus implements BaseErrorCode {
     APPLY_NOT_FOUND(HttpStatus.BAD_REQUEST, "APPLY_4003", "해당 응모 내역을 찾을 수 없습니다."),
     APPLY_AGE_RESTRICTED(HttpStatus.BAD_REQUEST, "APPLY_4004", "응모 가능한 연령이 아닙니다."),
     APPLY_SELF_HOSTING_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "APPLY_4005", "본인이 개최한 공연에는 응모할 수 없습니다."),
+    APPLY_EMPTY(HttpStatus.BAD_REQUEST, "APPLY_4006", "해당 세션에 응모 내역이 없습니다."),
+    APPLY_NOT_CLOSED(HttpStatus.BAD_REQUEST, "APPLY_4007", "아직 응모가 마감되지 않았습니다."),
 
     IPFS_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IPFS_5001", "IPFS 업로드에 실패했습니다."),
 
@@ -111,6 +114,11 @@ public enum ErrorStatus implements BaseErrorCode {
 
     PASSPORT_IDENTITY_NOT_FOUND(HttpStatus.BAD_REQUEST, "PASSPORT_INFO_4001", "해당 여권 정보를 찾을 수 없습니다."),
 
+    KECCAK_WRONG_PARAMETER(HttpStatus.BAD_REQUEST, "KECCAK_4001", "잘못된 파라미터로 해시 생성이 불가합니다."),
+
+    SNAPSHOT_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "SNAPSHOT_4001", "이미 snapshot이 존재합니다."),
+    SNAPSHOT_NOT_FOUND(HttpStatus.BAD_REQUEST, "SNAPSHOT_4002", "해당 스냅샷을 찾을 수 없습니다."),
+    SNAPSHOT_INVALID(HttpStatus.BAD_REQUEST, "SNAPSHOT_4003", "유효하지 않은 스냅샷입니다."),
 
     ;
 

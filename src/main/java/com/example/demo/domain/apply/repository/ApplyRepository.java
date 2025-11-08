@@ -58,4 +58,7 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
     boolean existsByUserIdAndSessionId(Long userId, Long sessionId);
 
     List<Apply> findByUserIdAndSessionIdIn(Long userId, List<Long> sessionIds);
+
+    List<Apply> findAllBySessionIdOrderByIdAsc(Long sessionId);
+
 }

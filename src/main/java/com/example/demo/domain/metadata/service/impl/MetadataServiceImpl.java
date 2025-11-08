@@ -10,7 +10,7 @@ import com.example.demo.domain.metadata.repository.MetadataRepository;
 import com.example.demo.domain.metadata.repository.PhotoCardRepository;
 import com.example.demo.domain.metadata.service.MetadataCommandService;
 import com.example.demo.domain.metadata.service.MetadataService;
-import com.example.demo.global.event.ReadyToMintEvent;
+import com.example.demo.global.event.ReadyToMint;
 import com.example.demo.global.infra.ipfs.PinataService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
@@ -108,7 +108,7 @@ public class MetadataServiceImpl implements MetadataService {
                     TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                         @Override
                         public void afterCommit() {
-                            eventPublisher.publishEvent(new ReadyToMintEvent(session.getId()));
+                            eventPublisher.publishEvent(new ReadyToMint(session.getId()));
                         }
                     });
                 });

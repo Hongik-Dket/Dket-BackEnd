@@ -1,9 +1,10 @@
-package com.example.demo.domain.apply.service;
+package com.example.demo.domain.apply.service.impl;
 
 import com.example.demo.domain.apply.dto.ApplyResponseDTO;
 import com.example.demo.domain.apply.entity.Apply;
 import com.example.demo.domain.apply.enums.ApplyStatus;
 import com.example.demo.domain.apply.repository.ApplyRepository;
+import com.example.demo.domain.apply.service.ApplyService;
 import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.concert.enums.ConcertStatus;
