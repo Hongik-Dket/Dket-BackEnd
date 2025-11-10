@@ -12,6 +12,7 @@ import com.example.demo.domain.lottery.repository.ApplicantsSnapshotItemReposito
 import com.example.demo.domain.lottery.repository.ApplicantsSnapshotRepository;
 import com.example.demo.domain.lottery.repository.WinnersAggregateRepository;
 import com.example.demo.domain.lottery.repository.WinnersEventRepository;
+import com.example.demo.domain.lottery.service.ApplicantsSnapshotService;
 import com.example.demo.domain.lottery.service.LotteryService;
 import com.example.demo.global.infra.blockchain.service.DketNFTService;
 import com.example.demo.global.response.exception.CustomException;
@@ -40,6 +41,33 @@ public class LotteryServiceImpl implements LotteryService {
     private final PoseidonMerkleService poseidonMerkleService;
     private final WinnersAggregateRepository winnersAggregateRepository;
     private final DketNFTService dketNFTService;
+    private final ApplicantsSnapshotService applicantsSnapshotService;
+
+    @Override
+    public void commitApplicants(Session session) {
+        ApplicantsSnapshot snapshot = applicantsSnapshotService.createSnapshot(session);
+        dketNFTService.setApplicantsListCommitment(session, snapshot);
+    }
+
+    @Override
+    public void drawWinners(Long sessionId) {
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
+
+        List<byte[]> leaves = applicantsSnapshotService.buildLeavesForDraw(session);
+
+        int total = Math.min(session.getConcert().getCapacity(), session.getApplyList().size());
+        int count = Math.min(total, 100);
+        int batch = total / count;
+
+        for (int i = 0; i < batch; i++) {
+            dketNFTService.drawWinnersOnChain(session, count, leaves);
+        }
+
+        if (total % count > 0) {
+            dketNFTService.drawWinnersOnChain(session, total % count, leaves);
+        }
+    }
 
     @Override
     @Transactional
