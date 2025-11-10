@@ -3,7 +3,7 @@ package com.example.demo.global.base;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 
-import static com.example.demo.global.zkp.ic.util.Keccak.keccak256;
+import static com.example.demo.global.util.Keccak.keccak256;
 
 public class Constants {
 
@@ -27,5 +27,7 @@ public class Constants {
 
     // DOMAIN_TAG = keccak256("ICv1")
     public static final byte[] DOMAIN_TAG_HASH = keccak256("ICv1".getBytes(StandardCharsets.UTF_8));
+
+    public static final int MERKLE_DEPTH = 20;
 
 }

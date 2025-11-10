@@ -10,6 +10,7 @@ import com.example.demo.domain.metadata.repository.MetadataRepository;
 import com.example.demo.domain.metadata.repository.PhotoCardRepository;
 import com.example.demo.domain.metadata.service.MetadataCommandService;
 import com.example.demo.domain.metadata.service.MetadataService;
+import com.example.demo.global.infra.blockchain.service.DketNFTService;
 import com.example.demo.global.infra.ipfs.PinataService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
@@ -47,6 +48,7 @@ public class MetadataServiceImpl implements MetadataService {
     private final PinataService pinataService;
     private final MetadataCommandService metadataCommandService;
     private final ObjectMapper objectMapper;
+    private final DketNFTService dketNFTService;
 
     @Override
     @Transactional
@@ -98,9 +100,14 @@ public class MetadataServiceImpl implements MetadataService {
                 .map(this::uploadMetadataAsync)
                 .collect(Collectors.toList());
 
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                .thenRun(() -> {
-                    metadataCommandService.finishUpload(session.getId());
+        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new))
+                .whenComplete((v, e) -> {
+                    if (e == null) {
+                        dketNFTService.mintSessionTicket(session);
+                    } else {
+                        log.error("세션 [{}] 메타데이터 업로드 실패", session.getId(), e);
+                        throw new CustomException(ErrorStatus.IPFS_UPLOAD_FAILED);
+                    }
                 });
     }
 

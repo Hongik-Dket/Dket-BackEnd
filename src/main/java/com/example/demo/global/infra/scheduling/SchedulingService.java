@@ -194,7 +194,7 @@ public class SchedulingService {
                 }
             }
 
-            List<Session> sessionList = sessionRepository.findByIsBuyableTrueAndIsDrawnTrueAndMetadataUploadedTrue();
+            List<Session> sessionList = sessionRepository.findByIsBuyableTrueAndIsDrawnTrueAndIsMintedTrue();
             for (Session session : sessionList) {
                 scheduleSessionJob(session, ClosePaymentJob.class);
             }

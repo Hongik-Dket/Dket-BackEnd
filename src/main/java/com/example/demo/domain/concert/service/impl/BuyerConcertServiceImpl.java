@@ -76,7 +76,7 @@ public class BuyerConcertServiceImpl implements BuyerConcertService {
     private boolean validateBuyer(Session session, User user, Apply apply) {
         Concert concert = session.getConcert();
 
-        if (!user.isEligibleFor(concert.getAgeLimit()) || !session.getIsBuyable()) {
+        if (!user.isEligibleFor(concert.getAgeLimit()) || !session.isBuyable()) {
             return false;
         }
 

@@ -156,6 +156,31 @@
 		"inputs": [
 			{
 				"indexed": true,
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "listHash",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint32",
+				"name": "count",
+				"type": "uint32"
+			}
+		],
+		"name": "ApplicantsListCommitted",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
 				"internalType": "address",
 				"name": "owner",
 				"type": "address"
@@ -354,12 +379,6 @@
 				"internalType": "uint256",
 				"name": "sessionId",
 				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "applicationCount",
-				"type": "uint256"
 			}
 		],
 		"name": "SessionCreated",
@@ -464,6 +483,19 @@
 		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "win",
+				"type": "address"
+			}
+		],
+		"name": "VerifierSet",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
 				"indexed": true,
 				"internalType": "uint256",
 				"name": "sessionId",
@@ -471,12 +503,37 @@
 			},
 			{
 				"indexed": false,
-				"internalType": "address[]",
-				"name": "winners",
-				"type": "address[]"
+				"internalType": "uint32",
+				"name": "count",
+				"type": "uint32"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint32[]",
+				"name": "winnerIdx",
+				"type": "uint32[]"
 			}
 		],
 		"name": "WinnersDrawn",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "winnersRoot",
+				"type": "bytes32"
+			}
+		],
+		"name": "WinnersRootSet",
 		"type": "event"
 	},
 	{
@@ -513,6 +570,44 @@
 				"internalType": "address",
 				"name": "",
 				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "applicantsCountOf",
+		"outputs": [
+			{
+				"internalType": "uint32",
+				"name": "",
+				"type": "uint32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "applicantsListHashOf",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
 			}
 		],
 		"stateMutability": "view",
@@ -585,11 +680,69 @@
 				"internalType": "uint256",
 				"name": "sessionId",
 				"type": "uint256"
+			},
+			{
+				"internalType": "bytes",
+				"name": "proof",
+				"type": "bytes"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "paymentNullifier",
+				"type": "bytes32"
 			}
 		],
 		"name": "buyTicket",
 		"outputs": [],
 		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint32",
+				"name": "",
+				"type": "uint32"
+			}
+		],
+		"name": "claimedIndex",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint32",
+				"name": "k",
+				"type": "uint32"
+			}
+		],
+		"name": "computeWinnerIndices",
+		"outputs": [
+			{
+				"internalType": "uint32[]",
+				"name": "out",
+				"type": "uint32[]"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -672,6 +825,16 @@
 				"internalType": "bool",
 				"name": "_isResaleAllowed",
 				"type": "bool"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "sessionIds",
+				"type": "uint256[]"
+			},
+			{
+				"internalType": "uint64[]",
+				"name": "startAts",
+				"type": "uint64[]"
 			}
 		],
 		"name": "createConcert",
@@ -683,28 +846,24 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "_concertId",
+				"name": "sessionId",
 				"type": "uint256"
 			},
 			{
-				"internalType": "uint256",
-				"name": "_sessionId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint64",
-				"name": "_startAt",
-				"type": "uint64"
-			},
-			{
-				"internalType": "address[]",
-				"name": "_applications",
-				"type": "address[]"
+				"internalType": "uint32",
+				"name": "step",
+				"type": "uint32"
 			}
 		],
-		"name": "createSession",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"name": "drawIndex",
+		"outputs": [
+			{
+				"internalType": "uint32",
+				"name": "",
+				"type": "uint32"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -713,9 +872,19 @@
 				"internalType": "uint256",
 				"name": "sessionId",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint32",
+				"name": "count",
+				"type": "uint32"
+			},
+			{
+				"internalType": "bytes32[]",
+				"name": "leaves",
+				"type": "bytes32[]"
 			}
 		],
-		"name": "drawSession",
+		"name": "drawWinners",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -750,6 +919,24 @@
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "winnersRoot",
+				"type": "bytes32"
+			}
+		],
+		"name": "finalizeWinnersRoot",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -798,32 +985,17 @@
 				"type": "uint256"
 			}
 		],
-		"name": "getSessionInfo",
+		"name": "getSessionHeader",
 		"outputs": [
 			{
 				"internalType": "uint256",
-				"name": "concertId",
+				"name": "",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint64",
-				"name": "startAt",
+				"name": "",
 				"type": "uint64"
-			},
-			{
-				"internalType": "address[]",
-				"name": "applications",
-				"type": "address[]"
-			},
-			{
-				"internalType": "address[]",
-				"name": "winners",
-				"type": "address[]"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "tokenIds",
-				"type": "uint256[]"
 			}
 		],
 		"stateMutability": "view",
@@ -1083,6 +1255,58 @@
 	{
 		"inputs": [
 			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "sessions",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "concertId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint64",
+				"name": "startAt",
+				"type": "uint64"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "listHash",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint32",
+				"name": "count",
+				"type": "uint32"
+			}
+		],
+		"name": "setApplicantsListCommitment",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "operator",
 				"type": "address"
@@ -1094,6 +1318,19 @@
 			}
 		],
 		"name": "setApprovalForAll",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			}
+		],
+		"name": "setDrawn",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -1114,6 +1351,38 @@
 		"name": "setTransferAgent",
 		"outputs": [],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "win",
+				"type": "address"
+			}
+		],
+		"name": "setWinVerifier",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "stepCursorOf",
+		"outputs": [
+			{
+				"internalType": "uint32",
+				"name": "",
+				"type": "uint32"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -1206,22 +1475,97 @@
 	{
 		"inputs": [
 			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"name": "usedPaymentNullifier",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "winVerifier",
+		"outputs": [
+			{
+				"internalType": "contract IWinVerifier",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint32",
+				"name": "targetRank",
+				"type": "uint32"
+			}
+		],
+		"name": "winnerIndexAt",
+		"outputs": [
+			{
+				"internalType": "uint32",
+				"name": "index",
+				"type": "uint32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
 			},
 			{
-				"internalType": "address",
+				"internalType": "uint256",
 				"name": "",
-				"type": "address"
+				"type": "uint256"
 			}
 		],
-		"name": "winnerIndexMaps",
+		"name": "winnerLeavesOf",
 		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
 			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
+			}
+		],
+		"name": "winnersRootOf",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
 			}
 		],
 		"stateMutability": "view",

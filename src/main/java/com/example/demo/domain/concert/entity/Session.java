@@ -32,13 +32,19 @@ public class Session extends BaseEntity {
 
     private LocalDate date;
 
-    private String txHash;
-
-    private Boolean isDrawn;
-    private Boolean metadataUploaded;
-    private Boolean isBuyable;
+    @Builder.Default
+    private boolean isDrawn = false;
+    @Builder.Default
+    private boolean isMinted = false;
+    @Builder.Default
+    private boolean isBuyable = false;
 
     private String entryCode;
+
+    @Column(columnDefinition = "BINARY(32)")
+    private byte[] winnersRoot;
+    @Column(columnDefinition = "BINARY(32)")
+    private byte[] ownersRoot;
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
     @Builder.Default
@@ -52,9 +58,12 @@ public class Session extends BaseEntity {
     @Builder.Default
     private List<Metadata> metadataList = new ArrayList<>();
 
-    public void setTxHash(String txHash) { this.txHash = txHash; }
     public void setIsDrawn() { this.isDrawn = true; }
-    public void setMetadataUploaded() { this.metadataUploaded = true; }
+    public void setIsDrawn(byte[] root) {
+        this.winnersRoot = root;
+        this.isDrawn = true;
+    }
+    public void setIsMinted() { this.isMinted = true; }
     public void setIsBuyable(boolean isBuyable) { this.isBuyable = isBuyable; }
     public void setEntryCode(String entryCode) { this.entryCode = entryCode; }
 

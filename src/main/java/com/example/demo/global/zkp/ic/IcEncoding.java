@@ -2,8 +2,8 @@ package com.example.demo.global.zkp.ic;
 
 import java.nio.charset.StandardCharsets;
 
-import static com.example.demo.global.zkp.ic.util.Hexes.*;
-import static com.example.demo.global.zkp.ic.util.Keccak.keccak256;
+import static com.example.demo.global.util.Hexes.*;
+import static com.example.demo.global.util.Keccak.keccak256;
 
 public final class IcEncoding {
     private IcEncoding() {}

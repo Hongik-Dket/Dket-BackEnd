@@ -4,6 +4,7 @@ import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.concert.enums.ConcertStatus;
 import com.example.demo.domain.concert.repository.ConcertRepository;
+import com.example.demo.domain.lottery.service.LotteryOnChainService;
 import com.example.demo.global.infra.blockchain.service.DketNFTService;
 import com.example.demo.global.infra.scheduling.SchedulingService;
 import com.example.demo.global.response.exception.CustomException;
@@ -23,6 +24,7 @@ public class CloseApplyJob implements Job {
     private final ConcertRepository concertRepository;
     private final SchedulingService schedulingService;
     private final DketNFTService dketNFTService;
+    private final LotteryOnChainService lotteryOnChainService;
 
     @Override
     @Transactional
@@ -34,18 +36,23 @@ public class CloseApplyJob implements Job {
 
         concert.setConcertStatus(ConcertStatus.APPLY_CLOSED);
 
-        for (Session session : concert.getSessions()) {
-            session.setTxHash(dketNFTService.recordSessionOnChain(session));
-        }
-
+        int emptyCount = 0;
         List<Session> sessions = concert.getSessions();
-        long emptyCount = sessions.stream()
-                .filter(session -> session.getApplyList().isEmpty())
-                .count();
+
+        for (Session session : sessions) {
+            if (session.getApplyList().isEmpty()) {
+                emptyCount++;
+                dketNFTService.setDrawnOnChain(session);
+            } else {
+                lotteryOnChainService.commitApplicants(session);
+            }
+        }
 
         if (emptyCount == sessions.size()) {
             dketNFTService.openPublicSaleOnChain(concert);
             concert.setConcertStatus(ConcertStatus.TICKETED);
+            schedulingService.scheduleConcertJob(concert, StartConcertJob.class);
+        } else {
             schedulingService.scheduleConcertJob(concert, OpenPublicJob.class);
         }
     }
