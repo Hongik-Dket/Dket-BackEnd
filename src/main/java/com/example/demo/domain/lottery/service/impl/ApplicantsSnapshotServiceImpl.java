@@ -1,25 +1,26 @@
-package com.example.demo.domain.apply.service.impl;
+package com.example.demo.domain.lottery.service.impl;
 
-import com.example.demo.domain.apply.entity.ApplicantsSnapshot;
-import com.example.demo.domain.apply.entity.ApplicantsSnapshotItem;
+import com.example.demo.domain.lottery.entity.ApplicantsSnapshot;
+import com.example.demo.domain.lottery.entity.ApplicantsSnapshotItem;
 import com.example.demo.domain.apply.entity.Apply;
-import com.example.demo.domain.apply.repository.ApplicantsSnapshotItemRepository;
-import com.example.demo.domain.apply.repository.ApplicantsSnapshotRepository;
+import com.example.demo.domain.lottery.repository.ApplicantsSnapshotItemRepository;
+import com.example.demo.domain.lottery.repository.ApplicantsSnapshotRepository;
 import com.example.demo.domain.apply.repository.ApplyRepository;
-import com.example.demo.domain.apply.service.ApplicantsSnapshotService;
+import com.example.demo.domain.lottery.service.ApplicantsSnapshotService;
 import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.concert.enums.ConcertStatus;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.demo.global.zkp.util.Hexes.toBytesList;
-import static com.example.demo.global.zkp.util.Keccak.keccakListHash;
+import static com.example.demo.global.util.Hexes.toBytesList;
+import static com.example.demo.global.util.Keccak.keccakListHash;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,7 +32,7 @@ public class ApplicantsSnapshotServiceImpl implements ApplicantsSnapshotService 
     private final ApplicantsSnapshotItemRepository applicantsSnapshotItemRepository;
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public ApplicantsSnapshot createSnapshot(Session session) {
         if (applicantsSnapshotRepository.findBySessionId(session.getId()).isPresent()) {
             throw new CustomException(ErrorStatus.SNAPSHOT_ALREADY_EXISTS);
@@ -68,8 +69,7 @@ public class ApplicantsSnapshotServiceImpl implements ApplicantsSnapshotService 
         }
 
         String listHash = keccakListHash(leaves);
-        snapshot.setListHash(listHash);
-        snapshot.setTotalCount(leaves.size());
+        snapshot.finalize(listHash, leaves.size());
 
         return snapshot;
     }

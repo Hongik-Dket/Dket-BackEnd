@@ -3,7 +3,7 @@ package com.example.demo.global.base;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 
-import static com.example.demo.global.zkp.util.Keccak.keccak256;
+import static com.example.demo.global.util.Keccak.keccak256;
 
 public class Constants {
 

@@ -1,6 +1,6 @@
-package com.example.demo.domain.apply.repository;
+package com.example.demo.domain.lottery.repository;
 
-import com.example.demo.domain.apply.entity.ApplicantsSnapshot;
+import com.example.demo.domain.lottery.entity.ApplicantsSnapshot;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

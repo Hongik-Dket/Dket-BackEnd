@@ -10,7 +10,7 @@ import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.example.demo.global.zkp.util.Hexes.to0xHex;
+import static com.example.demo.global.util.Hexes.to0xHex;
 
 @Service
 @RequiredArgsConstructor

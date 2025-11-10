@@ -1,6 +1,6 @@
-package com.example.demo.domain.apply.service;
+package com.example.demo.domain.lottery.service;
 
-import com.example.demo.domain.apply.entity.ApplicantsSnapshot;
+import com.example.demo.domain.lottery.entity.ApplicantsSnapshot;
 import com.example.demo.domain.concert.entity.Session;
 
 import java.util.List;

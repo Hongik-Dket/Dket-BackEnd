@@ -120,6 +120,8 @@ public enum ErrorStatus implements BaseErrorCode {
     SNAPSHOT_NOT_FOUND(HttpStatus.BAD_REQUEST, "SNAPSHOT_4002", "해당 스냅샷을 찾을 수 없습니다."),
     SNAPSHOT_INVALID(HttpStatus.BAD_REQUEST, "SNAPSHOT_4003", "유효하지 않은 스냅샷입니다."),
 
+    LOTTERY_INVALID_INDEX(HttpStatus.BAD_REQUEST, "LOTTERY_4001", "당첨자 인덱스 정보가 잘못되었습니다."),
+
     ;
 
     private final HttpStatus httpStatus;

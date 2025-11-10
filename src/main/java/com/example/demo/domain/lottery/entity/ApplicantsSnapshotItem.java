@@ -1,5 +1,6 @@
-package com.example.demo.domain.apply.entity;
+package com.example.demo.domain.lottery.entity;
 
+import com.example.demo.domain.apply.entity.Apply;
 import com.example.demo.global.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

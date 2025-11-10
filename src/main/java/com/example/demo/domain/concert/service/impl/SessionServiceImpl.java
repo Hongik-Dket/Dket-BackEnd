@@ -3,11 +3,9 @@ package com.example.demo.domain.concert.service.impl;
 import com.example.demo.domain.apply.entity.Apply;
 import com.example.demo.domain.apply.enums.ApplyStatus;
 import com.example.demo.domain.apply.repository.ApplyRepository;
-import com.example.demo.domain.apply.service.ApplicantsSnapshotService;
 import com.example.demo.domain.concert.dto.response.EntryCodeDTO;
 import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.concert.entity.Session;
-import com.example.demo.domain.concert.enums.ConcertStatus;
 import com.example.demo.domain.concert.repository.ConcertRepository;
 import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.domain.concert.service.SessionService;
@@ -16,7 +14,6 @@ import com.example.demo.domain.ticket.repository.TicketRepository;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.infra.scheduling.SchedulingService;
-import com.example.demo.global.infra.scheduling.jobs.concert.OpenPublicJob;
 import com.example.demo.global.infra.scheduling.jobs.session.ClosePaymentJob;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
@@ -25,13 +22,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Random;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-
 public class SessionServiceImpl implements SessionService {
 
     private final SessionRepository sessionRepository;
@@ -40,41 +35,6 @@ public class SessionServiceImpl implements SessionService {
     private final UserService userService;
     private final TicketRepository ticketRepository;
     private final ConcertRepository concertRepository;
-
-    @Override
-    @Transactional
-    public void saveWinners(Long sessionId, List<String> winners) {
-        Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
-
-        if (session.isDrawn())
-            throw new CustomException(ErrorStatus.SESSION_ALREADY_DRAWN);
-
-        applyRepository.batchUpdateApplyStatusBySessionIdAndWalletAddresses(
-                session.getId(), winners, ApplyStatus.SELECTED);
-
-        applyRepository.batchUpdateStatusExceptWallets(
-                session.getId(), winners, ApplyStatus.NOT_SELECTED);
-
-        Concert concert = session.getConcert();
-        if (concert.getConcertStatus() != ConcertStatus.APPLY_CLOSED) {
-            concert.setConcertStatus(ConcertStatus.APPLY_CLOSED);
-            schedulingService.scheduleConcertJob(concert, OpenPublicJob.class);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void completeDraw(Long sessionId) {
-        Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
-
-        session.setIsDrawn();
-
-        if (session.isMinted()) {
-            session.setIsBuyable(true);
-        }
-    }
 
     @Override
     @Transactional

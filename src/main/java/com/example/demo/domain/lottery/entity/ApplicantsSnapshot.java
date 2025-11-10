@@ -1,4 +1,4 @@
-package com.example.demo.domain.apply.entity;
+package com.example.demo.domain.lottery.entity;
 
 import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.global.base.BaseEntity;
@@ -41,7 +41,9 @@ public class ApplicantsSnapshot extends BaseEntity {
         this.totalCount = this.items.size();
     }
 
-    public void setListHash(String listHash) { this.listHash = listHash; }
-    public void setTotalCount(int totalCount) { this.totalCount = totalCount; }
+    public void finalize(String listHash, int totalCount) {
+        this.listHash = listHash;
+        this.totalCount = totalCount;
+    }
 
 }

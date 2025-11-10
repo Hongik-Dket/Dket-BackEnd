@@ -1,16 +1,14 @@
-package com.example.demo.domain.concert.service.impl;
+package com.example.demo.domain.lottery.service.impl;
 
-import com.example.demo.domain.apply.entity.ApplicantsSnapshot;
-import com.example.demo.domain.apply.service.ApplicantsSnapshotService;
 import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.concert.repository.SessionRepository;
-import com.example.demo.domain.concert.service.SessionOnChainService;
-import com.example.demo.global.event.ReadyToDraw;
+import com.example.demo.domain.lottery.entity.ApplicantsSnapshot;
+import com.example.demo.domain.lottery.service.ApplicantsSnapshotService;
+import com.example.demo.domain.lottery.service.LotteryOnChainService;
 import com.example.demo.global.infra.blockchain.service.DketNFTService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +17,7 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class SessionOnChainServiceImpl implements SessionOnChainService {
+public class LotteryOnChainServiceImpl implements LotteryOnChainService {
 
     private final ApplicantsSnapshotService applicantsSnapshotService;
     private final DketNFTService dketNFTService;
@@ -31,24 +29,23 @@ public class SessionOnChainServiceImpl implements SessionOnChainService {
         dketNFTService.setApplicantsListCommitment(session, snapshot);
     }
 
-    @EventListener
-    public void drawWinners(ReadyToDraw event) {
-        Session session = sessionRepository.findById(event.getSessionId())
+    @Override
+    public void drawWinners(Long sessionId) {
+        Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
 
         List<byte[]> leaves = applicantsSnapshotService.buildLeavesForDraw(session);
 
-        int applies = session.getApplyList().size();
-        int count = 100;
-        int batch = applies / count;
+        int total = Math.min(session.getConcert().getCapacity(), session.getApplyList().size());
+        int count = Math.min(total, 100);
+        int batch = total / count;
 
         for (int i = 0; i < batch; i++) {
             dketNFTService.drawWinnersOnChain(session, count, leaves);
         }
 
-        if (applies % count > 0) {
-            dketNFTService.drawWinnersOnChain(session, applies % count, leaves);
+        if (total % count > 0) {
+            dketNFTService.drawWinnersOnChain(session, total % count, leaves);
         }
     }
-
 }

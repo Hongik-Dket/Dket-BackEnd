@@ -13,6 +13,9 @@ import org.web3j.protocol.http.HttpService;
 @RequiredArgsConstructor
 public class Web3jConfig {
 
+    @Value("${web3.rpc-wss-url}")
+    private String wssUrl;
+
     @Value("${web3.network-url}")
     private String networkUrl;
 
@@ -25,9 +28,18 @@ public class Web3jConfig {
     @Value("${web3.resale-contract-address}")
     private String verifyingContract;          // DketResale
 
-    @Bean
-    public Web3j web3j() {
-        return Web3j.build(new HttpService(networkUrl));
+    @Bean(destroyMethod = "shutdown")
+    public Web3j web3j() throws Exception {
+        if (wssUrl != null && !wssUrl.isBlank()) {
+            var ws = new org.web3j.protocol.websocket.WebSocketService(wssUrl, true);
+            ws.connect();
+            return org.web3j.protocol.Web3j.build(ws);
+        }
+
+        okhttp3.OkHttpClient ok = new okhttp3.OkHttpClient.Builder()
+                .retryOnConnectionFailure(true)
+                .build();
+        return org.web3j.protocol.Web3j.build(new HttpService(networkUrl, ok, false));
     }
 
     @Bean

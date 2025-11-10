@@ -25,19 +25,21 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
 
     @Modifying
     @Query("UPDATE Apply a SET a.applyStatus = :newStatus " +
-            "WHERE a.session.id = :sessionId AND a.user.walletAddress IN :walletAddresses")
-    int batchUpdateApplyStatusBySessionIdAndWalletAddresses(
-            @Param("sessionId") Long sessionId,
-            @Param("walletAddresses") List<String> walletAddresses,
+            "WHERE a.id IN :applyIds AND a.applyStatus = :currentStatus")
+    void batchUpdateApplyStatusByIds(
+            @Param("applyIds") List<Long> applyIds,
+            @Param("currentStatus") ApplyStatus currentStatus,
             @Param("newStatus") ApplyStatus newStatus
     );
 
     @Modifying
     @Query("UPDATE Apply a SET a.applyStatus = :newStatus " +
-            "WHERE a.session.id = :sessionId AND a.user.walletAddress NOT IN :walletAddresses")
-    int batchUpdateStatusExceptWallets(
+            "WHERE a.session.id = :sessionId " +
+            "AND a.id NOT IN :applyIds AND a.applyStatus = :currentStatus")
+    void batchUpdateApplyStatusExceptIdsBySessionId(
             @Param("sessionId") Long sessionId,
-            @Param("walletAddresses") List<String> walletAddresses,
+            @Param("applyIds") List<Long> applyIds,
+            @Param("currentStatus") ApplyStatus currentStatus,
             @Param("newStatus") ApplyStatus newStatus
     );
 
@@ -60,5 +62,8 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
     List<Apply> findByUserIdAndSessionIdIn(Long userId, List<Long> sessionIds);
 
     List<Apply> findAllBySessionIdOrderByIdAsc(Long sessionId);
+
+    @Query("SELECT a.id FROM Apply a WHERE a.session.id = :sessionId AND a.applyStatus = :applyStatus")
+    List<Long> findIdsBySessionIdAndApplyStatus(Long sessionId, ApplyStatus applyStatus);
 
 }

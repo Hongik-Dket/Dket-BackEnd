@@ -4,8 +4,7 @@ import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.concert.enums.ConcertStatus;
 import com.example.demo.domain.concert.repository.ConcertRepository;
-import com.example.demo.domain.concert.service.SessionOnChainService;
-import com.example.demo.domain.concert.service.SessionService;
+import com.example.demo.domain.lottery.service.LotteryOnChainService;
 import com.example.demo.global.infra.blockchain.service.DketNFTService;
 import com.example.demo.global.infra.scheduling.SchedulingService;
 import com.example.demo.global.response.exception.CustomException;
@@ -25,7 +24,7 @@ public class CloseApplyJob implements Job {
     private final ConcertRepository concertRepository;
     private final SchedulingService schedulingService;
     private final DketNFTService dketNFTService;
-    private final SessionOnChainService sessionOnChainService;
+    private final LotteryOnChainService lotteryOnChainService;
 
     @Override
     @Transactional
@@ -45,13 +44,15 @@ public class CloseApplyJob implements Job {
                 emptyCount++;
                 dketNFTService.setDrawnOnChain(session);
             } else {
-                sessionOnChainService.commitApplicants(session);
+                lotteryOnChainService.commitApplicants(session);
             }
         }
 
         if (emptyCount == sessions.size()) {
             dketNFTService.openPublicSaleOnChain(concert);
             concert.setConcertStatus(ConcertStatus.TICKETED);
+            schedulingService.scheduleConcertJob(concert, StartConcertJob.class);
+        } else {
             schedulingService.scheduleConcertJob(concert, OpenPublicJob.class);
         }
     }

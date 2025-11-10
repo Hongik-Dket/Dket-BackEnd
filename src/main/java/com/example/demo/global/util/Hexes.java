@@ -1,4 +1,4 @@
-package com.example.demo.global.zkp.util;
+package com.example.demo.global.util;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -69,4 +69,5 @@ public final class Hexes {
         }
         return result;
     }
+
 }

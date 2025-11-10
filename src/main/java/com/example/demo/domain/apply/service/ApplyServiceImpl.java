@@ -1,10 +1,9 @@
-package com.example.demo.domain.apply.service.impl;
+package com.example.demo.domain.apply.service;
 
 import com.example.demo.domain.apply.dto.ApplyResponseDTO;
 import com.example.demo.domain.apply.entity.Apply;
 import com.example.demo.domain.apply.enums.ApplyStatus;
 import com.example.demo.domain.apply.repository.ApplyRepository;
-import com.example.demo.domain.apply.service.ApplyService;
 import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.concert.enums.ConcertStatus;
@@ -15,12 +14,13 @@ import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import com.example.demo.global.zkp.poseidon.Poseidon;
-import com.example.demo.global.zkp.util.Hexes;
+import com.example.demo.global.util.Hexes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -64,7 +64,8 @@ public class ApplyServiceImpl implements ApplyService {
             throw new CustomException(ErrorStatus.CONCERT_SESSION_MISMATCH);
         }
 
-        if (!concert.getConcertStatus().equals(ConcertStatus.APPLY_OPEN)) {
+        if (!concert.getConcertStatus().equals(ConcertStatus.APPLY_OPEN)
+                || concert.getApplyEnd().isBefore(LocalDateTime.now())) {
             throw new CustomException(ErrorStatus.APPLY_INVALID_PERIOD);
         }
 

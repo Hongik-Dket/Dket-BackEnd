@@ -1,10 +1,12 @@
-package com.example.demo.global.zkp.util;
+package com.example.demo.global.util;
 
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import org.web3j.crypto.Hash;
 
 import java.util.List;
+
+import static com.example.demo.global.util.Hexes.*;
 
 public final class Keccak {
     private Keccak() {}
@@ -22,7 +24,7 @@ public final class Keccak {
                 new org.bouncycastle.jcajce.provider.digest.Keccak.Digest256();
 
         for (String hex : leafHexList) {
-            byte[] b = Hexes.hexToBytes(hex);
+            byte[] b = hexToBytes(hex);
 
             if (b.length != 32) {
                 throw new CustomException(ErrorStatus.KECCAK_WRONG_PARAMETER);
@@ -31,6 +33,7 @@ public final class Keccak {
             d.update(b, 0, 32);
         }
 
-        return Hexes.to0xHex(d.digest());
+        return to0xHex(d.digest());
     }
+
 }

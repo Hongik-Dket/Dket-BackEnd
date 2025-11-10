@@ -59,6 +59,10 @@ public class Session extends BaseEntity {
     private List<Metadata> metadataList = new ArrayList<>();
 
     public void setIsDrawn() { this.isDrawn = true; }
+    public void setIsDrawn(byte[] root) {
+        this.winnersRoot = root;
+        this.isDrawn = true;
+    }
     public void setIsMinted() { this.isMinted = true; }
     public void setIsBuyable(boolean isBuyable) { this.isBuyable = isBuyable; }
     public void setEntryCode(String entryCode) { this.entryCode = entryCode; }
@@ -72,8 +76,5 @@ public class Session extends BaseEntity {
                 .filter(ticket -> ticket.getPaidAt() != null)
                 .count();
     }
-
-    public boolean hasWinnersRoot() { return winnersRoot != null && winnersRoot.length == 32; }
-    public boolean hasOwnersRoot() { return ownersRoot != null && ownersRoot.length == 32; }
 
 }
