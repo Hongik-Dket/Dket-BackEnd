@@ -4,7 +4,7 @@ import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.concert.enums.ConcertStatus;
 import com.example.demo.domain.concert.repository.ConcertRepository;
-import com.example.demo.domain.lottery.service.LotteryOnChainService;
+import com.example.demo.domain.lottery.service.LotteryService;
 import com.example.demo.global.infra.blockchain.service.DketNFTService;
 import com.example.demo.global.infra.scheduling.SchedulingService;
 import com.example.demo.global.response.exception.CustomException;
@@ -24,7 +24,7 @@ public class CloseApplyJob implements Job {
     private final ConcertRepository concertRepository;
     private final SchedulingService schedulingService;
     private final DketNFTService dketNFTService;
-    private final LotteryOnChainService lotteryOnChainService;
+    private final LotteryService lotteryService;
 
     @Override
     @Transactional
@@ -44,7 +44,7 @@ public class CloseApplyJob implements Job {
                 emptyCount++;
                 dketNFTService.setDrawnOnChain(session);
             } else {
-                lotteryOnChainService.commitApplicants(session);
+                lotteryService.commitApplicants(session);
             }
         }
 

@@ -1,6 +1,5 @@
 package com.example.demo.global.infra.blockchain.service;
 
-import com.example.demo.domain.lottery.service.LotteryOnChainService;
 import com.example.demo.domain.lottery.service.LotteryService;
 import com.example.demo.domain.metadata.service.MetadataService;
 import com.example.demo.domain.resale.service.ResaleService;
@@ -35,7 +34,6 @@ public class DketNFTListenService {
     private final MetadataService metadataService;
     private final DketNFTViewService dketNFTViewService;
     private final TicketService ticketService;
-    private final LotteryOnChainService lotteryOnChainService;
     private final LotteryService lotteryService;
     private final ResaleService resaleService;
 
@@ -114,7 +112,7 @@ public class DketNFTListenService {
                 .subscribe(
                         event -> {
                             Long sessionId = event.sessionId.longValue();
-                            lotteryOnChainService.drawWinners(sessionId);
+                            lotteryService.drawWinners(sessionId);
                         },
                         error -> {
                             log.error("applicantsListCommitted 이벤트 수신 중 예외 발생", error);
