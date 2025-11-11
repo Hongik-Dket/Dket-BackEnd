@@ -70,6 +70,8 @@ public class DketNFTListenService {
                             BigInteger sessionId = event.sessionId;
                             BigInteger randomWord = event.randomWord;
 
+                            log.info("randomFulfilled: session [{}]", sessionId);
+
                             List<Long> metadataIds = metadataService.createMetadata(sessionId, randomWord);
                             metadataService.uploadAllMetadataAsync(metadataIds);
                         },
@@ -88,6 +90,8 @@ public class DketNFTListenService {
                             if (tokenIds == null || tokenIds.isEmpty()) {
                                 throw new CustomException(ErrorStatus.SESSION_MINTING_FAILED);
                             }
+
+                            log.info("sessionMinted: tokenIds [{}]", tokenIds);
 
                             registerMintedTickets(tokenIds);
                         },
@@ -112,6 +116,9 @@ public class DketNFTListenService {
                 .subscribe(
                         event -> {
                             Long sessionId = event.sessionId.longValue();
+
+                            log.info("applicantsListCommitted: session [{}]", sessionId);
+
                             lotteryService.drawWinners(sessionId);
                         },
                         error -> {
@@ -131,6 +138,8 @@ public class DketNFTListenService {
                             long blockNumber = event.log.getBlockNumber().longValue();
                             int logIndex = event.log.getLogIndex().intValue();
 
+                            log.info("winnersDrawn: session[{}]", sessionId);
+
                             lotteryService.saveWinners(
                                     sessionId, count, event.winnerIdx, txHash, blockNumber, logIndex
                             );
@@ -146,6 +155,9 @@ public class DketNFTListenService {
                 .subscribe(
                         event -> {
                             Long sessionId = event.sessionId.longValue();
+
+                            log.info("setDrawn: session [{}]", sessionId);
+
                             lotteryService.completeDraw(sessionId);
                         },
                         error -> {
@@ -162,6 +174,8 @@ public class DketNFTListenService {
                             Long sessionId = event.sessionId.longValue();
                             Long tokenId = event.tokenId.longValue();
 
+                            log.info("paymentTransferred: session[{}], token[{}]", sessionId, tokenId);
+
                             ticketService.completeTicket(buyer, sessionId, tokenId);
                         },
                         error -> {
@@ -176,6 +190,8 @@ public class DketNFTListenService {
                         event -> {
                             String approved = event.approved;
                             if (!approved.equalsIgnoreCase(resaleContractAddress)) return;
+
+                            log.info("approval: owner [{}]", event.owner);
 
                             resaleService.listResale(event.owner, event.tokenId);
                         },

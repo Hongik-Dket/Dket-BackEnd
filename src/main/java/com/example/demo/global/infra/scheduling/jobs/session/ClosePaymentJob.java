@@ -5,11 +5,13 @@ import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ClosePaymentJob implements Job {
@@ -20,6 +22,8 @@ public class ClosePaymentJob implements Job {
     @Transactional
     public void execute(JobExecutionContext context) {
         Long sessionId = context.getJobDetail().getJobDataMap().getLong("sessionId");
+
+        log.info("closePaymentJob: session [{}]", sessionId);
 
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
