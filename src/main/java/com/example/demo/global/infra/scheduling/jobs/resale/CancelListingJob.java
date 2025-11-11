@@ -7,12 +7,14 @@ import com.example.demo.global.response.status.ErrorStatus;
 import jakarta.persistence.LockTimeoutException;
 import jakarta.persistence.PessimisticLockException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 @DisallowConcurrentExecution
@@ -24,6 +26,8 @@ public class CancelListingJob implements Job {
     @Transactional
     public void execute(JobExecutionContext context) {
         Long resaleId = context.getJobDetail().getJobDataMap().getLong("resaleId");
+
+        log.info("cancelListingJob: resale [{}]", resaleId);
 
         Resale resale;
         try {

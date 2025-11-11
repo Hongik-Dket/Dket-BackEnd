@@ -46,6 +46,9 @@ public class DketResaleListenService {
         dketResale.resaleListedEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST)
                 .subscribe(event -> {
                     Long resaleId = event.resaleId.longValue();
+
+                    log.info("resaleListed: resale [{}]", resaleId);
+
                     resaleService.completeResaleListing(resaleId);
                 },
                 error -> {
@@ -59,6 +62,9 @@ public class DketResaleListenService {
                 .subscribe(
                         event -> {
                             Long resaleId = event.resaleId.longValue();
+
+                            log.info("resaleSold: resale [{}]", resaleId);
+
                             resaleService.completeResalePurchase(resaleId);
                         },
                         error -> {
