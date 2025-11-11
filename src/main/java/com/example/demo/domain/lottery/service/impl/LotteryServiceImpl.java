@@ -133,12 +133,13 @@ public class LotteryServiceImpl implements LotteryService {
                     sessionId, winnerIdList, ApplyStatus.APPLIED, ApplyStatus.NOT_SELECTED);
 
             byte[] root = hexToBytes(poseidonRoot);
-            dketNFTService.finalizeWinnersRoot(session);
 
             session.setIsDrawn(root);
             if (session.isMinted()) {
                 session.setIsBuyable(true);
             }
+
+            dketNFTService.finalizeWinnersRoot(session);
         }
     }
 
