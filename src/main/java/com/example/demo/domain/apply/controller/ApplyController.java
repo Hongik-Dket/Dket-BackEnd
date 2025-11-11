@@ -5,6 +5,7 @@ import com.example.demo.domain.apply.service.ApplyService;
 import com.example.demo.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.example.demo.global.response.status.SuccessStatus._OK;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/buyer/concerts")
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class ApplyController {
             @PathVariable Long concertId,
             @PathVariable Long sessionId
     ) {
+        log.info("POST /api/buyer/concerts/{}/sessions/{}/apply", concertId, sessionId);
         return ApiResponse.onSuccess(_OK, applyService.applyToSession(concertId, sessionId));
     }
 }

@@ -11,6 +11,7 @@ import com.example.demo.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +20,7 @@ import java.util.List;
 
 import static com.example.demo.global.response.status.SuccessStatus._OK;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/organizer/concerts")
 @RequiredArgsConstructor
@@ -30,6 +32,7 @@ public class OrganizerConcertController {
     @Operation(summary = "개최자 - 공연 상세 조회")
     @GetMapping("/{concertId}")
     public ApiResponse<OrganizerConcertDetailDTO> getConcertDetailForOrganizer(@PathVariable Long concertId) {
+        log.info("GET /api/organizer/concerts/{}/concert", concertId);
         return ApiResponse.onSuccess(_OK, organizerConcertService.getConcertDetailForOrganizer(concertId));
     }
 
@@ -37,6 +40,7 @@ public class OrganizerConcertController {
     @GetMapping("/{concertId}/{sessionId}")
     public ApiResponse<OrganizerSessionInfoDTO> getSessionInfoForOrganizer(
             @PathVariable Long concertId, @PathVariable Long sessionId) {
+        log.info("GET /api/organizer/concerts/{}/{}}", concertId, sessionId);
         return ApiResponse.onSuccess(_OK, organizerConcertService.getSessionInfoForOrganizer(concertId, sessionId));
     }
 
@@ -50,6 +54,7 @@ public class OrganizerConcertController {
             @RequestPart(name = "poster") MultipartFile poster,
             @RequestPart(name = "photocardList") List<MultipartFile> photoCardList
     ) {
+        log.info("POST /api/organizer/concerts");
         return ApiResponse.onSuccess(_OK, organizerConcertService.uploadConcert(request, banner, poster, photoCardList));
     }
 
@@ -58,6 +63,7 @@ public class OrganizerConcertController {
     public ApiResponse<EntryCodeDTO> getEntryCode(
             @PathVariable Long concertId, @PathVariable Long sessionId
     ) {
+        log.info("GET /api/organizer/concerts/{}/{}/enter", concertId, sessionId);
         return ApiResponse.onSuccess(_OK, sessionService.getEntryCode(concertId, sessionId));
     }
 
