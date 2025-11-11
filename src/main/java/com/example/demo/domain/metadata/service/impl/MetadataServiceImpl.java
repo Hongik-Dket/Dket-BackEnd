@@ -104,7 +104,7 @@ public class MetadataServiceImpl implements MetadataService {
                 .whenComplete((v, e) -> {
                     if (e == null) {
                         log.info("Completed uploadAllMetadataAsync: session[{}]", session.getId());
-                        dketNFTService.mintSessionTicket(session);
+                        dketNFTService.mintSessionTicket(session.getId());
                     } else {
                         log.error("세션 [{}] 메타데이터 업로드 실패", session.getId(), e);
                         throw new CustomException(ErrorStatus.IPFS_UPLOAD_FAILED);

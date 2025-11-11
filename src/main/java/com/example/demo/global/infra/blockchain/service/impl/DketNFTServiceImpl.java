@@ -1,5 +1,6 @@
 package com.example.demo.global.infra.blockchain.service.impl;
 
+import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.domain.lottery.entity.ApplicantsSnapshot;
 import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.concert.entity.Session;
@@ -34,6 +35,8 @@ public class DketNFTServiceImpl implements DketNFTService {
 
     private final Web3j web3j;
     private final Credentials credentials;
+
+    private final SessionRepository sessionRepository;
 
     @Value("${web3.nft-contract-address}")
     private String nftContractAddress;
@@ -89,7 +92,10 @@ public class DketNFTServiceImpl implements DketNFTService {
     }
 
     @Override
-    public void mintSessionTicket(Session session) {
+    public void mintSessionTicket(Long sessionId) {
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
+
         List<String> metadataUris = session.getMetadataList().stream()
                 .map(metadata -> "ipfs://" + metadata.getCid())
                 .collect(Collectors.toList());
