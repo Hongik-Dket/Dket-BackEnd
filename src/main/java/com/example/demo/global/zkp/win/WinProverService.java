@@ -45,7 +45,7 @@ public class WinProverService {
     @Data
     public static class WinProof {
         private String proofHex;
-        private String paymentNullifierHex32;
+        private String paymentNullifierHex;
     }
 
     public WinProof prove(Long sessionId, int leafIndex, String icHex) {
@@ -89,7 +89,7 @@ public class WinProverService {
 
             var winProof = new WinProof();
             winProof.setProofHex(proofHex);
-            winProof.setPaymentNullifierHex32(to0xHex(bigIntToBe32(nullifier)));
+            winProof.setPaymentNullifierHex(to0xHex(bigIntToBe32(nullifier)));
 
             Files.deleteIfExists(tmpInput);
 
