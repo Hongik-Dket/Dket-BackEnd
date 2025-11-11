@@ -5,10 +5,11 @@ import com.example.demo.domain.ticket.service.OrganizerTicketService;
 import com.example.demo.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import static com.example.demo.global.response.status.SuccessStatus._OK;
-
+@Slf4j
 @RestController
 @RequestMapping("/api/organizer/tickets")
 @RequiredArgsConstructor
@@ -19,6 +20,7 @@ public class OrganizerTicketController {
     @Operation(summary = "공연 입장")
     @PatchMapping("/{ticketId}/enter")
     public ApiResponse<?> enterTicket(@PathVariable("ticketId") Long ticketId) {
+        log.info("PATCH /api/organizer/tickets/{}/enter", ticketId);
         organizerTicketService.enterTicket(ticketId);
 
         return ApiResponse.onSuccess(_OK, null);
@@ -29,6 +31,7 @@ public class OrganizerTicketController {
     public ApiResponse<TicketResponseDTO> validateTicketWithoutProof(
             @RequestParam("ticketNumber") String ticketNumber
     ) {
+        log.info("GET /api/organizer/tickets?ticketNumber={}", ticketNumber);
         return ApiResponse.onSuccess(_OK, organizerTicketService.validateTicketWithoutProof(ticketNumber));
     }
 }

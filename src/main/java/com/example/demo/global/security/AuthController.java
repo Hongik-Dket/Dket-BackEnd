@@ -7,10 +7,12 @@ import com.example.demo.global.response.ApiResponse;
 import com.example.demo.global.security.dto.request.PassportSignupDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import static com.example.demo.global.response.status.SuccessStatus._OK;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class AuthController {
     public ApiResponse<LoginResponseDTO> signupWithPassport(
             @RequestBody PassportSignupDTO request
             ) {
+        log.info("POST /auth/signup/passport");
         return ApiResponse.onSuccess(_OK, userService.signupWithPassport(request));
     }
 
@@ -31,6 +34,7 @@ public class AuthController {
     public ApiResponse<LoginResponseDTO> loginWithMetaMask(
             @RequestBody MetaMaskLoginDTO request
     ) {
+        log.info("POST /auth/metamask");
         return ApiResponse.onSuccess(_OK, userService.loginWithMetaMask(request));
     }
 

@@ -11,12 +11,14 @@ import com.example.demo.domain.user.dto.request.MetaMaskLoginDTO;
 import com.example.demo.domain.user.dto.response.UserInfoDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 import static com.example.demo.global.response.status.SuccessStatus._OK;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
@@ -30,6 +32,7 @@ public class UserController {
     public ApiResponse<?> connectMetaMaskWallet(
             @RequestBody MetaMaskLoginDTO request
     ) {
+        log.info("POST /api/user/signup/metamask/complete");
         userService.connectWallet(request);
 
         return ApiResponse.onSuccess(_OK, null);
@@ -44,24 +47,28 @@ public class UserController {
     @Operation(summary = "여권 정보 확인하기")
     @GetMapping("/passport")
     public ApiResponse<PassportInfoDTO> getPassportInfo() {
+        log.info("GET /api/user/passport");
         return ApiResponse.onSuccess(_OK, userService.getPassportInfo());
     }
 
     @Operation(summary = "지갑 정보 조회하기")
     @GetMapping("/wallet")
     public ApiResponse<WalletDTO> getWallet() {
+        log.info("GET /api/user/wallet");
         return ApiResponse.onSuccess(_OK, mypageService.getWalletInfo());
     }
 
     @Operation(summary = "내 티켓 목록 조회하기")
     @GetMapping("/tickets")
     public ApiResponse<List<TicketCardDTO>> getTickets() {
+        log.info("GET /api/user/tickets");
         return ApiResponse.onSuccess(_OK, mypageService.getMyTickets());
     }
 
     @Operation(summary = "내 포토카드 목록 조회하기")
     @GetMapping("/photocards")
     public ApiResponse<List<PhotoCardDTO>> getPhotoCards() {
+        log.info("GET /api/user/photocards");
         return ApiResponse.onSuccess(_OK, mypageService.getMyPhotoCards());
     }
 

@@ -1,6 +1,5 @@
 package com.example.demo.domain.resale.controller;
 
-import com.beust.ah.A;
 import com.example.demo.domain.resale.dto.request.ResaleListingDTO;
 import com.example.demo.domain.resale.dto.response.ResaleAuthDTO;
 import com.example.demo.domain.resale.dto.response.ResaleCardDTO;
@@ -10,12 +9,14 @@ import com.example.demo.domain.resale.service.ResaleService;
 import com.example.demo.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 import static com.example.demo.global.response.status.SuccessStatus._OK;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/resales")
 @RequiredArgsConstructor
@@ -29,6 +30,7 @@ public class ResaleController {
             @PathVariable("ticketId") Long ticketId,
             @RequestBody ResaleListingDTO request
     ) {
+        log.info("POST /api/resales/{}", ticketId);
         return ApiResponse.onSuccess(_OK, resaleService.createResale(ticketId, request));
     }
 
@@ -37,6 +39,7 @@ public class ResaleController {
     public ApiResponse<List<ResaleCardDTO>> getSessionResales(
             @RequestParam("sessionId") Long sessionId
     ) {
+        log.info("GET /api/resales?sessionId={}", sessionId);
         return ApiResponse.onSuccess(_OK, resaleService.getSessionResales(sessionId));
     }
 
@@ -45,6 +48,7 @@ public class ResaleController {
     public ApiResponse<ResaleDetailDTO> reserveResale(
             @PathVariable("resaleId") Long resaleId
     ) {
+        log.info("PATCH /api/resales/{}/reserve", resaleId);
         return ApiResponse.onSuccess(_OK, resaleService.reserveResale(resaleId));
     }
 
@@ -53,6 +57,7 @@ public class ResaleController {
     public ApiResponse<?> cancelResaleReservation(
             @PathVariable("resaleId") Long resaleId
     ) {
+        log.info("DELETE /api/resales/{}/reserve", resaleId);
         resaleService.cancelResaleReservation(resaleId);
 
         return ApiResponse.onSuccess(_OK, null);
@@ -63,6 +68,7 @@ public class ResaleController {
     public ApiResponse<ResaleAuthDTO> authorizeResalePurchase(
             @PathVariable("resaleId") Long resaleId
     ) {
-      return ApiResponse.onSuccess(_OK, resaleService.authorizeResalePurchase(resaleId));
+        log.info("POST /api/resales/{}/purchase", resaleId);
+        return ApiResponse.onSuccess(_OK, resaleService.authorizeResalePurchase(resaleId));
     }
 }
