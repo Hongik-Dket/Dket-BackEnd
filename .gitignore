@@ -41,4 +41,3 @@ src/test/resources/libposeidon.dylib
 src/main/resources/libposeidon.dylib
 
 zk/node_modules/
-zk/poseidon_t3_rust_consts.rs
