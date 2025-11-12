@@ -119,8 +119,17 @@ public enum ErrorStatus implements BaseErrorCode {
     SNAPSHOT_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "SNAPSHOT_4001", "이미 snapshot이 존재합니다."),
     SNAPSHOT_NOT_FOUND(HttpStatus.BAD_REQUEST, "SNAPSHOT_4002", "해당 스냅샷을 찾을 수 없습니다."),
     SNAPSHOT_INVALID(HttpStatus.BAD_REQUEST, "SNAPSHOT_4003", "유효하지 않은 스냅샷입니다."),
+    SNAPSHOT_WINNER_LEAFS_EMPTY(HttpStatus.BAD_REQUEST, "SNAPSHOT_4004", "해당 세션의 당첨자 리프가 없습니다."),
+    SNAPSHOT_ITEM_NOT_FOUND(HttpStatus.BAD_REQUEST, "SNAPSHOT_4005", "해당 스냅슛 아이템을 찾을 수 없습니다."),
 
     LOTTERY_INVALID_INDEX(HttpStatus.BAD_REQUEST, "LOTTERY_4001", "당첨자 인덱스 정보가 잘못되었습니다."),
+
+    ZKP_DEPTH_MISMATCH(HttpStatus.BAD_REQUEST, "ZKP_4001", "depth가 일치하지 않습니다."),
+    ZKP_ROOT_MISMATCH(HttpStatus.BAD_REQUEST, "ZKP_4002", "root가 일치하지 않습니다."),
+    ZKP_NOT_A_WINNER(HttpStatus.BAD_REQUEST, "ZKP_4001", "당첨자가 아닙니다."),
+    ZKP_PROVE_TIMEOUT(HttpStatus.INTERNAL_SERVER_ERROR, "ZKP_5001", "증명 생성 시간을 초과하였습니다."),
+    ZKP_PROVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "ZKP_5002", "증명 생성에 실패했습니다."),
+    ZKP_INVALID_RETURN(HttpStatus.INTERNAL_SERVER_ERROR, "ZKP_5003", "증명 생성의 반환값이 유효하지 않습니다."),
 
     ;
 
