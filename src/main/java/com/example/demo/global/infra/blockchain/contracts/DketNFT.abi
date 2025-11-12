@@ -682,9 +682,9 @@
 				"type": "uint256"
 			},
 			{
-				"internalType": "bytes",
+				"internalType": "uint256[24]",
 				"name": "proof",
-				"type": "bytes"
+				"type": "uint256[24]"
 			},
 			{
 				"internalType": "bytes32",
