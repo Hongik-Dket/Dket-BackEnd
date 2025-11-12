@@ -6,6 +6,7 @@ import com.example.demo.domain.proof.service.ProofService;
 import com.example.demo.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.example.demo.global.response.status.SuccessStatus._OK;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/proofs")
 @RequiredArgsConstructor
@@ -25,6 +27,7 @@ public class ProofController {
     public ApiResponse<ProofDTO> issueWinProof(
             @RequestBody WinProofAuthDTO request
     ) {
+        log.info("POST /api/proofs/win");
         return ApiResponse.onSuccess(_OK, proofService.issueWinProof(request));
     }
 

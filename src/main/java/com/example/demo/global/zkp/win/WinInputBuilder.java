@@ -52,8 +52,7 @@ public class WinInputBuilder {
             pathElements.add(beHexToFrDec(hx));
         }
 
-        BigInteger leaf = poseidon.hash(IC, SID);
-        BigInteger cur = poseidon.hash(leaf);
+        BigInteger cur = poseidon.hash(IC, SID);
         for (int i = 0; i < depth; i++) {
             BigInteger pe = new BigInteger(pathElements.get(i));
             if (indexBits.get(i) == 0) {

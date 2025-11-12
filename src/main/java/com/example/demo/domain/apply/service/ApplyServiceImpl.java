@@ -14,7 +14,6 @@ import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import com.example.demo.global.zkp.poseidon.Poseidon;
-import com.example.demo.global.util.Hexes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.example.demo.global.util.Hexes.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -78,11 +79,11 @@ public class ApplyServiceImpl implements ApplyService {
             throw new CustomException(ErrorStatus.APPLY_AGE_RESTRICTED);
         }
 
-        BigInteger ic = new BigInteger(1, Hexes.hexToBytes(user.getIcCommitment()));
+        BigInteger ic = new BigInteger(1, hexToBytes(user.getIcCommitment()));
         BigInteger sid = BigInteger.valueOf(sessionId);
         BigInteger h = poseidon.hash(ic, sid);
 
-        String leafHex = Hexes.to0xHex(Hexes.bigIntToBe32(h));
+        String leafHex = to0xHex(bigIntToBe32(h));
 
         Apply apply = Apply.builder()
                 .session(session)
