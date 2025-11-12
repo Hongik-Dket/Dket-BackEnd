@@ -15,7 +15,7 @@ public interface ApplicantsSnapshotItemRepository extends JpaRepository<Applican
     @Query("""
         select i.apply.leafHex from ApplicantsSnapshotItem i
         where i.applicantsSnapshot.session.id = :sessionId
-            and i.apply.applyStatus = 'SELECTED'
+            and (i.apply.applyStatus = 'SELECTED' or i.apply.applyStatus = 'PAID')
         order by i.ordIndex asc
     """)
     List<String> findWinnerLeafHexes(@Param("sessionId") Long sessionId);
