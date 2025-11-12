@@ -12,6 +12,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.demo.global.util.FrCodec.fr;
 import static com.example.demo.global.util.Hexes.*;
 
 @Service
@@ -26,46 +27,42 @@ public class PoseidonMerkleService {
     @Value(value = "${zk.depth}")
     private int depth;
 
-    private static final BigInteger BN254_P = new BigInteger(
-            "21888242871839275222246405745257275088548364400416034343698204186575808495617"
-    );
-
-    private static BigInteger fr(String hex0x) {
-        byte[] be = hexToBytes(hex0x);
-
-        if (be.length != 32) {
-            be = directBe32(be);
+    private List<BigInteger> buildZeroes() {
+        List<BigInteger> ZERO = new ArrayList<>(depth + 1);
+        ZERO.add(BigInteger.ZERO);
+        for (int i = 0; i < depth; i++) {
+            ZERO.add(poseidon.hash(ZERO.get(i), ZERO.get(i)));
         }
-
-        return new BigInteger(1, be).mod(BN254_P);
+        return ZERO;
     }
 
     public String rootHex(List<String> leafHexes) {
+        List<BigInteger> ZERO = buildZeroes();
+
         if (leafHexes == null || leafHexes.isEmpty()) {
-            return "0x" + "00".repeat(64);
+            return to0xHex(bigIntToBe32(ZERO.get(depth)));
         }
 
         List<BigInteger> level = new ArrayList<>(leafHexes.size());
         for (String hx : leafHexes) {
-            BigInteger leafFr = fr(hx);
-            BigInteger leafHash = poseidon.hash(leafFr);
-            level.add(leafHash);
+            level.add(fr(hx));
         }
 
-        while (level.size() > 1) {
-            List<BigInteger> next = new ArrayList<>((level.size() + 1) / 2);
-            for (int i = 0; i < level.size(); i += 2) {
-                BigInteger left = level.get(i);
-                BigInteger right = (i + 1 < level.size()) ? level.get(i + 1) : left; // 홀수면 복제
-                BigInteger parent = poseidon.hash(left, right);
-                next.add(parent);
+        for (int i = 0; i < depth; i++) {
+            int n = level.size();
+
+            List<BigInteger> next = new ArrayList<>((n + 1) / 2);
+            for (int j = 0; j < n; j += 2) {
+                BigInteger L = level.get(j);
+                BigInteger R = (j + 1 < n) ? level.get(j + 1) : ZERO.get(i);
+                next.add(poseidon.hash(L, R));
             }
             level = next;
         }
 
-        byte[] be32 = bigIntToBe32(level.get(0));
+        BigInteger root = level.get(0);
 
-        return to0xHex(be32);
+        return to0xHex(bigIntToBe32(root));
     }
 
     public record Path(List<String> siblingsHex32, List<Integer> indexBits) {}
@@ -79,43 +76,34 @@ public class PoseidonMerkleService {
             throw new CustomException(ErrorStatus.LOTTERY_INVALID_INDEX);
         }
 
+        List<BigInteger> ZERO = buildZeroes();
+
         List<BigInteger> level = new ArrayList<>(leafHexes.size());
         for (String hx : leafHexes) {
-            BigInteger leafFr = fr(hx);
-            level.add(poseidon.hash(leafFr));
+            level.add(fr(hx));
         }
 
         List<String> siblings = new ArrayList<>(depth);
         List<Integer> indexBits = new ArrayList<>(depth);
 
         int idx = leafIndex;
-        int d = 0;
 
-        while (level.size() > 1 && d < depth) {
+        for (int i = 0; i < depth; i++) {
             int n = level.size();
 
             int sibIdx = idx ^ 1;
-            if (sibIdx >= n) sibIdx = idx;
-
-            siblings.add(to0xHex(bigIntToBe32(level.get(sibIdx))));
+            BigInteger siblingVal = (sibIdx < n) ? level.get(sibIdx) : ZERO.get(i);
+            siblings.add(to0xHex(bigIntToBe32(siblingVal)));
             indexBits.add(idx & 1);
 
             List<BigInteger> next = new ArrayList<>((n + 1) / 2);
-            for (int i = 0; i < n; i += 2) {
-                BigInteger L = level.get(i);
-                BigInteger R = (i + 1 < n) ? level.get(i + 1) : L;
+            for (int j = 0; j < n; j += 2) {
+                BigInteger L = level.get(j);
+                BigInteger R = (j + 1 < n) ? level.get(j + 1) : ZERO.get(i);
                 next.add(poseidon.hash(L, R));
             }
-
             level = next;
             idx >>= 1;
-            d++;
-        }
-
-        while (d < depth) {
-            siblings.add(to0xHex(bigIntToBe32(level.get(0))));
-            indexBits.add(0);
-            d++;
         }
 
         return new Path(siblings, indexBits);

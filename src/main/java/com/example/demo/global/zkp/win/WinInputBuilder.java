@@ -15,6 +15,7 @@ import java.util.*;
 
 import static com.example.demo.global.util.FrCodec.*;
 import static com.example.demo.global.util.Hexes.*;
+import static com.example.demo.global.util.Hexes.bigIntToBe32;
 
 @Component
 @RequiredArgsConstructor
@@ -43,8 +44,8 @@ public class WinInputBuilder {
             throw new CustomException(ErrorStatus.ZKP_DEPTH_MISMATCH);
         }
 
-        BigInteger IC = new BigInteger(beHexToFrDec(icHex));
-        BigInteger SID = new BigInteger(longToFrDec(sessionId));
+        BigInteger IC = new BigInteger(1, hexToBytes(icHex));
+        BigInteger SID = BigInteger.valueOf(sessionId);
         BigInteger PAY_TAG = new BigInteger(beHexToFrDec(payTagConstHex));
 
         List<String> pathElements = new ArrayList<>(depth);
@@ -52,7 +53,8 @@ public class WinInputBuilder {
             pathElements.add(beHexToFrDec(hx));
         }
 
-        BigInteger cur = poseidon.hash(IC, SID);
+        String leaf = to0xHex(bigIntToBe32(poseidon.hash(IC, SID)));
+        BigInteger cur = fr(leaf);
         for (int i = 0; i < depth; i++) {
             BigInteger pe = new BigInteger(pathElements.get(i));
             if (indexBits.get(i) == 0) {
@@ -67,7 +69,7 @@ public class WinInputBuilder {
         }
 
         String winnersRootFr = new BigInteger(1, session.getWinnersRoot())
-                .mod(P).toString(10);
+                .mod(BN254_P).toString(10);
 
         BigInteger paymentNullifier = poseidon.hash(IC, SID, PAY_TAG);
 

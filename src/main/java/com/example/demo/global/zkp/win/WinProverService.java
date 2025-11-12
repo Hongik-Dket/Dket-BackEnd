@@ -73,6 +73,7 @@ public class WinProverService {
 
             String out = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim();
             if (p.exitValue() != 0) {
+                log.error(out);
                 throw new CustomException(ErrorStatus.ZKP_INVALID_RETURN);
             }
 

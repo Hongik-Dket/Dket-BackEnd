@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -36,9 +38,22 @@ public class ProofServiceImpl implements ProofService {
                 .findBySessionIdAndUserId(session.getId(), user.getId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.SNAPSHOT_ITEM_NOT_FOUND));
 
+        List<String> winnerLeafHexes = applicantsSnapshotItemRepository.findWinnerLeafHexes(session.getId());
+
+        int idx = -1;
+        for (int i = 0; i < winnerLeafHexes.size(); i++) {
+            if (winnerLeafHexes.get(i).equalsIgnoreCase(item.getApply().getLeafHex())) {
+                idx = i;
+                break;
+            }
+        }
+        if (idx < 0) {
+            throw new CustomException(ErrorStatus.ZKP_NOT_A_WINNER);
+        }
+
         WinProverService.WinProof proof = winProverService.prove(
                 session.getId(),
-                item.getOrdIndex(),
+                idx,
                 user.getIcCommitment()
         );
 

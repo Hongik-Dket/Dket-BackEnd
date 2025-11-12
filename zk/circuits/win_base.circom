@@ -49,13 +49,8 @@ template WinBase(depth, PAY_TAG_CONST) {
     component hLeaf = Poseidon(2);
     hLeaf.inputs[0] <== IC;
     hLeaf.inputs[1] <== sessionId;
-    signal leaf;
-    leaf <== hLeaf.out;
-
-    component hLeafHash = Poseidon(1);
-    hLeafHash.inputs[0] <== leaf;
     signal leafHash;
-    leafHash <== hLeafHash.out;
+    leafHash <== hLeaf.out;
 
     component mi = MerkleInclusion(depth);
     mi.leafHash <== leafHash;
