@@ -44,7 +44,8 @@ public class WinProverService {
 
     @Data
     public static class WinProof {
-        private String proofHex;
+        private List<String> proof;
+        private List<String> publicSignals;
         private String paymentNullifierHex;
     }
 
@@ -79,18 +80,26 @@ public class WinProverService {
 
             @SuppressWarnings("unchecked")
             Map<String, Object> map = om.readValue(out, Map.class);
-            String proofHex = (String) map.get("proofHex");
-            List<String> pubs = (List<String>) map.get("publicSignals");
-            if (pubs == null || pubs.size() != 3) {
-                log.error("prove stderr/stdout: {}", out);
+//            String proofHex = (String) map.get("proof");
+//            List<String> pubs = (List<String>) map.get("publicSignals");
+//            if (pubs == null || pubs.size() != 3) {
+//                log.error("prove stderr/stdout: {}", out);
+//                throw new CustomException(ErrorStatus.ZKP_INVALID_RETURN);
+//            }
+
+            List<String> proof = (List<String>) map.get("proof");
+            List<String> pubs  = (List<String>) map.get("publicSignals");
+
+            if (proof == null || proof.size() != 24 || pubs == null || pubs.size() != 3) {
                 throw new CustomException(ErrorStatus.ZKP_INVALID_RETURN);
             }
 
-            BigInteger nullifier = new BigInteger(pubs.get(2));
+            String nullifier = pubs.get(2);
 
             var winProof = new WinProof();
-            winProof.setProofHex(proofHex);
-            winProof.setPaymentNullifierHex(to0xHex(bigIntToBe32(nullifier)));
+            winProof.setProof(proof);
+            winProof.setPublicSignals(pubs);
+            winProof.setPaymentNullifierHex(nullifier);
 
             Files.deleteIfExists(tmpInput);
 

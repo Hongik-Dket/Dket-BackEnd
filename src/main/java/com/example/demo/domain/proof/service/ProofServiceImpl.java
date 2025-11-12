@@ -58,7 +58,7 @@ public class ProofServiceImpl implements ProofService {
         );
 
         return ProofDTO.builder()
-                .proof(proof.getProofHex())
+                .proof(proof.getProof())
                 .nullifier(proof.getPaymentNullifierHex())
                 .build();
     }

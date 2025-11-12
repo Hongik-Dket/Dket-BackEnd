@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
+const { spawnSync } = require("child_process");
 const { plonk } = require("snarkjs");
 
 function arg(name) {
@@ -20,19 +22,34 @@ function arg(name) {
         const zkeyPath  = arg("--zkey");
         const inputPath = arg("--input");
 
-        const input = JSON.parse(fs.readFileSync(inputPath, "utf8"));
+        const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "wtns-"));
+        const wtnsPath = path.join(tmpDir, "out.wtns");
 
-        const { generateWitness } = require(path.resolve(genPath));
-        const wtnsBuff = await generateWitness(input, wasmPath);
+        const gen = spawnSync(process.execPath, [genPath, wasmPath, inputPath, wtnsPath], {
+            encoding: "utf8"
+        });
+        if (gen.status !== 0) {
+            const msg = (gen.stderr || gen.stdout || "").trim();
+            throw new Error(`witness generation failed: ${msg}`);
+        }
+        if (!fs.existsSync(wtnsPath)) throw new Error("witness file not created");
 
+        const wtnsBuff = fs.readFileSync(wtnsPath);
         const { proof, publicSignals } = await plonk.prove(zkeyPath, wtnsBuff);
 
-        const calldata = await plonk.exportSolidityCallData(proof, publicSignals);
-        const [proofHex, pubs] = JSON.parse(calldata);
+        const calldata = (await plonk.exportSolidityCallData(proof, publicSignals)).trim();
+        const m = calldata.match(/^\s*(\[[\s\S]*?\])\s*(\[[\s\S]*\])\s*$/);
+        if (!m) { console.error("Unexpected calldata format"); process.exit(1); }
 
-        process.stdout.write(JSON.stringify({ proofHex, publicSignals: pubs }));
+        const proofArr = JSON.parse(m[1]);
+        const pubsArr  = JSON.parse(m[2]).map(String);
+
+        process.stdout.write(JSON.stringify({ proof: proofArr, publicSignals: pubsArr }) + "\n");
+
+        try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch {}
+        process.exit(0);
     } catch (e) {
-        console.error(e);
+        process.stderr.write(e && e.message ? e.message : String(e));
         process.exit(1);
     }
 })();

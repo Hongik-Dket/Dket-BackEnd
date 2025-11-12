@@ -29,9 +29,6 @@ public class WinInputBuilder {
     @Value("${zk.depth}")
     private int depth;
 
-    @Value("${zk.payTagConstHex}")
-    private String payTagConstHex;
-
     public Map<String, Object> build(Long sessionId, int leafIndex, String icHex) {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
@@ -46,7 +43,6 @@ public class WinInputBuilder {
 
         BigInteger IC = new BigInteger(1, hexToBytes(icHex));
         BigInteger SID = BigInteger.valueOf(sessionId);
-        BigInteger PAY_TAG = new BigInteger(beHexToFrDec(payTagConstHex));
 
         List<String> pathElements = new ArrayList<>(depth);
         for (String hx : sibHexes) {
@@ -71,15 +67,17 @@ public class WinInputBuilder {
         String winnersRootFr = new BigInteger(1, session.getWinnersRoot())
                 .mod(BN254_P).toString(10);
 
-        BigInteger paymentNullifier = poseidon.hash(IC, SID, PAY_TAG);
+        List<String> pathIndexStr = new ArrayList<>(depth);
+        for (int i = 0; i < depth; i++) {
+            pathIndexStr.add(indexBits.get(i) == 0 ? "0" : "1");
+        }
 
         Map<String, Object> json = new HashMap<>();
-        json.put("IC", IC.toString());
+        json.put("IC", beHexToFrDec(icHex));
         json.put("sessionId", SID.toString());
         json.put("winnersRoot", winnersRootFr);
-        json.put("paymentNullifier", paymentNullifier.toString());
         json.put("pathElements", pathElements);
-        json.put("pathIndex", indexBits);
+        json.put("pathIndex", pathIndexStr);
 
         return json;
     }

@@ -44,7 +44,6 @@ template WinBase(depth, PAY_TAG_CONST) {
     // public
     signal input  sessionId;
     signal input  winnersRoot;
-    signal input paymentNullifier;
 
     component hLeaf = Poseidon(2);
     hLeaf.inputs[0] <== IC;
@@ -65,7 +64,6 @@ template WinBase(depth, PAY_TAG_CONST) {
     hNull.inputs[0] <== IC;
     hNull.inputs[1] <== sessionId;
     hNull.inputs[2] <== PAY_TAG_CONST;
-    hNull.out === paymentNullifier;
 
     signal output sessionId_pub;
     signal output winnersRoot_pub;
@@ -73,7 +71,7 @@ template WinBase(depth, PAY_TAG_CONST) {
 
     sessionId_pub        <== sessionId;
     winnersRoot_pub      <== winnersRoot;
-    paymentNullifier_pub <== paymentNullifier;
+    paymentNullifier_pub <== hNull.out;
 }
 
 // PAY_TAG_CONST: keccak256("Dket:pay") mod BN254
