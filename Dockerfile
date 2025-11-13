@@ -5,8 +5,15 @@ RUN apt-get update \
  && apt-get install -y curl bash \
  && rm -rf /var/lib/apt/lists/*
 
-COPY zk/package*.json ./
+RUN apt-get update \
+ && apt-get install -y curl bash git build-essential libssl-dev \
+ && rm -rf /var/lib/apt/lists/*
 
+RUN curl -L https://github.com/iden3/circom/releases/download/v2.1.6/circom-linux-amd64 \
+      -o /usr/local/bin/circom \
+ && chmod +x /usr/local/bin/circom
+
+COPY zk/package*.json ./
 RUN npm ci
 
 COPY zk/ /opt/zk/
