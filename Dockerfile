@@ -40,9 +40,4 @@ ENV ZK_ROOT=/opt/zk
 ENV NODE_BIN=node
 
 EXPOSE 8080
-ENTRYPOINT ["java",
-            "-Duser.timezone=Asia/Seoul",
-            "-Xms256m",
-            "-Xmx256m",
-            "-XX:MaxMetaspaceSize=128m",
-            "-jar","/app/app.jar"]
+ENTRYPOINT ["java", "-Duser.timezone=Asia/Seoul", "-Xms256m", "-Xmx256m", "-XX:MaxMetaspaceSize=128m", "-jar", "/app/app.jar"]
