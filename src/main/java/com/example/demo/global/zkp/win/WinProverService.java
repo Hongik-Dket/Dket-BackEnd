@@ -80,12 +80,6 @@ public class WinProverService {
 
             @SuppressWarnings("unchecked")
             Map<String, Object> map = om.readValue(out, Map.class);
-//            String proofHex = (String) map.get("proof");
-//            List<String> pubs = (List<String>) map.get("publicSignals");
-//            if (pubs == null || pubs.size() != 3) {
-//                log.error("prove stderr/stdout: {}", out);
-//                throw new CustomException(ErrorStatus.ZKP_INVALID_RETURN);
-//            }
 
             List<String> proof = (List<String>) map.get("proof");
             List<String> pubs  = (List<String>) map.get("publicSignals");
