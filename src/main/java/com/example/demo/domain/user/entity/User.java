@@ -46,6 +46,9 @@ public class User extends BaseEntity {
     @Column(length = 34)
     private String icUserSalt;
 
+    @Column(length = 66, unique = true)
+    private String publicKey;
+
     @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Concert> organizedConcerts = new ArrayList<>();
@@ -57,8 +60,6 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Ticket> tickets = new ArrayList<>();
-
-    public void setWalletAddress(String walletAddress) { this.walletAddress = walletAddress; }
 
     public void addConcert(Concert concert) { this.organizedConcerts.add(concert); }
     public void addApply(Apply apply) { this.applies.add(apply); }
@@ -83,6 +84,11 @@ public class User extends BaseEntity {
     public void createIc(IcService.IcCommitment ic) {
         this.icCommitment = ic.icCommitment();
         this.icUserSalt = ic.icUserSalt();
+    }
+
+    public void completeSignup(String walletAddress, String publicKey) {
+        this.walletAddress = walletAddress;
+        this.publicKey = publicKey;
     }
 
 }

@@ -9,4 +9,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MetaMaskLoginDTO {
     private String walletAddress;
+    private String publicKey;
 }
