@@ -1,9 +1,14 @@
 FROM node:20-bullseye-slim AS zk-build
 WORKDIR /opt/zk
 
+COPY zk/package*.json ./
+
+RUN npm ci
+
 COPY zk/ /opt/zk/
 
-RUN npm ci --only=production
+RUN npm run ptau
+RUN npm run build:base
 
 FROM eclipse-temurin:17-jre
 WORKDIR /app
