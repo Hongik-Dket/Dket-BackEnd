@@ -31,10 +31,10 @@ public class WinProverService {
     private final WinInputBuilder inputBuilder;
     private final ObjectMapper om = new ObjectMapper();
 
-    @Value("${zk.root}")
+    @Value("${ZK_ROOT:/opt/zk}")
     private String zkRoot;
 
-    @Value("${zk.nodeExec}")
+    @Value("${NODE_BIN:node}")
     private String nodeExec;
 
     private Path wasm()  { return Path.of(zkRoot, "build", "win_base_js", "win_base.wasm"); }
