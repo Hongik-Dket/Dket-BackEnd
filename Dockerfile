@@ -2,16 +2,19 @@ FROM node:20-bullseye-slim AS zk-build
 WORKDIR /opt/zk
 
 RUN apt-get update \
- && apt-get install -y curl bash \
+ && apt-get install -y curl bash git build-essential libssl-dev pkg-config cmake \
  && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update \
- && apt-get install -y curl bash git build-essential libssl-dev \
- && rm -rf /var/lib/apt/lists/*
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
 
-RUN curl -L https://github.com/iden3/circom/releases/download/v2.1.6/circom-linux-amd64 \
-      -o /usr/local/bin/circom \
- && chmod +x /usr/local/bin/circom
+RUN git clone https://github.com/iden3/circom.git /tmp/circom \
+ && cd /tmp/circom \
+ && git checkout v2.1.6 \
+ && cargo build --release \
+ && cp target/release/circom /usr/local/bin/circom \
+ && chmod +x /usr/local/bin/circom \
+ && rm -rf /tmp/circom
 
 COPY zk/package*.json ./
 RUN npm ci
