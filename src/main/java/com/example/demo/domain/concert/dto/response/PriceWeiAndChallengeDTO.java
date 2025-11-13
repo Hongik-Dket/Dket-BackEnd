@@ -11,8 +11,10 @@ import java.math.BigInteger;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PriceWeiDTO {
+public class PriceWeiAndChallengeDTO {
 
     Long sessionId;
     BigInteger priceWei;
+    String challengeId;
+    String challenge;
 }

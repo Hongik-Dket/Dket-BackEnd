@@ -6,10 +6,11 @@ import com.example.demo.domain.apply.repository.ApplyRepository;
 import com.example.demo.domain.concert.dto.response.EntryCodeDTO;
 import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.concert.entity.Session;
+import com.example.demo.domain.concert.enums.ConcertStatus;
 import com.example.demo.domain.concert.repository.ConcertRepository;
 import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.domain.concert.service.SessionService;
-import com.example.demo.domain.concert.dto.response.PriceWeiDTO;
+import com.example.demo.domain.concert.dto.response.PriceWeiAndChallengeDTO;
 import com.example.demo.domain.ticket.repository.TicketRepository;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.UserService;
@@ -17,6 +18,9 @@ import com.example.demo.global.infra.scheduling.SchedulingService;
 import com.example.demo.global.infra.scheduling.jobs.session.ClosePaymentJob;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
+import com.example.demo.global.zkp.signature.entity.Challenge;
+import com.example.demo.global.zkp.signature.enums.ChallengePurpose;
+import com.example.demo.global.zkp.signature.service.ChallengeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +39,7 @@ public class SessionServiceImpl implements SessionService {
     private final UserService userService;
     private final TicketRepository ticketRepository;
     private final ConcertRepository concertRepository;
+    private final ChallengeService challengeService;
 
     @Override
     @Transactional
@@ -53,16 +58,26 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public PriceWeiDTO getPriceWei(Long sessionId) {
+    public PriceWeiAndChallengeDTO getPriceWeiAndChallenge(Long sessionId) {
         User user = userService.getCurrentUser();
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
 
         validateBuyer(session, user);
 
-        return PriceWeiDTO.builder()
+        String challengeId = null;
+        String challenge = null;
+        if (session.getConcert().getConcertStatus().equals(ConcertStatus.APPLY_CLOSED)) {
+            Challenge c = challengeService.issueChallenge(user.getId(), session.getId(), ChallengePurpose.WIN_PROOF);
+            challengeId = c.getId();
+            challenge = c.getMessage();
+        }
+
+        return PriceWeiAndChallengeDTO.builder()
+                .sessionId(session.getId())
                 .priceWei(session.getConcert().getPriceWei())
-                .sessionId(sessionId)
+                .challengeId(challengeId)
+                .challenge(challenge)
                 .build();
     }
 
