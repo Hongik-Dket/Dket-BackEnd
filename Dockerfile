@@ -1,6 +1,10 @@
 FROM node:20-bullseye-slim AS zk-build
 WORKDIR /opt/zk
 
+RUN apt-get update \
+ && apt-get install -y curl bash \
+ && rm -rf /var/lib/apt/lists/*
+
 COPY zk/package*.json ./
 
 RUN npm ci
