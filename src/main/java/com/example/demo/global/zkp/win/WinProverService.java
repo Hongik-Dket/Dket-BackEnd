@@ -37,6 +37,9 @@ public class WinProverService {
     @Value("${NODE_BIN:node}")
     private String nodeExec;
 
+    @Value("${zk.proveTimeoutSec:300}")
+    private long proveTimeoutSec;
+
     private Path wasm()  { return Path.of(zkRoot, "build", "win_base_js", "win_base.wasm"); }
     private Path gen()   { return Path.of(zkRoot, "build", "win_base_js", "generate_witness.js"); }
     private Path zkey()  { return Path.of(zkRoot, "build", "win_base.zkey"); }
@@ -66,7 +69,7 @@ public class WinProverService {
             pb.redirectErrorStream(true);
 
             var p = pb.start();
-            var timeout = Duration.ofMinutes(2);
+            var timeout = Duration.ofMinutes(proveTimeoutSec);
             if (!p.waitFor(timeout.toMillis(), java.util.concurrent.TimeUnit.MILLISECONDS)) {
                 p.destroyForcibly();
                 throw new CustomException(ErrorStatus.ZKP_PROVE_TIMEOUT);
