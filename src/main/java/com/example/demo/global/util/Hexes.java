@@ -1,11 +1,14 @@
 package com.example.demo.global.util;
 
 import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
 public final class Hexes {
     private Hexes() {}
+
+    private static final SecureRandom secureRandom = new SecureRandom();
 
     public static String to0xHex(byte[] b) {
         if (b == null) return null;
@@ -68,6 +71,23 @@ public final class Hexes {
             result.add(hexToBytes(hex));
         }
         return result;
+    }
+
+    public static String random32BytesHex() {
+        byte[] bytes = new byte[32]; // 256bit
+        secureRandom.nextBytes(bytes);
+
+        return bytesToHex(bytes);
+    }
+
+    public static String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder(bytes.length * 2);
+
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+
+        return sb.toString();
     }
 
 }

@@ -1,7 +1,7 @@
 package com.example.demo.domain.concert.controller;
 
 import com.example.demo.domain.concert.dto.response.BuyerConcertDetailDTO;
-import com.example.demo.domain.concert.dto.response.PriceWeiDTO;
+import com.example.demo.domain.concert.dto.response.PriceWeiAndChallengeDTO;
 import com.example.demo.domain.concert.service.BuyerConcertService;
 import com.example.demo.domain.concert.service.SessionService;
 import com.example.demo.global.response.ApiResponse;
@@ -33,8 +33,8 @@ public class BuyerConcertController {
 
     @Operation(summary = "티켓 가격 확인")
     @GetMapping("/{sessionId}/price")
-    public ApiResponse<PriceWeiDTO> getPriceWei(@PathVariable("sessionId") Long sessionId) {
+    public ApiResponse<PriceWeiAndChallengeDTO> getPriceWeiAndChallenge(@PathVariable("sessionId") Long sessionId) {
         log.info("GET /api/buyer/concerts/{}/price", sessionId);
-        return ApiResponse.onSuccess(_OK, sessionService.getPriceWei(sessionId));
+        return ApiResponse.onSuccess(_OK, sessionService.getPriceWeiAndChallenge(sessionId));
     }
 }
