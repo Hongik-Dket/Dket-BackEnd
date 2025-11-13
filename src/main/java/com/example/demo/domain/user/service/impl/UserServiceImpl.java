@@ -87,19 +87,32 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void connectWallet(MetaMaskLoginDTO request) {
         String walletAddress = request.getWalletAddress();
+        String publicKey = request.getPublicKey();
 
         if (walletAddress == null || walletAddress.isBlank()
                 || !walletAddress.matches("^0x[a-fA-F0-9]{40}$")) {
-            throw new CustomException(ErrorStatus.USER_INVALID_INPUT);
+            throw new CustomException(ErrorStatus.WALLET_INVALID_ADDRESS);
         }
 
         walletAddress = normalize(walletAddress);
         if (userRepository.existsByWalletAddress(walletAddress)) {
-            throw new CustomException(ErrorStatus.USER_WALLET_ALREADY_REGISTERED);
+            throw new CustomException(ErrorStatus.WALLET_ALREADY_REGISTERED);
+        }
+
+        if (userRepository.existsByPublicKey(publicKey)) {
+            throw new CustomException(ErrorStatus.SIG_ALREADY_REGISTERED_PUBKEY);
         }
 
         User user = getCurrentUser();
-        user.setWalletAddress(walletAddress);
+
+        if (user.getWalletAddress() != null) {
+            throw new CustomException(ErrorStatus.USER_WALLET_ALREADY_REGISTERED);
+        }
+        if (user.getPublicKey() != null) {
+            throw new CustomException(ErrorStatus.USER_PUBKEY_ALREADY_REGISTERED);
+        }
+
+        user.completeSignup(walletAddress, publicKey);
 
         LocalDate birth = user.getBirth();
         byte[] salt16 = newSalt16();
@@ -128,7 +141,7 @@ public class UserServiceImpl implements UserService {
 
         if (walletAddress == null || walletAddress.isBlank()
                 || !walletAddress.matches("^0x[a-fA-F0-9]{40}$")) {
-            throw new CustomException(ErrorStatus.USER_INVALID_INPUT);
+            throw new CustomException(ErrorStatus.WALLET_INVALID_ADDRESS);
         }
 
         walletAddress = normalize(walletAddress);

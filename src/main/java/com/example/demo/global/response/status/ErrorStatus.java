@@ -23,11 +23,14 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_INVALID_PASSWORD_FORMAT(HttpStatus.BAD_REQUEST, "USER_4006", "비밀번호 설정 규칙에 맞지 않습니다."),
     USER_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "USER_4007", "비밀번호가 잘못되었습니다."),
     USER_INVALID_PASSPORT(HttpStatus.BAD_REQUEST, "USER_4008", "유효하지 않은 여권 정보입니다."),
-    USER_WALLET_ALREADY_REGISTERED(HttpStatus.BAD_REQUEST, "USER_4009", "이미 등록된 지갑 주소입니다."),
-    USER_INVALID_INPUT(HttpStatus.BAD_REQUEST, "USER_4010", "입력값이 유효하지 않습니다."),
-    USER_INVALID_WALLET(HttpStatus.BAD_REQUEST, "USER_4011", "유효하지 않은 지갑 주소 형식입니다."),
-    USER_NOT_REGISTERED_WITH_PASSPORT(HttpStatus.BAD_REQUEST, "USER_4012", "여권 기반 가입자가 아닙니다."),
-    USER_INVALID_SIGNUP(HttpStatus.BAD_REQUEST, "USER_4013", "가입 정보가 유효하지 않습니다."),
+    USER_WALLET_ALREADY_REGISTERED(HttpStatus.BAD_REQUEST, "USER_4009", "이미 지갑이 등록된 사용자입니다."),
+    USER_NOT_REGISTERED_WITH_PASSPORT(HttpStatus.BAD_REQUEST, "USER_4010", "여권 기반 가입자가 아닙니다."),
+    USER_INVALID_SIGNUP(HttpStatus.BAD_REQUEST, "USER_4011", "가입 정보가 유효하지 않습니다."),
+    USER_PUBKEY_ALREADY_REGISTERED(HttpStatus.BAD_REQUEST, "USER_4012", "이미 공개키가 등록된 사용자입니다."),
+
+    WALLET_INVALID_ADDRESS(HttpStatus.BAD_REQUEST, "WALLET_4001", "유효하지 않은 주소입니다."),
+    WALLET_ALREADY_REGISTERED(HttpStatus.BAD_REQUEST, "WALLET_4002", "이미 다른 사용자에게 등록된 지갑주소입니다."),
+    WALLET_GET_BALANCE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "WALLET_5001", "잔액 조회에 실패했습니다."),
 
     TOKEN_MISSING(HttpStatus.UNAUTHORIZED, "TOKEN_4001", "토큰이 누락되었습니다."),
     TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "TOKEN_4002", "해당 토큰을 찾을 수 없습니다."),
@@ -91,9 +94,6 @@ public enum ErrorStatus implements BaseErrorCode {
     METADATA_NOT_FOUND(HttpStatus.BAD_REQUEST, "METADATA_4001", "해당 메타데이터를 찾을 수 없습니다."),
     METADATA_JSON_CONVERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "METADATA_5001", "해당 메타데이터를 Json으로 변환하는데 실패했습니다."),
 
-    WALLET_INVALID_ADDRESS(HttpStatus.BAD_REQUEST, "WALLET_4001", "유효하지 않은 주소입니다."),
-    WALLET_GET_BALANCE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "WALLET_5001", "잔액 조회에 실패했습니다."),
-
     PHOTOCARD_NOT_FOUND(HttpStatus.BAD_REQUEST, "PHOTOCARD_4001", "해당 포토카드를 찾을 수 없습니다."),
 
     RESALE_NOT_FOUND(HttpStatus.BAD_REQUEST, "RESALE_4001", "해당 리세일 정보를 찾을 수 없습니다."),
@@ -130,6 +130,8 @@ public enum ErrorStatus implements BaseErrorCode {
     ZKP_PROVE_TIMEOUT(HttpStatus.INTERNAL_SERVER_ERROR, "ZKP_5001", "증명 생성 시간을 초과하였습니다."),
     ZKP_PROVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "ZKP_5002", "증명 생성에 실패했습니다."),
     ZKP_INVALID_RETURN(HttpStatus.INTERNAL_SERVER_ERROR, "ZKP_5003", "증명 생성의 반환값이 유효하지 않습니다."),
+
+    SIG_ALREADY_REGISTERED_PUBKEY(HttpStatus.BAD_REQUEST, "SIG_4001", "이미 다른 사용자에게 등록된 공개키입니다."),
 
     ;
 
