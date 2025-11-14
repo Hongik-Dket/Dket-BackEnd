@@ -58,6 +58,7 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
+    @Transactional
     public PriceWeiAndChallengeDTO getPriceWeiAndChallenge(Long sessionId) {
         User user = userService.getCurrentUser();
         Session session = sessionRepository.findById(sessionId)

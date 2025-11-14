@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -32,7 +32,7 @@ public class Challenge extends BaseEntity {
 
     private String nonceHex;
 
-    private Instant expiresAt;
+    private LocalDateTime expiresAt;
 
     @Builder.Default
     private boolean used = false;
