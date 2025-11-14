@@ -7,10 +7,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 
-import static com.example.demo.global.base.Constants.CHALLENGE_EXPIRATION_SECONDS;
+import static com.example.demo.global.base.Constants.CHALLENGE_EXPIRATION_MINUTES;
 import static com.example.demo.global.util.Hexes.random32BytesHex;
 
 @Service
@@ -23,7 +24,8 @@ public class ChallengeService {
     @Transactional
     public Challenge issueChallenge(Long userId, Long sessionId, ChallengePurpose purpose) {
         String nonce = random32BytesHex();
-        Instant expiresAt = Instant.now().plusSeconds(CHALLENGE_EXPIRATION_SECONDS);
+
+        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(CHALLENGE_EXPIRATION_MINUTES);
 
         Challenge challenge = Challenge.builder()
                 .id(UUID.randomUUID().toString())
@@ -47,7 +49,7 @@ public class ChallengeService {
                 c.getUserId(),
                 c.getSessionId(),
                 c.getNonceHex(),
-                c.getExpiresAt().getEpochSecond()
+                c.getExpiresAt().atZone(ZoneId.of("Asia/Seoul")).toEpochSecond()
         );
     }
 

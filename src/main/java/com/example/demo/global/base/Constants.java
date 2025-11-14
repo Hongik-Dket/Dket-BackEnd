@@ -29,6 +29,6 @@ public class Constants {
     public static final byte[] DOMAIN_TAG_HASH = keccak256("ICv1".getBytes(StandardCharsets.UTF_8));
 
     // Challenge 만료 시간(초 단위)
-    public static final int CHALLENGE_EXPIRATION_SECONDS = 600;
+    public static final int CHALLENGE_EXPIRATION_MINUTES = 10;
 
 }
