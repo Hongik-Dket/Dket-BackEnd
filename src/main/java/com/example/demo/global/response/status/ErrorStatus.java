@@ -126,12 +126,16 @@ public enum ErrorStatus implements BaseErrorCode {
 
     ZKP_DEPTH_MISMATCH(HttpStatus.BAD_REQUEST, "ZKP_4001", "depth가 일치하지 않습니다."),
     ZKP_ROOT_MISMATCH(HttpStatus.BAD_REQUEST, "ZKP_4002", "root가 일치하지 않습니다."),
-    ZKP_NOT_A_WINNER(HttpStatus.BAD_REQUEST, "ZKP_4001", "당첨자가 아닙니다."),
+    ZKP_NOT_A_WINNER(HttpStatus.BAD_REQUEST, "ZKP_4003", "당첨자가 아닙니다."),
     ZKP_PROVE_TIMEOUT(HttpStatus.INTERNAL_SERVER_ERROR, "ZKP_5001", "증명 생성 시간을 초과하였습니다."),
     ZKP_PROVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "ZKP_5002", "증명 생성에 실패했습니다."),
     ZKP_INVALID_RETURN(HttpStatus.INTERNAL_SERVER_ERROR, "ZKP_5003", "증명 생성의 반환값이 유효하지 않습니다."),
 
     SIG_ALREADY_REGISTERED_PUBKEY(HttpStatus.BAD_REQUEST, "SIG_4001", "이미 다른 사용자에게 등록된 공개키입니다."),
+    SIG_PUBKEY_MISMATCH_USER(HttpStatus.BAD_REQUEST, "SIG_4002", "해당 사용자의 공개키가 아닙니다."),
+    SIG_CHALLENGE_NOT_FOUND(HttpStatus.BAD_REQUEST, "SIG_4003", "해당 challenge를 찾을 수 없습니다."),
+    SIG_INVALID_CHALLENGE(HttpStatus.BAD_REQUEST, "SIG_4004", "유효하지 않은 challenge입니다."),
+
 
     ;
 
