@@ -13,14 +13,18 @@ import com.example.demo.global.response.status.ErrorStatus;
 import com.example.demo.global.zkp.signature.entity.Challenge;
 import com.example.demo.global.zkp.signature.enums.ChallengePurpose;
 import com.example.demo.global.zkp.signature.repository.ChallengeRepository;
+import com.example.demo.global.zkp.signature.service.SecureEnclaveVerifier;
 import com.example.demo.global.zkp.win.WinProverService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.example.demo.global.util.Hexes.bytesToHex;
 
 @Slf4j
 @Service
@@ -54,8 +58,7 @@ public class ProofServiceImpl implements ProofService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.SIG_CHALLENGE_NOT_FOUND));
 
         if (!challenge.getUserId().equals(user.getId())
-                // Todo: 테스트 후 만료시간 조건 활성화 -> 위 if 문에 조건 추가
-//                || challenge.getExpiresAt().isBefore(LocalDateTime.now())
+                || challenge.getExpiresAt().isBefore(LocalDateTime.now())
                 || !challenge.getSessionId().equals(session.getId())
                 || !challenge.getPurpose().equals(ChallengePurpose.WIN_PROOF)
                 || challenge.isUsed()
@@ -76,7 +79,12 @@ public class ProofServiceImpl implements ProofService {
             throw new CustomException(ErrorStatus.ZKP_NOT_A_WINNER);
         }
 
-        // Todo: 서명 추가
+
+        System.out.println(SecureEnclaveVerifier.verify(challenge.getMessage(), request.getSignature(), user.getPublicKey()));
+        if (!SecureEnclaveVerifier.verify(challenge.getMessage(), request.getSignature(), user.getPublicKey())) {
+            throw new CustomException(ErrorStatus.SIG_VERIFY_FAILED);
+        }
+
         log.info("Starting winProverService.prove... : session [{}], user [{}]", session.getId(), user.getId());
         WinProverService.WinProof proof = winProverService.prove(
                 session.getId(),

@@ -49,6 +49,7 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
 
 	implementation 'org.slf4j:jcl-over-slf4j'
 	implementation 'ch.qos.logback:logback-classic'

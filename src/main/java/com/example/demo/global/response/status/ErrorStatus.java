@@ -135,6 +135,7 @@ public enum ErrorStatus implements BaseErrorCode {
     SIG_PUBKEY_MISMATCH_USER(HttpStatus.BAD_REQUEST, "SIG_4002", "해당 사용자의 공개키가 아닙니다."),
     SIG_CHALLENGE_NOT_FOUND(HttpStatus.BAD_REQUEST, "SIG_4003", "해당 challenge를 찾을 수 없습니다."),
     SIG_INVALID_CHALLENGE(HttpStatus.BAD_REQUEST, "SIG_4004", "유효하지 않은 challenge입니다."),
+    SIG_VERIFY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "SIG_5001", "서명 검증에 실패했습니다."),
 
 
     ;
