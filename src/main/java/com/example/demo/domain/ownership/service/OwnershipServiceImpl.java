@@ -8,6 +8,8 @@ import com.example.demo.domain.ownership.entity.Ownership;
 import com.example.demo.domain.ownership.repository.OwnersAggregateRepository;
 import com.example.demo.domain.ownership.repository.OwnersEventRepository;
 import com.example.demo.domain.ownership.repository.OwnershipRepository;
+import com.example.demo.domain.resale.entity.Resale;
+import com.example.demo.domain.resale.repository.ResaleRepository;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.ticket.repository.TicketRepository;
 import com.example.demo.domain.user.entity.User;
@@ -40,6 +42,7 @@ public class OwnershipServiceImpl implements OwnershipService {
     private final OwnersAggregateRepository ownersAggregateRepository;
     private final OwnershipRepository ownershipRepository;
     private final PoseidonMerkleService poseidonMerkleService;
+    private final ResaleRepository resaleRepository;
 
     @Override
     @Transactional
@@ -72,6 +75,43 @@ public class OwnershipServiceImpl implements OwnershipService {
                 .logIndex(logIdx)
                 .ownerAddress(buyer)
                 .tokenId(tokenId)
+                .build();
+        ownersEventRepository.save(event);
+    }
+
+    @Override
+    @Transactional
+    public void transferOwnership(Long resaleId, String txHash, Long blockNo, Integer logIdx
+    ) {
+        if (ownersEventRepository.existsByTxHashAndLogIndex(txHash, logIdx)) {
+            return;
+        }
+
+        Resale resale = resaleRepository.findById(resaleId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.RESALE_NOT_FOUND));
+
+        Session session = resale.getSession();
+        User buyer = resale.getBuyer();
+
+        if (ownershipRepository.existsActiveOwnershipBySessionIdAndUserId(session.getId(), buyer.getId())) {
+            throw new CustomException(ErrorStatus.OWN_ALREADY_OWNED);
+        }
+
+        Ownership old = ownershipRepository.findBySessionIdAndUserId(
+                session.getId(), resale.getSeller().getId())
+                .orElseThrow(() -> new CustomException(ErrorStatus.OWN_NOT_FOUND));
+
+        old.deactivate();
+
+        updateOwnership(session, buyer, resale.getTicket(), blockNo);
+
+        OwnersEvent event = OwnersEvent.builder()
+                .sessionId(session.getId())
+                .blockNumber(blockNo)
+                .txHash(txHash)
+                .logIndex(logIdx)
+                .ownerAddress(buyer.getWalletAddress())
+                .tokenId(resale.getTicket().getTokenId())
                 .build();
         ownersEventRepository.save(event);
     }

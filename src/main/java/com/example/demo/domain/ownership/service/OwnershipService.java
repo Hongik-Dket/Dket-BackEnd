@@ -4,6 +4,9 @@ import java.math.BigInteger;
 
 public interface OwnershipService {
 
-    void createOwnership(String buyer, Long sessionId, BigInteger tokenId, String txHash, Long blockNo, Integer logIdx);
+    void createOwnership(String buyer, Long sessionId, BigInteger tokenId,
+                         String txHash, Long blockNo, Integer logIdx);
+
+    void transferOwnership(Long resaleId, String txHash, Long blockNo, Integer logIdx);
 
 }

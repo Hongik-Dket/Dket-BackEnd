@@ -1,5 +1,6 @@
 package com.example.demo.global.infra.blockchain.service;
 
+import com.example.demo.domain.ownership.service.OwnershipService;
 import com.example.demo.domain.resale.service.ResaleService;
 import com.example.demo.global.infra.blockchain.contracts.DketResale;
 import jakarta.annotation.PostConstruct;
@@ -23,6 +24,7 @@ public class DketResaleListenService {
     private final Credentials credentials;
 
     private final ResaleService resaleService;
+    private final OwnershipService ownershipService;
 
     @Value("${web3.resale-contract-address}")
     private String contractAddress;
@@ -66,6 +68,12 @@ public class DketResaleListenService {
                             log.info("resaleSold: resale [{}]", resaleId);
 
                             resaleService.completeResalePurchase(resaleId);
+
+                            String txHash = event.log.getTransactionHash();
+                            long blockNumber = event.log.getBlockNumber().longValue();
+                            int logIndex = event.log.getLogIndex().intValue();
+
+                            ownershipService.transferOwnership(resaleId, txHash, blockNumber, logIndex);
                         },
                         error -> {
                             log.error("resaleSold 이벤트 수신 중 예외 발생", error);
