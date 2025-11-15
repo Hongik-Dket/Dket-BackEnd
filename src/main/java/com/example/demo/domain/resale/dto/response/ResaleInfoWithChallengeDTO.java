@@ -11,8 +11,10 @@ import java.math.BigInteger;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResaleInfoDTO {
+public class ResaleInfoWithChallengeDTO {
 
     private Long resaleId;
     private BigInteger tokenId;
+    private String challengeId;
+    private String challenge;
 }

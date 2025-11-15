@@ -3,6 +3,7 @@ package com.example.demo.global.zkp.proof;
 import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.domain.lottery.repository.ApplicantsSnapshotItemRepository;
+import com.example.demo.domain.ownership.repository.OwnershipRepository;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import com.example.demo.global.zkp.poseidon.Poseidon;
@@ -15,6 +16,7 @@ import java.math.BigInteger;
 import java.util.*;
 
 import static com.example.demo.global.base.Constants.APPLY_TAG;
+import static com.example.demo.global.base.Constants.OWN_TAG;
 import static com.example.demo.global.util.FrCodec.*;
 import static com.example.demo.global.util.Hexes.*;
 import static com.example.demo.global.util.Hexes.bigIntToBe32;
@@ -28,6 +30,7 @@ public class InputBuilder {
 
     private final SessionRepository sessionRepository;
     private final ApplicantsSnapshotItemRepository applicantsSnapshotItemRepository;
+    private final OwnershipRepository ownershipRepository;
 
     @Value("${zk.depth}")
     private int depth;
@@ -42,6 +45,18 @@ public class InputBuilder {
         }
 
         return build(session, leafIndex, icHex, leafHexes, session.getWinnersRoot(), APPLY_TAG);
+    }
+
+    public Map<String, Object> buildOwnInput(Long sessionId, int leafIndex, String icHex) {
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
+
+        List<String> leafHexes = ownershipRepository.findOwnerLeafHexes(sessionId);
+        if (leafHexes == null || leafHexes.isEmpty()) {
+            throw new CustomException(ErrorStatus.OWN_LEAF_EMPTY);
+        }
+
+        return build(session, leafIndex, icHex, leafHexes, session.getWinnersRoot(), OWN_TAG);
     }
 
     private Map<String, Object> build(Session session, int leafIndex, String icHex,

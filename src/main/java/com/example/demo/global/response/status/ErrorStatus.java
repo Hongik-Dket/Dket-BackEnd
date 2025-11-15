@@ -139,6 +139,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     OWN_ALREADY_OWNED(HttpStatus.BAD_REQUEST, "OWN_4001", "이미 소유권을 가지고 있습니다."),
     OWN_NOT_FOUND(HttpStatus.BAD_REQUEST, "OWN_4002", "해당 소유권을 찾을 수 없습니다."),
+    OWN_LEAF_EMPTY(HttpStatus.BAD_REQUEST, "OWN_4003", "해당 세션의 소유자 리프가 없습니다."),
 
     ;
 

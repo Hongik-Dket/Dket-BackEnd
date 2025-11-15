@@ -65,6 +65,27 @@ public class ProverService {
         }
     }
 
+    public Proof proveOwn(Long sessionId, int leafIndex, String icHex) {
+        try {
+            Map<String, Object> json = inputBuilder.buildOwnInput(sessionId, leafIndex, icHex);
+
+            Path tmpInput = Files.createTempFile("own-input-", ".json");
+            om.writeValue(tmpInput.toFile(), json);
+
+            Path wasm = Path.of(zkRoot, "build", "own_js", "own.wasm");
+            Path gen = Path.of(zkRoot, "build", "own_js", "generate_witness.js");
+            Path zkey = Path.of(zkRoot, "build", "own.zkey");
+
+            Proof proof = prove(sessionId, leafIndex, wasm, gen, zkey, tmpInput);
+            log.info("OWN prove success: sessionId={}, leafIndex={}", sessionId, leafIndex);
+
+            return proof;
+        } catch (IOException | InterruptedException e) {
+            log.error("OWN prove failed: sessionId={}, leafIndex={}", sessionId, leafIndex, e);
+            throw new CustomException(ErrorStatus.ZKP_PROVE_FAILED);
+        }
+    }
+
     private Proof prove(Long sessionId, int leafIndex,
                         Path wasm, Path gen, Path zkey,
                         Path tmpInput) throws IOException, InterruptedException {

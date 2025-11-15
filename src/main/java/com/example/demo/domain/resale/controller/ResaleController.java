@@ -4,7 +4,7 @@ import com.example.demo.domain.resale.dto.request.ResaleListingDTO;
 import com.example.demo.domain.resale.dto.response.ResaleAuthDTO;
 import com.example.demo.domain.resale.dto.response.ResaleCardDTO;
 import com.example.demo.domain.resale.dto.response.ResaleDetailDTO;
-import com.example.demo.domain.resale.dto.response.ResaleInfoDTO;
+import com.example.demo.domain.resale.dto.response.ResaleInfoWithChallengeDTO;
 import com.example.demo.domain.resale.service.ResaleService;
 import com.example.demo.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,7 +26,7 @@ public class ResaleController {
 
     @Operation(summary = "리세일 티켓 판매")
     @PostMapping("/{ticketId}")
-    public ApiResponse<ResaleInfoDTO> listResale(
+    public ApiResponse<ResaleInfoWithChallengeDTO> listResale(
             @PathVariable("ticketId") Long ticketId,
             @RequestBody ResaleListingDTO request
     ) {
