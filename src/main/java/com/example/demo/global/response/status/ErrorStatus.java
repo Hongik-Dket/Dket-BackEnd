@@ -104,6 +104,8 @@ public enum ErrorStatus implements BaseErrorCode {
     RESALE_ALREADY_RESERVED(HttpStatus.BAD_REQUEST, "RESALE_4005", "이미 예약된 리세일입니다."),
     RESALE_RESERVATION_FORBIDDEN(HttpStatus.FORBIDDEN, "RESALE_4006", "본인이 예약하지 않은 리세일입니다."),
     RESALE_NOT_RESERVED_USER(HttpStatus.BAD_REQUEST, "RESALE_4007", "현재 사용자가 예약한 리세일이 아닙니다."),
+    RESALE_NOT_SIGNED(HttpStatus.BAD_REQUEST, "RESALE_4008", "판매자가 서명하지 않은 리세일입니다."),
+    RESALE_MISMATCH_TICKET(HttpStatus.BAD_REQUEST, "RESALE_4009", "해당 리세일에 등록된 티켓이 아닙니다."),
     RESALE_CONFLICT(HttpStatus.INTERNAL_SERVER_ERROR, "RESALE_5001", "리세일 락 획득에 실패했습니다."),
 
     RESALE_AUTH_NO_TEMPLATE(HttpStatus.NOT_FOUND, "RESALE_AUTH_4001", "서명 템플릿을 찾을 수 없습니다."),

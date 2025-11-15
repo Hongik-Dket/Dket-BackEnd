@@ -1,7 +1,8 @@
 package com.example.demo.domain.proof.controller;
 
 import com.example.demo.domain.proof.dto.response.ProofDTO;
-import com.example.demo.domain.proof.dto.request.WinProofAuthDTO;
+import com.example.demo.domain.proof.dto.request.ProofAuthDTO;
+import com.example.demo.domain.proof.dto.response.ProofQrCodeDTO;
 import com.example.demo.domain.proof.service.ProofService;
 import com.example.demo.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,10 +26,19 @@ public class ProofController {
     @Operation(summary = "당첨 증명 생성")
     @PostMapping("/win")
     public ApiResponse<ProofDTO> issueWinProof(
-            @RequestBody WinProofAuthDTO request
+            @RequestBody ProofAuthDTO request
     ) {
         log.info("POST /api/proofs/win");
         return ApiResponse.onSuccess(_OK, proofService.issueWinProof(request));
+    }
+
+    @Operation(summary = "소유 증명 생성")
+    @PostMapping("/own")
+    public ApiResponse<ProofQrCodeDTO> issueOwnProof(
+            @RequestBody ProofAuthDTO request
+    ) {
+        log.info("POST /api/proofs/own");
+        return ApiResponse.onSuccess(_OK, proofService.issueOwnProof(request));
     }
 
 }

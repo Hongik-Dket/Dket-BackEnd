@@ -5,7 +5,8 @@ import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.domain.lottery.entity.ApplicantsSnapshotItem;
 import com.example.demo.domain.lottery.repository.ApplicantsSnapshotItemRepository;
-import com.example.demo.domain.proof.dto.request.WinProofAuthDTO;
+import com.example.demo.domain.proof.dto.request.ProofAuthDTO;
+import com.example.demo.domain.proof.dto.response.ProofQrCodeDTO;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.response.exception.CustomException;
@@ -37,7 +38,7 @@ public class ProofServiceImpl implements ProofService {
 
     @Override
     @Transactional
-    public ProofDTO issueWinProof(WinProofAuthDTO request) {
+    public ProofDTO issueWinProof(ProofAuthDTO request) {
         Session session = sessionRepository.findById(request.getSessionId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
 
@@ -93,6 +94,15 @@ public class ProofServiceImpl implements ProofService {
                 .proof(proof.getProof())
                 .nullifier(proof.getPublicSignals().get(2))
                 .build();
+    }
+
+    public ProofQrCodeDTO issueOwnProof(ProofAuthDTO request) {
+        Session session = sessionRepository.findById(request.getSessionId())
+                .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
+
+        User user = userService.getCurrentUser();
+
+        return null;
     }
 
 }

@@ -2,6 +2,7 @@ package com.example.demo.domain.resale.service;
 
 import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.concert.repository.SessionRepository;
+import com.example.demo.domain.resale.dto.request.SignatureDTO;
 import com.example.demo.domain.resale.dto.response.ResaleAuthDTO;
 import com.example.demo.domain.resale.dto.response.ResaleCardDTO;
 import com.example.demo.domain.resale.dto.response.ResaleDetailDTO;
@@ -25,7 +26,9 @@ import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import com.example.demo.global.zkp.signature.entity.Challenge;
 import com.example.demo.global.zkp.signature.enums.ChallengePurpose;
+import com.example.demo.global.zkp.signature.repository.ChallengeRepository;
 import com.example.demo.global.zkp.signature.service.ChallengeService;
+import com.example.demo.global.zkp.signature.service.SecureEnclaveVerifier;
 import jakarta.persistence.LockTimeoutException;
 import jakarta.persistence.PessimisticLockException;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +60,7 @@ public class ResaleServiceImpl implements ResaleService {
     private final SchedulingService schedulingService;
     private final ResaleSigner resaleSigner;
     private final ChallengeService challengeService;
+    private final ChallengeRepository challengeRepository;
 
     @Override
     @Transactional
@@ -81,10 +85,53 @@ public class ResaleServiceImpl implements ResaleService {
 
         schedulingService.scheduleResaleJob(resale, CancelListingJob.class);
 
-        Challenge challenge = challengeService.issueChallenge(
-                user.getId(), ticket.getSession().getId(), ChallengePurpose.OWN_PROOF);
+        Challenge challenge = challengeService.issueChallengeForResale(
+                user.getId(), ticket.getSession().getId(), ChallengePurpose.APPROVE_RESALE);
 
         return toResaleInfoWithChallengeDTO(resale, challenge);
+    }
+
+    @Override
+    @Transactional
+    public void signResale(Long ticketId, SignatureDTO request) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.TICKET_NOT_FOUND));
+
+        Resale resale = resaleRepository.findById(request.getResaleId())
+                .orElseThrow(() -> new CustomException(ErrorStatus.RESALE_NOT_FOUND));
+
+        if (!resale.getTicket().equals(ticket)) {
+            throw new CustomException(ErrorStatus.RESALE_MISMATCH_TICKET);
+        }
+
+        User user = userService.getCurrentUser();
+
+        if (!user.equals(resale.getSeller())) {
+            throw new CustomException(ErrorStatus.TICKET_INVALID_USER);
+        }
+
+        if (!user.getPublicKey().equals(request.getPublicKey())) {
+            throw new CustomException(ErrorStatus.SIG_PUBKEY_MISMATCH_USER);
+        }
+
+        Challenge challenge = challengeRepository.findById(request.getChallengeId())
+                .orElseThrow(() -> new CustomException(ErrorStatus.SIG_CHALLENGE_NOT_FOUND));
+
+        if (!challenge.getUserId().equals(user.getId())
+                || challenge.getExpiresAt().isBefore(LocalDateTime.now())
+                || !challenge.getResaleId().equals(resale.getId())
+                || !challenge.getPurpose().equals(ChallengePurpose.APPROVE_RESALE)
+                || challenge.isUsed()
+        ) {
+            throw new CustomException(ErrorStatus.SIG_INVALID_CHALLENGE);
+        }
+
+//        if (!SecureEnclaveVerifier.verify(challenge.getMessage(), request.getSignature(), user.getPublicKey())) {
+//            throw new CustomException(ErrorStatus.SIG_VERIFY_FAILED);
+//        }
+
+        resale.verifySignature();
+        challenge.setUsed();
     }
 
     @Override
@@ -97,9 +144,10 @@ public class ResaleServiceImpl implements ResaleService {
                         owner, tokenId, EnumSet.of(ResaleStatus.LISTING))
                 .orElseThrow(() -> new CustomException(ErrorStatus.RESALE_NOT_FOUND));
 
-        if (resale.getTxHash() == null) {
-            resale.setTxHash(dketResaleService.listResaleOnChain(resale));
+        if (!resale.isSignatureVerified()) {
+            throw new CustomException(ErrorStatus.RESALE_NOT_SIGNED);
         }
+        resale.setTxHash(dketResaleService.listResaleOnChain(resale));
     }
 
     @Override

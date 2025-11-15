@@ -64,7 +64,11 @@ public class Resale extends BaseEntity {
 
     private String txHash;
 
+    @Builder.Default
+    private boolean signatureVerified = false;
+
     public void setTxHash(String txHash) { this.txHash = txHash; }
+    public void verifySignature() { this.signatureVerified = true; }
 
     public void completeListing() {
         if (this.resaleStatus == ResaleStatus.LISTING) {

@@ -1,6 +1,7 @@
 package com.example.demo.domain.resale.controller;
 
 import com.example.demo.domain.resale.dto.request.ResaleListingDTO;
+import com.example.demo.domain.resale.dto.request.SignatureDTO;
 import com.example.demo.domain.resale.dto.response.ResaleAuthDTO;
 import com.example.demo.domain.resale.dto.response.ResaleCardDTO;
 import com.example.demo.domain.resale.dto.response.ResaleDetailDTO;
@@ -32,6 +33,18 @@ public class ResaleController {
     ) {
         log.info("POST /api/resales/{}", ticketId);
         return ApiResponse.onSuccess(_OK, resaleService.createResale(ticketId, request));
+    }
+
+    @Operation(summary = "리세일 티켓 판매 서명")
+    @PatchMapping("/{ticketId}/sign")
+    public ApiResponse<?> signResale(
+            @PathVariable("ticketId") Long ticketId,
+            @RequestBody SignatureDTO request
+            ) {
+        log.info("PATCH /api/resales/{ticketId}/sign", ticketId);
+        resaleService.signResale(ticketId, request);
+
+        return ApiResponse.onSuccess(_OK, null);
     }
 
     @Operation(summary = "특정 세션 리세일 티켓 조회")
