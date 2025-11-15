@@ -68,6 +68,7 @@ public class WinProverService {
             );
             pb.redirectErrorStream(true);
 
+            log.info("Executing Node program... : session [{}], leafIndex [{}]", sessionId, leafIndex);
             var p = pb.start();
             var timeout = Duration.ofMinutes(proveTimeoutSec);
             if (!p.waitFor(timeout.toMillis(), java.util.concurrent.TimeUnit.MILLISECONDS)) {
@@ -75,6 +76,7 @@ public class WinProverService {
                 throw new CustomException(ErrorStatus.ZKP_PROVE_TIMEOUT);
             }
 
+            log.info("Parsing results... : session [{}], leafIndex [{}]", sessionId, leafIndex);
             String out = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim();
             if (p.exitValue() != 0) {
                 log.error(out);

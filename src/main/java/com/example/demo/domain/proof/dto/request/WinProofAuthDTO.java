@@ -12,5 +12,8 @@ import lombok.NoArgsConstructor;
 public class WinProofAuthDTO {
 
     Long sessionId;
+    String challengeId;
+    String signature;
+    String publicKey;
 
 }

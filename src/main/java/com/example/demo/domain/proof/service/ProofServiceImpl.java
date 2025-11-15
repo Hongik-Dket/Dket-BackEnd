@@ -10,13 +10,23 @@ import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
+import com.example.demo.global.zkp.signature.entity.Challenge;
+import com.example.demo.global.zkp.signature.enums.ChallengePurpose;
+import com.example.demo.global.zkp.signature.repository.ChallengeRepository;
+import com.example.demo.global.zkp.signature.service.SecureEnclaveVerifier;
 import com.example.demo.global.zkp.win.WinProverService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.example.demo.global.util.Hexes.bytesToHex;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -26,8 +36,10 @@ public class ProofServiceImpl implements ProofService {
     private final UserService userService;
     private final ApplicantsSnapshotItemRepository applicantsSnapshotItemRepository;
     private final WinProverService winProverService;
+    private final ChallengeRepository challengeRepository;
 
     @Override
+    @Transactional
     public ProofDTO issueWinProof(WinProofAuthDTO request) {
         Session session = sessionRepository.findById(request.getSessionId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
@@ -37,6 +49,22 @@ public class ProofServiceImpl implements ProofService {
         ApplicantsSnapshotItem item = applicantsSnapshotItemRepository
                 .findBySessionIdAndUserId(session.getId(), user.getId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.SNAPSHOT_ITEM_NOT_FOUND));
+
+        if (!user.getPublicKey().equals(request.getPublicKey())) {
+            throw new CustomException(ErrorStatus.SIG_PUBKEY_MISMATCH_USER);
+        }
+
+        Challenge challenge = challengeRepository.findById(request.getChallengeId())
+                .orElseThrow(() -> new CustomException(ErrorStatus.SIG_CHALLENGE_NOT_FOUND));
+
+        if (!challenge.getUserId().equals(user.getId())
+                || challenge.getExpiresAt().isBefore(LocalDateTime.now())
+                || !challenge.getSessionId().equals(session.getId())
+                || !challenge.getPurpose().equals(ChallengePurpose.WIN_PROOF)
+                || challenge.isUsed()
+        ) {
+            throw new CustomException(ErrorStatus.SIG_INVALID_CHALLENGE);
+        }
 
         List<String> winnerLeafHexes = applicantsSnapshotItemRepository.findWinnerLeafHexes(session.getId());
 
@@ -51,11 +79,20 @@ public class ProofServiceImpl implements ProofService {
             throw new CustomException(ErrorStatus.ZKP_NOT_A_WINNER);
         }
 
+
+        System.out.println(SecureEnclaveVerifier.verify(challenge.getMessage(), request.getSignature(), user.getPublicKey()));
+        if (!SecureEnclaveVerifier.verify(challenge.getMessage(), request.getSignature(), user.getPublicKey())) {
+            throw new CustomException(ErrorStatus.SIG_VERIFY_FAILED);
+        }
+
+        log.info("Starting winProverService.prove... : session [{}], user [{}]", session.getId(), user.getId());
         WinProverService.WinProof proof = winProverService.prove(
                 session.getId(),
                 idx,
                 user.getIcCommitment()
         );
+
+        challenge.setUsed();
 
         return ProofDTO.builder()
                 .proof(proof.getProof())

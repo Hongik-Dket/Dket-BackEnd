@@ -38,4 +38,5 @@ public class Challenge extends BaseEntity {
     private boolean used = false;
 
     public void setMessage(String message) { this.message = message; }
+    public void setUsed() {  this.used = true; }
 }
