@@ -2,36 +2,8 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "resaleId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint64",
-				"name": "expireAt",
-				"type": "uint64"
-			},
-			{
-				"internalType": "bytes",
-				"name": "signature",
-				"type": "bytes"
-			}
-		],
-		"name": "buyResaleWithSig",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "address",
-				"name": "dketNft",
+				"name": "_dketNft",
 				"type": "address"
 			}
 		],
@@ -69,39 +41,6 @@
 		"inputs": [],
 		"name": "InvalidShortString",
 		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "resaleId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "sessionId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_seller",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "price",
-				"type": "uint256"
-			}
-		],
-		"name": "listResale",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	},
 	{
 		"inputs": [
@@ -162,13 +101,6 @@
 		"type": "event"
 	},
 	{
-		"inputs": [],
-		"name": "renounceOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -209,6 +141,19 @@
 		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "resaleSigner",
+				"type": "address"
+			}
+		],
+		"name": "ResaleSignerSet",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
 				"indexed": true,
 				"internalType": "uint256",
 				"name": "resaleId",
@@ -237,16 +182,42 @@
 		"type": "event"
 	},
 	{
+		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": false,
 				"internalType": "address",
-				"name": "newOwner",
+				"name": "verifier",
 				"type": "address"
 			}
 		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"name": "VerifierSet",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "BPS_DENOMINATOR",
+		"outputs": [
+			{
+				"internalType": "uint16",
+				"name": "",
+				"type": "uint16"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "ORGANIZER_FEE_BPS",
+		"outputs": [
+			{
+				"internalType": "uint16",
+				"name": "",
+				"type": "uint16"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -269,13 +240,41 @@
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "resaleId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint64",
+				"name": "expireAt",
+				"type": "uint64"
+			},
+			{
+				"internalType": "bytes",
+				"name": "signature",
+				"type": "bytes"
+			}
+		],
+		"name": "buyResaleWithSig",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
-		"name": "BPS_DENOMINATOR",
+		"name": "dketNFT",
 		"outputs": [
 			{
-				"internalType": "uint16",
+				"internalType": "contract IDketNFT",
 				"name": "",
-				"type": "uint16"
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -325,11 +324,54 @@
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "resaleId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_seller",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "price",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256[24]",
+				"name": "proof",
+				"type": "uint256[24]"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "entryNullifier",
+				"type": "bytes32"
+			}
+		],
+		"name": "listResale",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
-		"name": "nft",
+		"name": "owner",
 		"outputs": [
 			{
-				"internalType": "contract IDketNFT",
+				"internalType": "address",
 				"name": "",
 				"type": "address"
 			}
@@ -339,20 +381,14 @@
 	},
 	{
 		"inputs": [],
-		"name": "ORGANIZER_FEE_BPS",
-		"outputs": [
-			{
-				"internalType": "uint16",
-				"name": "",
-				"type": "uint16"
-			}
-		],
-		"stateMutability": "view",
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"inputs": [],
-		"name": "owner",
+		"name": "resaleSigner",
 		"outputs": [
 			{
 				"internalType": "address",
@@ -408,11 +444,50 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "resaleSigner",
-		"outputs": [
+		"inputs": [
 			{
 				"internalType": "address",
+				"name": "signer",
+				"type": "address"
+			}
+		],
+		"name": "setResaleSigner",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_verifier",
+				"type": "address"
+			}
+		],
+		"name": "setVerifier",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "verifier",
+		"outputs": [
+			{
+				"internalType": "contract IVerifier",
 				"name": "",
 				"type": "address"
 			}
