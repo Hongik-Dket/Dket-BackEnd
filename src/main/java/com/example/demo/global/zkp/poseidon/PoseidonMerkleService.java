@@ -67,11 +67,7 @@ public class PoseidonMerkleService {
 
     public record Path(List<String> siblingsHex32, List<Integer> indexBits) {}
 
-    public Path pathOf(Long sessionId, int leafIndex) {
-        List<String> leafHexes = applicantsSnapshotItemRepository.findWinnerLeafHexes(sessionId);
-        if (leafHexes == null || leafHexes.isEmpty()) {
-            throw new CustomException(ErrorStatus.SNAPSHOT_WINNER_LEAFS_EMPTY);
-        }
+    public Path pathOf(int leafIndex, List<String> leafHexes) {
         if (leafIndex < 0 || leafIndex >= leafHexes.size()) {
             throw new CustomException(ErrorStatus.LOTTERY_INVALID_INDEX);
         }

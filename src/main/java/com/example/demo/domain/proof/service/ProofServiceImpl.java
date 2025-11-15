@@ -14,17 +14,14 @@ import com.example.demo.global.zkp.signature.entity.Challenge;
 import com.example.demo.global.zkp.signature.enums.ChallengePurpose;
 import com.example.demo.global.zkp.signature.repository.ChallengeRepository;
 import com.example.demo.global.zkp.signature.service.SecureEnclaveVerifier;
-import com.example.demo.global.zkp.win.WinProverService;
+import com.example.demo.global.zkp.proof.ProverService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import static com.example.demo.global.util.Hexes.bytesToHex;
 
 @Slf4j
 @Service
@@ -35,7 +32,7 @@ public class ProofServiceImpl implements ProofService {
     private final SessionRepository sessionRepository;
     private final UserService userService;
     private final ApplicantsSnapshotItemRepository applicantsSnapshotItemRepository;
-    private final WinProverService winProverService;
+    private final ProverService proverService;
     private final ChallengeRepository challengeRepository;
 
     @Override
@@ -86,7 +83,7 @@ public class ProofServiceImpl implements ProofService {
         }
 
         log.info("Starting winProverService.prove... : session [{}], user [{}]", session.getId(), user.getId());
-        WinProverService.WinProof proof = winProverService.prove(
+        ProverService.Proof proof = proverService.proveWin(
                 session.getId(),
                 idx,
                 user.getIcCommitment()
@@ -96,7 +93,7 @@ public class ProofServiceImpl implements ProofService {
 
         return ProofDTO.builder()
                 .proof(proof.getProof())
-                .nullifier(proof.getPaymentNullifierHex())
+                .nullifier(proof.getPublicSignals().get(2))
                 .build();
     }
 
