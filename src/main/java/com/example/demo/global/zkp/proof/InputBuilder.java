@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigInteger;
 import java.util.*;
 
+import static com.example.demo.global.base.Constants.APPLY_TAG;
 import static com.example.demo.global.util.FrCodec.*;
 import static com.example.demo.global.util.Hexes.*;
 import static com.example.demo.global.util.Hexes.bigIntToBe32;
@@ -40,10 +41,12 @@ public class InputBuilder {
             throw new CustomException(ErrorStatus.SNAPSHOT_WINNER_LEAFS_EMPTY);
         }
 
-        return build(session, leafIndex, icHex, leafHexes, session.getWinnersRoot());
+        return build(session, leafIndex, icHex, leafHexes, session.getWinnersRoot(), APPLY_TAG);
     }
 
-    private Map<String, Object> build(Session session, int leafIndex, String icHex, List<String> leafHexes, byte[] root) {
+    private Map<String, Object> build(Session session, int leafIndex, String icHex,
+                                      List<String> leafHexes, byte[] root, BigInteger tag
+    ) {
         var path = poseidonMerkleService.pathOf(leafIndex, leafHexes);
         var sibHexes = path.siblingsHex32();
         var indexBits = path.indexBits();
@@ -60,7 +63,8 @@ public class InputBuilder {
             pathElements.add(beHexToFrDec(hx));
         }
 
-        String leaf = to0xHex(bigIntToBe32(poseidon.hash(IC, SID)));
+        String leaf = to0xHex(bigIntToBe32(poseidon.hash(poseidon.hash(IC, SID), tag)));
+
         BigInteger cur = fr(leaf);
         for (int i = 0; i < depth; i++) {
             BigInteger pe = new BigInteger(pathElements.get(i));

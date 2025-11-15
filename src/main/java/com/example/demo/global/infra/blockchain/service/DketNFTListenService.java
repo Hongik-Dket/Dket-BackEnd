@@ -2,6 +2,7 @@ package com.example.demo.global.infra.blockchain.service;
 
 import com.example.demo.domain.lottery.service.LotteryService;
 import com.example.demo.domain.metadata.service.MetadataService;
+import com.example.demo.domain.ownership.service.OwnershipService;
 import com.example.demo.domain.resale.service.ResaleService;
 import com.example.demo.domain.ticket.service.TicketService;
 import com.example.demo.global.infra.blockchain.contracts.DketNFT;
@@ -36,6 +37,7 @@ public class DketNFTListenService {
     private final TicketService ticketService;
     private final LotteryService lotteryService;
     private final ResaleService resaleService;
+    private final OwnershipService ownershipService;
 
     @Value("${web3.nft-contract-address}")
     private String nftContractAddress;
@@ -172,11 +174,17 @@ public class DketNFTListenService {
                         event -> {
                             String buyer = event.to;
                             Long sessionId = event.sessionId.longValue();
-                            Long tokenId = event.tokenId.longValue();
+                            BigInteger tokenId = event.tokenId;
 
                             log.info("paymentTransferred: session[{}], token[{}]", sessionId, tokenId);
 
                             ticketService.completeTicket(buyer, sessionId, tokenId);
+
+                            String txHash = event.log.getTransactionHash();
+                            long blockNumber = event.log.getBlockNumber().longValue();
+                            int logIndex = event.log.getLogIndex().intValue();
+
+                            ownershipService.createOwnership(buyer, sessionId, tokenId, txHash, blockNumber, logIndex);
                         },
                         error -> {
                             log.error("paymentTransferred 이벤트 수신 중 예외 발생", error);

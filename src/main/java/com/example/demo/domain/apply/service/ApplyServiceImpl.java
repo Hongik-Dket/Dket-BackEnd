@@ -22,6 +22,7 @@ import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.example.demo.global.base.Constants.APPLY_TAG;
 import static com.example.demo.global.util.Hexes.*;
 
 @Service
@@ -82,6 +83,7 @@ public class ApplyServiceImpl implements ApplyService {
         BigInteger ic = new BigInteger(1, hexToBytes(user.getIcCommitment()));
         BigInteger sid = BigInteger.valueOf(sessionId);
         BigInteger h = poseidon.hash(ic, sid);
+        h = poseidon.hash(h, APPLY_TAG);
 
         String leafHex = to0xHex(bigIntToBe32(h));
 

@@ -6,6 +6,6 @@ import java.util.List;
 public interface TicketService {
     void batchRegisterTicket(List<BigInteger> tokenIdList, List<String> cidList);
 
-    void completeTicket(String address, Long sessionId, Long tokenId);
+    void completeTicket(String address, Long sessionId, BigInteger tokenId);
 
 }

@@ -137,6 +137,8 @@ public enum ErrorStatus implements BaseErrorCode {
     SIG_INVALID_CHALLENGE(HttpStatus.BAD_REQUEST, "SIG_4004", "유효하지 않은 challenge입니다."),
     SIG_VERIFY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "SIG_5001", "서명 검증에 실패했습니다."),
 
+    OWN_ALREADY_OWNED(HttpStatus.BAD_REQUEST, "OWN_4001", "이미 소유권을 가지고 있습니다."),
+
 
     ;
 

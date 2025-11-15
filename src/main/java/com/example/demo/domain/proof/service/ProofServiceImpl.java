@@ -76,13 +76,11 @@ public class ProofServiceImpl implements ProofService {
             throw new CustomException(ErrorStatus.ZKP_NOT_A_WINNER);
         }
 
-
-        System.out.println(SecureEnclaveVerifier.verify(challenge.getMessage(), request.getSignature(), user.getPublicKey()));
         if (!SecureEnclaveVerifier.verify(challenge.getMessage(), request.getSignature(), user.getPublicKey())) {
             throw new CustomException(ErrorStatus.SIG_VERIFY_FAILED);
         }
 
-        log.info("Starting winProverService.prove... : session [{}], user [{}]", session.getId(), user.getId());
+        log.info("Starting ProverService.proveWin... : session [{}], user [{}]", session.getId(), user.getId());
         ProverService.Proof proof = proverService.proveWin(
                 session.getId(),
                 idx,

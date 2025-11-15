@@ -35,7 +35,7 @@ template MerkleInclusion(depth) {
     root <== cur[depth];
 }
 
-template Base(depth, TAG_CONST) {
+template Base(depth, LEAF_TAG, NULLIFIER_TAG) {
     // private
     signal input IC;
     signal input pathElements[depth];
@@ -45,11 +45,15 @@ template Base(depth, TAG_CONST) {
     signal input  sessionId;
     signal input  root;
 
-    component hLeaf = Poseidon(2);
-    hLeaf.inputs[0] <== IC;
-    hLeaf.inputs[1] <== sessionId;
+    component hLeaf1 = Poseidon(2);
+    hLeaf1.inputs[0] <== IC;
+    hLeaf1.inputs[1] <== sessionId;
+
+    component hLeaf2 = Poseidon(2);
+    hLeaf2.inputs[0] <== hLeaf1.out;
+    hLeaf2.inputs[1] <== LEAF_TAG;
     signal leafHash;
-    leafHash <== hLeaf.out;
+    leafHash <== hLeaf2.out;
 
     component mi = MerkleInclusion(depth);
     mi.leafHash <== leafHash;
@@ -59,11 +63,11 @@ template Base(depth, TAG_CONST) {
     }
     mi.root === root;
 
-    // nullifier = Poseidon(IC, sessionId, TAG_CONST)
+    // nullifier = Poseidon(IC, sessionId, NULLIFIER_TAG)
     component hNull = Poseidon(3);
     hNull.inputs[0] <== IC;
     hNull.inputs[1] <== sessionId;
-    hNull.inputs[2] <== TAG_CONST;
+    hNull.inputs[2] <== NULLIFIER_TAG;
 
     signal output sessionId_pub;
     signal output root_pub;
