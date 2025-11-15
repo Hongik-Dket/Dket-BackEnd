@@ -22,7 +22,7 @@ RUN npm ci
 COPY zk/ /opt/zk/
 
 RUN npm run ptau
-RUN npm run build:base
+RUN npm run build
 
 FROM eclipse-temurin:17-jre
 WORKDIR /app
