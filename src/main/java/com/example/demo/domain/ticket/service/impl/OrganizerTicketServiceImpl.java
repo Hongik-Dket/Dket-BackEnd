@@ -4,7 +4,7 @@ import com.example.demo.domain.proof.entity.OwnProof;
 import com.example.demo.domain.proof.repository.OwnProofRepository;
 import com.example.demo.domain.resale.enums.ResaleStatus;
 import com.example.demo.domain.resale.repository.ResaleRepository;
-import com.example.demo.domain.ticket.dto.request.ProofDTO;
+import com.example.demo.domain.ticket.dto.request.ProofRequestDTO;
 import com.example.demo.domain.ticket.dto.response.IdentityTypeDTO;
 import com.example.demo.domain.ticket.dto.response.TicketResponseDTO;
 import com.example.demo.domain.ticket.entity.Ticket;
@@ -56,7 +56,7 @@ public class OrganizerTicketServiceImpl implements OrganizerTicketService {
         validateOrganizer(ticket, user);
         validateTicket(ticket);
 
-        if (!ownProofRepository.existsByTicketIdAndUserId(ticketId, user.getId())) {
+        if (!ownProofRepository.existsByTicketId(ticketId)) {
             if (ticket.getEnteredAt() != null) {
                 throw new CustomException(ErrorStatus.TICKET_ALREADY_ENTERED);
             }
@@ -98,7 +98,7 @@ public class OrganizerTicketServiceImpl implements OrganizerTicketService {
 
     @Override
     @Transactional
-    public IdentityTypeDTO verifyOwnProofAndEnter(ProofDTO request) {
+    public IdentityTypeDTO verifyOwnProofAndEnter(ProofRequestDTO request) {
         OwnProof ownProof = ownProofRepository.findById(request.getProofId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.PROOF_NOT_FOUND));
 
@@ -129,6 +129,7 @@ public class OrganizerTicketServiceImpl implements OrganizerTicketService {
 
         return IdentityTypeDTO.builder()
                 .identityType(ticket.getUser().getIdentityType())
+                .ticketId(ticket.getId())
                 .build();
     }
 

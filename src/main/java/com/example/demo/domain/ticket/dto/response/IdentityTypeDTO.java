@@ -13,5 +13,6 @@ import lombok.NoArgsConstructor;
 public class IdentityTypeDTO {
 
     private IdentityType identityType;
+    private Long ticketId;
 
 }

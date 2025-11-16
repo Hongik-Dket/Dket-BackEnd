@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProofDTO {
+public class ProofRequestDTO {
 
     private String proofId;
 
