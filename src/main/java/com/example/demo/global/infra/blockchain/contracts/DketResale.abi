@@ -30,6 +30,19 @@
 	{
 		"inputs": [
 			{
+				"internalType": "uint256[]",
+				"name": "resaleIds",
+				"type": "uint256[]"
+			}
+		],
+		"name": "cancelResaleBatch",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "_dketNft",
 				"type": "address"
@@ -167,6 +180,19 @@
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256[]",
+				"name": "resaleIds",
+				"type": "uint256[]"
+			}
+		],
+		"name": "ResaleCanceled",
+		"type": "event"
 	},
 	{
 		"anonymous": false,
@@ -441,6 +467,25 @@
 				"internalType": "address",
 				"name": "",
 				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "resaleStatus",
+		"outputs": [
+			{
+				"internalType": "enum DketResale.ResaleStatus",
+				"name": "",
+				"type": "uint8"
 			}
 		],
 		"stateMutability": "view",

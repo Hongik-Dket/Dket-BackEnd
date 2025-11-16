@@ -14,6 +14,7 @@ import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.ticket.repository.TicketRepository;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
+import com.example.demo.global.infra.blockchain.service.DketNFTService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import com.example.demo.global.zkp.poseidon.Poseidon;
@@ -43,6 +44,7 @@ public class OwnershipServiceImpl implements OwnershipService {
     private final OwnershipRepository ownershipRepository;
     private final PoseidonMerkleService poseidonMerkleService;
     private final ResaleRepository resaleRepository;
+    private final DketNFTService dketNFTService;
 
     @Override
     @Transactional
@@ -152,6 +154,8 @@ public class OwnershipServiceImpl implements OwnershipService {
 
         aggregate.update(leafHexes.size(), poseidonRoot, blockNo);
         session.setOwnersRoot(hexToBytes(poseidonRoot));
+
+        dketNFTService.updateOwnersRoot(session);
     }
 
 }

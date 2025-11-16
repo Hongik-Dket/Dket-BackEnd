@@ -10,8 +10,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Getter
 @Builder
@@ -23,12 +21,11 @@ public class OwnProof extends BaseEntity {
     private String id;
 
     private Long sessionId;
+    private Long ticketId;
 
     @Lob
     @Column(columnDefinition = "TEXT")
     private String proofJson;
-
-    private String root;
 
     private String nullifier;
 

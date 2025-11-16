@@ -217,8 +217,8 @@ public class ProofServiceImpl implements ProofService {
         OwnProof ownProof = OwnProof.builder()
                 .id(UUID.randomUUID().toString())
                 .sessionId(session.getId())
+                .ticketId(ticket.getId())
                 .proofJson(json)
-                .root(proof.getPublicSignals().get(1))
                 .nullifier(proof.getPublicSignals().get(2))
                 .build();
         ownProofRepository.save(ownProof);

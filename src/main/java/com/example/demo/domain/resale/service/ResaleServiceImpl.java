@@ -45,6 +45,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import static com.example.demo.domain.resale.converter.ResaleConverter.*;
+import static com.example.demo.global.base.Constants.PAYMENT_AVAILABLE_BEFORE_CONCERT_START;
 
 @Service
 @RequiredArgsConstructor
@@ -102,6 +103,14 @@ public class ResaleServiceImpl implements ResaleService {
 
         if (!resale.getTicket().equals(ticket)) {
             throw new CustomException(ErrorStatus.RESALE_MISMATCH_TICKET);
+        }
+
+        Session session = resale.getSession();
+        LocalDateTime startAt = session.getDate().atTime(session.getConcert().getStartTime());
+        LocalDateTime endAt = session.getDate().atTime(session.getConcert().getEndTime());
+        if (startAt.minusHours(PAYMENT_AVAILABLE_BEFORE_CONCERT_START).isAfter(LocalDateTime.now())
+                && endAt.isBefore(LocalDateTime.now())) {
+            throw new CustomException(ErrorStatus.RESALE_ENTRY_IN_PROGRSS);
         }
 
         User user = userService.getCurrentUser();
@@ -163,6 +172,7 @@ public class ResaleServiceImpl implements ResaleService {
         }
 
         resale.completeListing();
+        resaleRepository.save(resale);
 
         String jobName = "CancelListingJob_" + resaleId;
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
@@ -201,6 +211,7 @@ public class ResaleServiceImpl implements ResaleService {
         validateResaleReservation(resale, user);
 
         resale.setReservation(user);
+        resaleRepository.save(resale);
         schedulingService.scheduleResaleJob(resale, CancelReservationJob.class);
 
         return toResaleDetailDTO(resale);
@@ -223,6 +234,7 @@ public class ResaleServiceImpl implements ResaleService {
             return;
         }
         resale.cancelReservation();
+        resaleRepository.save(resale);
 
         String jobName = "CancelReservationJob_" + resaleId;
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
@@ -248,6 +260,7 @@ public class ResaleServiceImpl implements ResaleService {
         validateResalePurchase(resale, user);
 
         resale.prepare();
+        resaleRepository.save(resale);
 
         String jobName = "CancelReservationJob_" + resaleId;
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {

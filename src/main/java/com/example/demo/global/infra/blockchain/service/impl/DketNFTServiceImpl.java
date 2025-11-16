@@ -173,10 +173,27 @@ public class DketNFTServiceImpl implements DketNFTService {
     }
 
     @Override
-    public void enterTicketOnChain(Ticket ticket) {
+    public void updateOwnersRoot(Session session) {
         try {
-            // Todo
-//            dketNFT.enter(ticket.getTokenId()).send();
+            dketNFT.updateOwnersRoot(
+                    BigInteger.valueOf(session.getId()),
+                    session.getOwnersRoot()
+            ).send();
+        } catch (Exception e) {
+            log.error("Session [{}] updateOwnersRoot 실패", session.getId(), e);
+            throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
+        }
+    }
+
+    @Override
+    public void enterTicketOnChain(Ticket ticket, List<BigInteger> proof, byte[] nullifier) {
+        try {
+            dketNFT.enter(
+                    BigInteger.valueOf(ticket.getSession().getId()),
+                    ticket.getTokenId(),
+                    proof,
+                    nullifier
+            ).send();
         } catch (Exception e) {
             log.error("Ticket [{}] 입장 실패", ticket.getId(), e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);

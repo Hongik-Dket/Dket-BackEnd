@@ -5,6 +5,7 @@ import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.concert.entity.Session;
 import com.example.demo.domain.ticket.entity.Ticket;
 
+import java.math.BigInteger;
 import java.util.List;
 
 public interface DketNFTService {
@@ -22,6 +23,8 @@ public interface DketNFTService {
 
     void openPublicSaleOnChain(Concert concert);
 
-    void enterTicketOnChain(Ticket ticket);
+    void updateOwnersRoot(Session session);
+
+    void enterTicketOnChain(Ticket ticket, List<BigInteger> proof, byte[] nullifier);
 
 }

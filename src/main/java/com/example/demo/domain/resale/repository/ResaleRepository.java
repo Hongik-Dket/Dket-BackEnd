@@ -4,10 +4,7 @@ import com.example.demo.domain.resale.entity.Resale;
 import com.example.demo.domain.resale.enums.ResaleStatus;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.QueryHint;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -55,4 +52,24 @@ public interface ResaleRepository extends JpaRepository<Resale, Long> {
     Optional<Resale> findById(Long id);
 
     List<Resale> findByResaleStatusIn(Collection<ResaleStatus> resaleStatuses);
+
+    @Query("""
+        SELECT r.id FROM Resale r
+        WHERE r.session.id = :sessionId AND r.resaleStatus IN :statuses
+    """)
+    List<Long> findIdsBySessionIdAndStatus(
+            @Param("sessionId") Long sessionId,
+            @Param("statuses") Collection<ResaleStatus> statuses
+    );
+
+    @Modifying
+    @Query("""
+        UPDATE Resale r SET r.resaleStatus = :newStatus
+        WHERE r.session.id = :sessionId AND r.resaleStatus IN :statuses
+    """)
+    void updateBySessionIdAndResaleStatusIn(
+            @Param("sessionId") Long sessionId,
+            @Param("statuses") Collection<ResaleStatus> statuses,
+            @Param("newStatus") ResaleStatus newStatus
+    );
 }

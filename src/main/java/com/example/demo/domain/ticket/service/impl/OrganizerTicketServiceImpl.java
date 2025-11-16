@@ -1,8 +1,12 @@
 package com.example.demo.domain.ticket.service.impl;
 
+import com.example.demo.domain.proof.entity.OwnProof;
+import com.example.demo.domain.proof.repository.OwnProofRepository;
 import com.example.demo.domain.resale.enums.ResaleStatus;
 import com.example.demo.domain.resale.repository.ResaleRepository;
-import com.example.demo.domain.ticket.dto.TicketResponseDTO;
+import com.example.demo.domain.ticket.dto.request.ProofRequestDTO;
+import com.example.demo.domain.ticket.dto.response.IdentityTypeDTO;
+import com.example.demo.domain.ticket.dto.response.TicketResponseDTO;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.ticket.repository.TicketRepository;
 import com.example.demo.domain.ticket.service.OrganizerTicketService;
@@ -12,13 +16,23 @@ import com.example.demo.global.infra.blockchain.service.DketNFTService;
 import com.example.demo.global.infra.blockchain.service.DketNFTViewService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.EnumSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import static com.example.demo.global.util.Hexes.directBe32;
+import static com.example.demo.global.util.Hexes.hexToBytes;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -29,6 +43,8 @@ public class OrganizerTicketServiceImpl implements OrganizerTicketService {
     private final DketNFTViewService dketNFTViewService;
     private final ResaleRepository resaleRepository;
     private final DketNFTService dketNFTService;
+    private final OwnProofRepository ownProofRepository;
+    private final ObjectMapper objectMapper;
 
     @Override
     @Transactional
@@ -38,10 +54,19 @@ public class OrganizerTicketServiceImpl implements OrganizerTicketService {
 
         User user = userService.getCurrentUser();
         validateOrganizer(ticket, user);
-        validateTicket(ticket);     // Todo: 영지식 증명 생성한 외국인의 경우 enterAt != null이므로 별도 처리 필요
+        validateTicket(ticket);
+
+        if (!ownProofRepository.existsByTicketId(ticketId)) {
+            if (ticket.getEnteredAt() != null) {
+                throw new CustomException(ErrorStatus.TICKET_ALREADY_ENTERED);
+            }
+
+            if (dketNFTViewService.isEntered(ticket.getTokenId())) {
+                throw new CustomException(ErrorStatus.TICKET_ALREADY_ENTERED);
+            }
+        }
 
         ticket.enter();
-        dketNFTService.enterTicketOnChain(ticket);
     }
 
     @Override
@@ -54,10 +79,56 @@ public class OrganizerTicketServiceImpl implements OrganizerTicketService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.TICKET_NOT_FOUND));
 
         User user = userService.getCurrentUser();
+
+        if (ticket.getEnteredAt() != null) {
+            throw new CustomException(ErrorStatus.TICKET_ALREADY_ENTERED);
+        }
+
         validateOrganizer(ticket, user);
         validateTicket(ticket);
 
+        if (dketNFTViewService.isEntered(ticket.getTokenId())) {
+            throw new CustomException(ErrorStatus.TICKET_ALREADY_ENTERED);
+        }
+
         return TicketResponseDTO.builder()
+                .ticketId(ticket.getId())
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public IdentityTypeDTO verifyOwnProofAndEnter(ProofRequestDTO request) {
+        OwnProof ownProof = ownProofRepository.findById(request.getProofId())
+                .orElseThrow(() -> new CustomException(ErrorStatus.PROOF_NOT_FOUND));
+
+        Ticket ticket;
+        try {
+            ticket = ticketRepository.findByIdForUpdate(ownProof.getTicketId())
+                    .orElseThrow(() -> new CustomException(ErrorStatus.TICKET_NOT_FOUND));
+        } catch (CustomException e) {
+            log.error(e.getMessage(), e);
+            throw new CustomException(ErrorStatus.TICKET_CONFLICT);
+        }
+
+        List<BigInteger> proof;
+        try {
+            List<String> rawHex = objectMapper.readValue(ownProof.getProofJson(), new TypeReference<List<String>>() {});
+            proof =  rawHex.stream()
+                    .map(h -> new BigInteger(1, hexToBytes(h)))
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new CustomException(ErrorStatus.JSON_CONVERT_FAILED);
+        }
+
+        byte[] nullifier = directBe32(hexToBytes(ownProof.getNullifier()));
+
+        dketNFTService.enterTicketOnChain(ticket, proof, nullifier);
+        ticket.enter();
+
+        return IdentityTypeDTO.builder()
+                .identityType(ticket.getUser().getIdentityType())
                 .ticketId(ticket.getId())
                 .build();
     }
@@ -69,10 +140,6 @@ public class OrganizerTicketServiceImpl implements OrganizerTicketService {
     }
 
     private void validateTicket(Ticket ticket) {
-        if (ticket.getEnteredAt() != null) {
-            throw new CustomException(ErrorStatus.TICKET_ALREADY_ENTERED);
-        }
-
         if (!ticket.getSession().getDate().equals(LocalDate.now())) {
             throw new CustomException(ErrorStatus.SESSION_NOT_TODAY);
         }
@@ -88,10 +155,6 @@ public class OrganizerTicketServiceImpl implements OrganizerTicketService {
         String ownerWalletAddress = dketNFTViewService.getOwnerWallet(ticket.getTokenId());
         if (!ticket.getUser().getWalletAddress().equals(ownerWalletAddress)) {
             throw new CustomException(ErrorStatus.TICKET_INVALID);
-        }
-
-        if (dketNFTViewService.isEntered(ticket.getTokenId())) {
-            throw new CustomException(ErrorStatus.TICKET_ALREADY_ENTERED);
         }
     }
 

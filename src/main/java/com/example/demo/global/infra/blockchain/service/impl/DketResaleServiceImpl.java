@@ -16,6 +16,7 @@ import org.web3j.protocol.Web3j;
 import org.web3j.tx.gas.DefaultGasProvider;
 
 import java.math.BigInteger;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -55,6 +56,22 @@ public class DketResaleServiceImpl implements DketResaleService {
             return tx.getTransactionHash();
         } catch (Exception e) {
             log.error("Resale [{}] 온체인 기록 실패", resale.getId(), e);
+            throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
+        }
+    }
+
+    @Override
+    public void cancelResaleBatch(List<Long> resaleIds) {
+        List<BigInteger> ids = resaleIds.stream()
+                .map(BigInteger::valueOf)
+                .toList();
+
+        try {
+            var tx = dketResale.cancelResaleBatch(
+                    ids
+            ).send();
+        } catch (Exception e) {
+            log.error("cancelResaleBatch 실패 : resaleIds = {}", resaleIds, e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
         }
     }
