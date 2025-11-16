@@ -211,6 +211,7 @@ public class ResaleServiceImpl implements ResaleService {
         validateResaleReservation(resale, user);
 
         resale.setReservation(user);
+        resaleRepository.save(resale);
         schedulingService.scheduleResaleJob(resale, CancelReservationJob.class);
 
         return toResaleDetailDTO(resale);
@@ -233,6 +234,7 @@ public class ResaleServiceImpl implements ResaleService {
             return;
         }
         resale.cancelReservation();
+        resaleRepository.save(resale);
 
         String jobName = "CancelReservationJob_" + resaleId;
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
@@ -258,6 +260,7 @@ public class ResaleServiceImpl implements ResaleService {
         validateResalePurchase(resale, user);
 
         resale.prepare();
+        resaleRepository.save(resale);
 
         String jobName = "CancelReservationJob_" + resaleId;
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
