@@ -181,11 +181,25 @@ public class ProofServiceImpl implements ProofService {
             throw new CustomException(ErrorStatus.SIG_VERIFY_FAILED);
         }
 
+        List<Ownership> ownerships = ownershipRepository.findAllByOwnersAggregateIdOrderByOrdIndexAsc(
+                ownership.getOwnersAggregate().getId());
+
+        int idx = -1;
+        for (int i = 0; i < ownerships.size(); i++) {
+            if (ownerships.get(i).equals(ownership)) {
+                idx = i;
+                break;
+            }
+        }
+        if (idx < 0) {
+            throw new CustomException(ErrorStatus.ZKP_NOT_AN_OWNER);
+        }
+
         log.info("Starting ProverService.proveOwn... : session [{}], user [{}], ticket [{}]",
                 session.getId(), user.getId(), ticket.getId());
         ProverService.Proof proof = proverService.proveOwn(
                 session.getId(),
-                ownership.getOrdIndex(),
+                idx,
                 user.getIcCommitment()
         );
 

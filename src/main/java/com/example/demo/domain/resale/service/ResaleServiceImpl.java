@@ -86,7 +86,7 @@ public class ResaleServiceImpl implements ResaleService {
         schedulingService.scheduleResaleJob(resale, CancelListingJob.class);
 
         Challenge challenge = challengeService.issueChallengeForResale(
-                user.getId(), ticket.getSession().getId(), ChallengePurpose.APPROVE_RESALE);
+                user.getId(), resale.getId(), ChallengePurpose.APPROVE_RESALE);
 
         return toResaleInfoWithChallengeDTO(resale, challenge);
     }

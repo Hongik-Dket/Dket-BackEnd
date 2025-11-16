@@ -12,7 +12,13 @@ import java.util.Optional;
 @Repository
 public interface OwnershipRepository extends JpaRepository<Ownership, Long> {
 
-    List<Ownership> findAllByOwnersAggregateIdOrderByOrdIndexAsc(Long aggregateId);
+    @Query("""
+        SELECT o FROM Ownership o
+        WHERE o.ownersAggregate.id = :aggregateId
+            AND o.isActive = true
+        ORDER BY o.ordIndex ASC
+    """)
+    List<Ownership> findAllByOwnersAggregateIdOrderByOrdIndexAsc(@Param("aggregateId") Long aggregateId);
 
     @Query("""
         SELECT o.leafHex FROM Ownership o

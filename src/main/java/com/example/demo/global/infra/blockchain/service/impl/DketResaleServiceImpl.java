@@ -44,17 +44,15 @@ public class DketResaleServiceImpl implements DketResaleService {
     @Override
     public String listResaleOnChain(Resale resale){
         try {
-            // todo
-//            var tx = dketResale.listResale(
-//                    BigInteger.valueOf(resale.getId()),
-//                    resale.getTicket().getTokenId(),
-//                    BigInteger.valueOf(resale.getSession().getId()),
-//                    resale.getSeller().getWalletAddress(),
-//                    resale.getPriceWei()
-//            ).send();
-//
-//            return tx.getTransactionHash();
-            return null;
+            var tx = dketResale.listResale(
+                    BigInteger.valueOf(resale.getId()),
+                    resale.getTicket().getTokenId(),
+                    BigInteger.valueOf(resale.getSession().getId()),
+                    resale.getSeller().getWalletAddress(),
+                    resale.getPriceWei()
+            ).send();
+
+            return tx.getTransactionHash();
         } catch (Exception e) {
             log.error("Resale [{}] 온체인 기록 실패", resale.getId(), e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
