@@ -1,7 +1,7 @@
 package com.example.demo.domain.ticket.converter;
 
-import com.example.demo.domain.ticket.dto.TicketCardDTO;
-import com.example.demo.domain.ticket.dto.TicketDetailDTO;
+import com.example.demo.domain.ticket.dto.response.TicketCardDTO;
+import com.example.demo.domain.ticket.dto.response.TicketDetailDTO;
 import com.example.demo.domain.ticket.entity.Ticket;
 
 import java.time.LocalDateTime;

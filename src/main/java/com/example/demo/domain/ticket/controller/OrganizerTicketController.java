@@ -1,6 +1,8 @@
 package com.example.demo.domain.ticket.controller;
 
-import com.example.demo.domain.ticket.dto.TicketResponseDTO;
+import com.example.demo.domain.ticket.dto.request.ProofDTO;
+import com.example.demo.domain.ticket.dto.response.IdentityTypeDTO;
+import com.example.demo.domain.ticket.dto.response.TicketResponseDTO;
 import com.example.demo.domain.ticket.service.OrganizerTicketService;
 import com.example.demo.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,5 +35,14 @@ public class OrganizerTicketController {
     ) {
         log.info("GET /api/organizer/tickets?ticketNumber={}", ticketNumber);
         return ApiResponse.onSuccess(_OK, organizerTicketService.validateTicketWithoutProof(ticketNumber));
+    }
+
+    @Operation(summary = "증명 검증")
+    @PostMapping("/verify")
+    public ApiResponse<IdentityTypeDTO> verifyOwnProof(
+            @RequestBody ProofDTO request
+    ) {
+        log.info("POST /api/organizer/tickets/verify : proofId={}", request.getProofId());
+        return ApiResponse.onSuccess(_OK, organizerTicketService.verifyOwnProofAndEnter(request));
     }
 }
