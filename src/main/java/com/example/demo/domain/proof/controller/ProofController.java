@@ -31,11 +31,11 @@ public class ProofController {
     }
 
     @Operation(summary = "소유 증명 서명 챌린지 발급")
-    @PostMapping("/own/challenge")
+    @GetMapping("/own/challenge")
     public ApiResponse<ChallengeDTO> issueChallengeForOwn(
             @RequestParam Long ticketId
     ) {
-        log.info("POST /api/proofs/own?ticketId={}", ticketId);
+        log.info("GET /api/proofs/own?ticketId={}", ticketId);
         return ApiResponse.onSuccess(_OK, proofService.issueChallenge(ticketId));
     }
 
