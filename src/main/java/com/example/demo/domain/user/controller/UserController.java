@@ -1,7 +1,7 @@
 package com.example.demo.domain.user.controller;
 
 import com.example.demo.domain.metadata.dto.PhotoCardDTO;
-import com.example.demo.domain.ticket.dto.response.TicketCardDTO;
+import com.example.demo.domain.ticket.dto.TicketCardDTO;
 import com.example.demo.domain.user.dto.response.PassportInfoDTO;
 import com.example.demo.domain.user.dto.response.WalletDTO;
 import com.example.demo.domain.user.service.MypageService;

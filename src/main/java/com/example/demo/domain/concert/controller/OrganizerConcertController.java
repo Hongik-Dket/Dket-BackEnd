@@ -1,7 +1,6 @@
 package com.example.demo.domain.concert.controller;
 
 import com.example.demo.domain.concert.dto.request.ConcertUploadDTO;
-import com.example.demo.domain.concert.dto.response.EntryCodeDTO;
 import com.example.demo.domain.concert.dto.response.OrganizerConcertDetailDTO;
 import com.example.demo.domain.concert.dto.response.ResponseDTO;
 import com.example.demo.domain.concert.dto.response.OrganizerSessionInfoDTO;
@@ -56,15 +55,6 @@ public class OrganizerConcertController {
     ) {
         log.info("POST /api/organizer/concerts");
         return ApiResponse.onSuccess(_OK, organizerConcertService.uploadConcert(request, banner, poster, photoCardList));
-    }
-
-    @Operation(summary = "개최자 - 입장 인증 번호 확인하기")
-    @GetMapping("/{concertId}/{sessionId}/enter")
-    public ApiResponse<EntryCodeDTO> getEntryCode(
-            @PathVariable Long concertId, @PathVariable Long sessionId
-    ) {
-        log.info("GET /api/organizer/concerts/{}/{}/enter", concertId, sessionId);
-        return ApiResponse.onSuccess(_OK, sessionService.getEntryCode(concertId, sessionId));
     }
 
 }

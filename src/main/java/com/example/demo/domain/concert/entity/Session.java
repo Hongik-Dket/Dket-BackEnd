@@ -39,8 +39,6 @@ public class Session extends BaseEntity {
     @Builder.Default
     private boolean isBuyable = false;
 
-    private String entryCode;
-
     @Column(columnDefinition = "BINARY(32)")
     private byte[] winnersRoot;
     @Column(columnDefinition = "BINARY(32)")
@@ -65,7 +63,6 @@ public class Session extends BaseEntity {
     }
     public void setIsMinted() { this.isMinted = true; }
     public void setIsBuyable(boolean isBuyable) { this.isBuyable = isBuyable; }
-    public void setEntryCode(String entryCode) { this.entryCode = entryCode; }
     public void setOwnersRoot(byte[] root) { this.ownersRoot = root; }
 
     public void addApply(Apply apply) { this.applyList.add(apply); }
