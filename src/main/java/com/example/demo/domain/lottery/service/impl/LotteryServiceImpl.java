@@ -121,7 +121,11 @@ public class LotteryServiceImpl implements LotteryService {
         String poseidonRoot = poseidonMerkleService.rootHex(winnerLeafHexes);
 
         WinnersAggregate aggregate = winnersAggregateRepository.findBySessionId(sessionId)
-                .orElse(WinnersAggregate.builder().sessionId(sessionId).build());
+                .orElseGet(() -> winnersAggregateRepository.save(
+                        WinnersAggregate.builder()
+                                .sessionId(session.getId())
+                                .build()
+                ));
 
         aggregate.update(winnerLeafHexes.size(), poseidonRoot, blockNumber);
         winnersAggregateRepository.save(aggregate);

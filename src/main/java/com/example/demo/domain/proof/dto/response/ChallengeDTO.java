@@ -1,4 +1,4 @@
-package com.example.demo.domain.proof.dto.request;
+package com.example.demo.domain.proof.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,11 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class WinProofAuthDTO {
+public class ChallengeDTO {
 
-    Long sessionId;
     String challengeId;
-    String signature;
-    String publicKey;
+    String challenge;
 
 }

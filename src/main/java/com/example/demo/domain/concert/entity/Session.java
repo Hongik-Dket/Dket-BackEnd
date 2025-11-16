@@ -66,6 +66,7 @@ public class Session extends BaseEntity {
     public void setIsMinted() { this.isMinted = true; }
     public void setIsBuyable(boolean isBuyable) { this.isBuyable = isBuyable; }
     public void setEntryCode(String entryCode) { this.entryCode = entryCode; }
+    public void setOwnersRoot(byte[] root) { this.ownersRoot = root; }
 
     public void addApply(Apply apply) { this.applyList.add(apply); }
     public void addTicket(Ticket ticket) { this.ticketList.add(ticket); }

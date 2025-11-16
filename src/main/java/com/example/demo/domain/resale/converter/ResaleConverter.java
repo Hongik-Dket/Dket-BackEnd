@@ -3,11 +3,12 @@ package com.example.demo.domain.resale.converter;
 import com.example.demo.domain.concert.entity.Concert;
 import com.example.demo.domain.resale.dto.response.ResaleCardDTO;
 import com.example.demo.domain.resale.dto.response.ResaleDetailDTO;
-import com.example.demo.domain.resale.dto.response.ResaleInfoDTO;
+import com.example.demo.domain.resale.dto.response.ResaleInfoWithChallengeDTO;
 import com.example.demo.domain.resale.entity.Resale;
 import com.example.demo.domain.resale.enums.ResaleStatus;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.user.entity.User;
+import com.example.demo.global.zkp.signature.entity.Challenge;
 
 import java.math.BigInteger;
 
@@ -24,10 +25,12 @@ public class ResaleConverter {
                 .build();
     }
 
-    public static ResaleInfoDTO toResaleInfoDTO(Resale resale){
-        return ResaleInfoDTO.builder()
+    public static ResaleInfoWithChallengeDTO toResaleInfoWithChallengeDTO(Resale resale, Challenge challenge){
+        return ResaleInfoWithChallengeDTO.builder()
                 .resaleId(resale.getId())
                 .tokenId(resale.getTicket().getTokenId())
+                .challengeId(challenge.getId())
+                .challenge(challenge.getMessage())
                 .build();
     }
 

@@ -1,18 +1,19 @@
-package com.example.demo.domain.resale.dto.response;
+package com.example.demo.domain.proof.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.math.BigInteger;
-
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResaleInfoDTO {
+public class ProofAuthDTO {
 
-    private Long resaleId;
-    private BigInteger tokenId;
+    Long sessionId;
+    String challengeId;
+    String signature;
+    String publicKey;
+
 }

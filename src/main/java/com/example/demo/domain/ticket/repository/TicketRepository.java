@@ -1,7 +1,6 @@
 package com.example.demo.domain.ticket.repository;
 
 import com.example.demo.domain.concert.entity.Concert;
-import com.example.demo.domain.metadata.entity.Metadata;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.user.entity.User;
 import jakarta.persistence.LockModeType;
@@ -14,6 +13,7 @@ import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +31,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     """)
     List<Concert> findPurchasedConcertsByBuyer(@Param("buyerId") Long buyerId, Pageable pageable);
 
-    Optional<Ticket> findByTokenId(Long tokenId);
+    Optional<Ticket> findByTokenId(BigInteger tokenId);
 
     int countBySessionIdAndPaidAtIsNotNull(Long sessionId);
 
@@ -66,4 +66,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
         WHERE t.metadata.ticketNumber = :ticketNumber
     """)
     Optional<Ticket> findByTicketNumber(@Param("ticketNumber") String ticketNumber);
+
+    Optional<Ticket> findByUserIdAndSessionId(Long userId, Long sessionId);
 }

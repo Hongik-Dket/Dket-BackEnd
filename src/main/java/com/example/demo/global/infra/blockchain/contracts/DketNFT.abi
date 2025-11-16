@@ -274,6 +274,25 @@
 		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "Entered",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
 				"indexed": false,
 				"internalType": "uint256",
 				"name": "_tokenId",
@@ -281,6 +300,25 @@
 			}
 		],
 		"name": "MetadataUpdate",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "ownersRoot",
+				"type": "bytes32"
+			}
+		],
+		"name": "OwnersRootSet",
 		"type": "event"
 	},
 	{
@@ -485,7 +523,7 @@
 			{
 				"indexed": false,
 				"internalType": "address",
-				"name": "win",
+				"name": "verifier",
 				"type": "address"
 			}
 		],
@@ -725,30 +763,6 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "sessionId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint32",
-				"name": "k",
-				"type": "uint32"
-			}
-		],
-		"name": "computeWinnerIndices",
-		"outputs": [
-			{
-				"internalType": "uint32[]",
-				"name": "out",
-				"type": "uint32[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
 			}
@@ -893,8 +907,23 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
 				"name": "tokenId",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256[24]",
+				"name": "proof",
+				"type": "uint256[24]"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "entryNullifier",
+				"type": "bytes32"
 			}
 		],
 		"name": "enter",
@@ -1115,6 +1144,25 @@
 				"internalType": "address",
 				"name": "",
 				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "ownersRootOf",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
 			}
 		],
 		"stateMutability": "view",
@@ -1357,11 +1405,11 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "win",
+				"name": "_verifier",
 				"type": "address"
 			}
 		],
-		"name": "setWinVerifier",
+		"name": "setVerifier",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -1475,6 +1523,43 @@
 	{
 		"inputs": [
 			{
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "ownersRoot",
+				"type": "bytes32"
+			}
+		],
+		"name": "updateOwnersRoot",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"name": "usedEntryNullifier",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "bytes32",
 				"name": "",
 				"type": "bytes32"
@@ -1493,36 +1578,12 @@
 	},
 	{
 		"inputs": [],
-		"name": "winVerifier",
+		"name": "verifier",
 		"outputs": [
 			{
-				"internalType": "contract IWinVerifier",
+				"internalType": "contract IVerifier",
 				"name": "",
 				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "sessionId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint32",
-				"name": "targetRank",
-				"type": "uint32"
-			}
-		],
-		"name": "winnerIndexAt",
-		"outputs": [
-			{
-				"internalType": "uint32",
-				"name": "index",
-				"type": "uint32"
 			}
 		],
 		"stateMutability": "view",

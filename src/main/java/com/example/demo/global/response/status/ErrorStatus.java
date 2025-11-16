@@ -104,6 +104,8 @@ public enum ErrorStatus implements BaseErrorCode {
     RESALE_ALREADY_RESERVED(HttpStatus.BAD_REQUEST, "RESALE_4005", "이미 예약된 리세일입니다."),
     RESALE_RESERVATION_FORBIDDEN(HttpStatus.FORBIDDEN, "RESALE_4006", "본인이 예약하지 않은 리세일입니다."),
     RESALE_NOT_RESERVED_USER(HttpStatus.BAD_REQUEST, "RESALE_4007", "현재 사용자가 예약한 리세일이 아닙니다."),
+    RESALE_NOT_SIGNED(HttpStatus.BAD_REQUEST, "RESALE_4008", "판매자가 서명하지 않은 리세일입니다."),
+    RESALE_MISMATCH_TICKET(HttpStatus.BAD_REQUEST, "RESALE_4009", "해당 리세일에 등록된 티켓이 아닙니다."),
     RESALE_CONFLICT(HttpStatus.INTERNAL_SERVER_ERROR, "RESALE_5001", "리세일 락 획득에 실패했습니다."),
 
     RESALE_AUTH_NO_TEMPLATE(HttpStatus.NOT_FOUND, "RESALE_AUTH_4001", "서명 템플릿을 찾을 수 없습니다."),
@@ -127,6 +129,7 @@ public enum ErrorStatus implements BaseErrorCode {
     ZKP_DEPTH_MISMATCH(HttpStatus.BAD_REQUEST, "ZKP_4001", "depth가 일치하지 않습니다."),
     ZKP_ROOT_MISMATCH(HttpStatus.BAD_REQUEST, "ZKP_4002", "root가 일치하지 않습니다."),
     ZKP_NOT_A_WINNER(HttpStatus.BAD_REQUEST, "ZKP_4003", "당첨자가 아닙니다."),
+    ZKP_NOT_AN_OWNER(HttpStatus.BAD_REQUEST, "ZKP_4004", "소유자가 아닙니다."),
     ZKP_PROVE_TIMEOUT(HttpStatus.INTERNAL_SERVER_ERROR, "ZKP_5001", "증명 생성 시간을 초과하였습니다."),
     ZKP_PROVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "ZKP_5002", "증명 생성에 실패했습니다."),
     ZKP_INVALID_RETURN(HttpStatus.INTERNAL_SERVER_ERROR, "ZKP_5003", "증명 생성의 반환값이 유효하지 않습니다."),
@@ -137,6 +140,11 @@ public enum ErrorStatus implements BaseErrorCode {
     SIG_INVALID_CHALLENGE(HttpStatus.BAD_REQUEST, "SIG_4004", "유효하지 않은 challenge입니다."),
     SIG_VERIFY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "SIG_5001", "서명 검증에 실패했습니다."),
 
+    OWN_ALREADY_OWNED(HttpStatus.BAD_REQUEST, "OWN_4001", "이미 소유권을 가지고 있습니다."),
+    OWN_NOT_FOUND(HttpStatus.BAD_REQUEST, "OWN_4002", "해당 소유권을 찾을 수 없습니다."),
+    OWN_LEAF_EMPTY(HttpStatus.BAD_REQUEST, "OWN_4003", "해당 세션의 소유자 리프가 없습니다."),
+
+    JSON_CONVERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "JSON_5001", "Json 직렬화에 실패했습니다."),
 
     ;
 

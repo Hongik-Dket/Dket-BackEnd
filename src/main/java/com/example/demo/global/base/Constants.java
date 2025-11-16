@@ -1,6 +1,7 @@
 package com.example.demo.global.base;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 
 import static com.example.demo.global.util.Keccak.keccak256;
@@ -30,5 +31,13 @@ public class Constants {
 
     // Challenge 만료 시간(초 단위)
     public static final int CHALLENGE_EXPIRATION_MINUTES = 10;
+
+    // keccak256("Dket:apply") mod BN254
+    public static final BigInteger APPLY_TAG = new BigInteger(
+            "21893c20f71039c08143fce9ce8cc2246209d41942edd38ff7e003737b20a7a1", 16);
+
+    // keccak256("Dket:own") mod BN254
+    public static final BigInteger OWN_TAG = new BigInteger(
+            "0b1ad30a3769ffdbb6a73732c1599ee47f8fcdb4c3fd7b39a51fd63183e0c4c7", 16);
 
 }

@@ -175,7 +175,8 @@ public class DketNFTServiceImpl implements DketNFTService {
     @Override
     public void enterTicketOnChain(Ticket ticket) {
         try {
-            dketNFT.enter(ticket.getTokenId()).send();
+            // Todo
+//            dketNFT.enter(ticket.getTokenId()).send();
         } catch (Exception e) {
             log.error("Ticket [{}] 입장 실패", ticket.getId(), e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);

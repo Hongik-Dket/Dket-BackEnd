@@ -31,7 +31,7 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "dketNft",
+				"name": "_dketNft",
 				"type": "address"
 			}
 		],
@@ -73,39 +73,6 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "resaleId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "sessionId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_seller",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "price",
-				"type": "uint256"
-			}
-		],
-		"name": "listResale",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "address",
 				"name": "owner",
 				"type": "address"
@@ -141,6 +108,39 @@
 		"inputs": [],
 		"name": "EIP712DomainChanged",
 		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "resaleId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_seller",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "price",
+				"type": "uint256"
+			}
+		],
+		"name": "listResale",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -209,6 +209,19 @@
 		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "resaleSigner",
+				"type": "address"
+			}
+		],
+		"name": "ResaleSignerSet",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
 				"indexed": true,
 				"internalType": "uint256",
 				"name": "resaleId",
@@ -235,6 +248,19 @@
 		],
 		"name": "ResaleSold",
 		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "signer",
+				"type": "address"
+			}
+		],
+		"name": "setResaleSigner",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"inputs": [
@@ -283,6 +309,19 @@
 	},
 	{
 		"inputs": [],
+		"name": "dketNFT",
+		"outputs": [
+			{
+				"internalType": "contract IDketNFT",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "eip712Domain",
 		"outputs": [
 			{
@@ -319,19 +358,6 @@
 				"internalType": "uint256[]",
 				"name": "extensions",
 				"type": "uint256[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "nft",
-		"outputs": [
-			{
-				"internalType": "contract IDketNFT",
-				"name": "",
-				"type": "address"
 			}
 		],
 		"stateMutability": "view",

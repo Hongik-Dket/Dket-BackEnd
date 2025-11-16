@@ -53,4 +53,36 @@ public class ChallengeService {
         );
     }
 
+    @Transactional
+    public Challenge issueChallengeForResale(Long userId, Long resaleId, ChallengePurpose purpose) {
+        String nonce = random32BytesHex();
+
+        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(CHALLENGE_EXPIRATION_MINUTES);
+
+        Challenge challenge = Challenge.builder()
+                .id(UUID.randomUUID().toString())
+                .userId(userId)
+                .purpose(purpose)
+                .resaleId(resaleId)
+                .nonceHex(nonce)
+                .expiresAt(expiresAt)
+                .build();
+
+        challenge.setMessage(buildChallengeMessageForResale(challenge));
+        challengeRepository.save(challenge);
+
+        return challenge;
+    }
+
+    private String buildChallengeMessageForResale(Challenge c) {
+        return String.format(
+                "DKET|%s|user:%d|resale:%d|nonce:%s|exp:%d",
+                c.getPurpose(),
+                c.getUserId(),
+                c.getResaleId(),
+                c.getNonceHex(),
+                c.getExpiresAt().atZone(ZoneId.of("Asia/Seoul")).toEpochSecond()
+        );
+    }
+
 }

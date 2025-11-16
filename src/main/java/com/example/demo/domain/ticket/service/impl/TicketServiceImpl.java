@@ -68,7 +68,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     @Transactional
-    public void completeTicket(String address, Long sessionId, Long tokenId) {
+    public void completeTicket(String address, Long sessionId, BigInteger tokenId) {
         User user = userRepository.findByWalletAddress(address)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 

@@ -29,6 +29,7 @@ public class Challenge extends BaseEntity {
     private ChallengePurpose purpose;
 
     private Long sessionId;
+    private Long resaleId;
 
     private String nonceHex;
 

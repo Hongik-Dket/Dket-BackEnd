@@ -35,7 +35,7 @@ template MerkleInclusion(depth) {
     root <== cur[depth];
 }
 
-template WinBase(depth, PAY_TAG_CONST) {
+template Base(depth, LEAF_TAG, NULLIFIER_TAG) {
     // private
     signal input IC;
     signal input pathElements[depth];
@@ -43,13 +43,17 @@ template WinBase(depth, PAY_TAG_CONST) {
 
     // public
     signal input  sessionId;
-    signal input  winnersRoot;
+    signal input  root;
 
-    component hLeaf = Poseidon(2);
-    hLeaf.inputs[0] <== IC;
-    hLeaf.inputs[1] <== sessionId;
+    component hLeaf1 = Poseidon(2);
+    hLeaf1.inputs[0] <== IC;
+    hLeaf1.inputs[1] <== sessionId;
+
+    component hLeaf2 = Poseidon(2);
+    hLeaf2.inputs[0] <== hLeaf1.out;
+    hLeaf2.inputs[1] <== LEAF_TAG;
     signal leafHash;
-    leafHash <== hLeaf.out;
+    leafHash <== hLeaf2.out;
 
     component mi = MerkleInclusion(depth);
     mi.leafHash <== leafHash;
@@ -57,25 +61,19 @@ template WinBase(depth, PAY_TAG_CONST) {
         mi.pathElements[i] <== pathElements[i];
         mi.pathIndex[i]    <== pathIndex[i];
     }
-    mi.root === winnersRoot;
+    mi.root === root;
 
-    // paymentNullifier = Poseidon(IC, sessionId, PAY_TAG_CONST)
+    // nullifier = Poseidon(IC, sessionId, NULLIFIER_TAG)
     component hNull = Poseidon(3);
     hNull.inputs[0] <== IC;
     hNull.inputs[1] <== sessionId;
-    hNull.inputs[2] <== PAY_TAG_CONST;
+    hNull.inputs[2] <== NULLIFIER_TAG;
 
     signal output sessionId_pub;
-    signal output winnersRoot_pub;
-    signal output paymentNullifier_pub;
+    signal output root_pub;
+    signal output nullifier_pub;
 
-    sessionId_pub        <== sessionId;
-    winnersRoot_pub      <== winnersRoot;
-    paymentNullifier_pub <== hNull.out;
+    sessionId_pub       <== sessionId;
+    root_pub            <== root;
+    nullifier_pub       <== hNull.out;
 }
-
-// PAY_TAG_CONST: keccak256("Dket:pay") mod BN254
-component main = WinBase(
-    20,
-    0x0844240e9aafe11e996165900b7372f1cd87f4553fd0853e30b47650a7ee576c
-);
