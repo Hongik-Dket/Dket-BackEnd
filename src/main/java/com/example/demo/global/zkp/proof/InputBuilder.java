@@ -51,12 +51,12 @@ public class InputBuilder {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
 
-        List<String> leafHexes = ownershipRepository.findOwnerLeafHexes(sessionId);
+        List<String> leafHexes = ownershipRepository.findOwnerLeafHexesBySessionId(sessionId);
         if (leafHexes == null || leafHexes.isEmpty()) {
             throw new CustomException(ErrorStatus.OWN_LEAF_EMPTY);
         }
 
-        return build(session, leafIndex, icHex, leafHexes, session.getWinnersRoot(), OWN_TAG);
+        return build(session, leafIndex, icHex, leafHexes, session.getOwnersRoot(), OWN_TAG);
     }
 
     private Map<String, Object> build(Session session, int leafIndex, String icHex,

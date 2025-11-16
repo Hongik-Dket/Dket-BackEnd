@@ -126,9 +126,9 @@ public class ResaleServiceImpl implements ResaleService {
             throw new CustomException(ErrorStatus.SIG_INVALID_CHALLENGE);
         }
 
-//        if (!SecureEnclaveVerifier.verify(challenge.getMessage(), request.getSignature(), user.getPublicKey())) {
-//            throw new CustomException(ErrorStatus.SIG_VERIFY_FAILED);
-//        }
+        if (!SecureEnclaveVerifier.verify(challenge.getMessage(), request.getSignature(), user.getPublicKey())) {
+            throw new CustomException(ErrorStatus.SIG_VERIFY_FAILED);
+        }
 
         resale.verifySignature();
         challenge.setUsed();

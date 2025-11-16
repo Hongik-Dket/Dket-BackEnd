@@ -66,4 +66,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
         WHERE t.metadata.ticketNumber = :ticketNumber
     """)
     Optional<Ticket> findByTicketNumber(@Param("ticketNumber") String ticketNumber);
+
+    Optional<Ticket> findByUserIdAndSessionId(Long userId, Long sessionId);
 }

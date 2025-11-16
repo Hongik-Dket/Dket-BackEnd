@@ -16,11 +16,11 @@ public interface OwnershipRepository extends JpaRepository<Ownership, Long> {
 
     @Query("""
         SELECT o.leafHex FROM Ownership o
-        WHERE o.ownersAggregate.id = :aggregateId
+        WHERE o.ownersAggregate.sessionId = :sessionId
             AND o.isActive = true
         ORDER BY o.ordIndex ASC
     """)
-    List<String> findOwnerLeafHexes(@Param("aggregateId") Long aggregateId);
+    List<String> findOwnerLeafHexesBySessionId(@Param("sessionId") Long sessionId);
 
     @Query("""
         SELECT o FROM Ownership o

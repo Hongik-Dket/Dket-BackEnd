@@ -147,10 +147,11 @@ public class OwnershipServiceImpl implements OwnershipService {
         ownershipRepository.save(ownership);
 
 
-        List<String> leafHexes = ownershipRepository.findOwnerLeafHexes(aggregate.getId());
+        List<String> leafHexes = ownershipRepository.findOwnerLeafHexesBySessionId(aggregate.getSessionId());
         String poseidonRoot = poseidonMerkleService.rootHex(leafHexes);
 
         aggregate.update(leafHexes.size(), poseidonRoot, blockNo);
+        session.setOwnersRoot(hexToBytes(poseidonRoot));
     }
 
 }

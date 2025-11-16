@@ -21,8 +21,8 @@ import java.io.ByteArrayOutputStream;
 @Transactional(readOnly = true)
 public class QrCodeGenerator {
 
-    public MultipartFile generateQrCodeFile(Long ticketId) {
-        BufferedImage qrImage = generateQrCodeImage("%s".formatted(ticketId), 300, 300);
+    public MultipartFile generateQrCodeFile(String ownProofId) {
+        BufferedImage qrImage = generateQrCodeImage("%s".formatted(ownProofId), 1000, 1000);
         byte[] qrBytes = bufferedImageToBytes(qrImage, "png");
 
         return new ByteArrayMultipartFile(qrBytes, "qrcode.png", "image/png");

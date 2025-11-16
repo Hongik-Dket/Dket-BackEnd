@@ -1,6 +1,5 @@
 package com.example.demo.domain.proof.dto.response;
 
-import com.example.demo.domain.user.enums.IdentityType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProofQrCodeDTO {
+public class ChallengeDTO {
 
-    private String qrCodeUrl;
-    private IdentityType identityType;
+    String challengeId;
+    String challenge;
 
 }

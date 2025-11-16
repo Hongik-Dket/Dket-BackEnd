@@ -143,6 +143,8 @@ public enum ErrorStatus implements BaseErrorCode {
     OWN_NOT_FOUND(HttpStatus.BAD_REQUEST, "OWN_4002", "해당 소유권을 찾을 수 없습니다."),
     OWN_LEAF_EMPTY(HttpStatus.BAD_REQUEST, "OWN_4003", "해당 세션의 소유자 리프가 없습니다."),
 
+    JSON_CONVERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "JSON_5001", "Json 직렬화에 실패했습니다."),
+
     ;
 
     private final HttpStatus httpStatus;
