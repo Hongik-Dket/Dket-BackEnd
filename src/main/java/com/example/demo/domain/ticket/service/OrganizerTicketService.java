@@ -1,6 +1,6 @@
 package com.example.demo.domain.ticket.service;
 
-import com.example.demo.domain.ticket.dto.response.TicketResponseDTO;
+import com.example.demo.domain.ticket.dto.TicketResponseDTO;
 
 public interface OrganizerTicketService {
 

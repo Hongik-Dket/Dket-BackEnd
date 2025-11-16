@@ -1,6 +1,6 @@
 package com.example.demo.domain.ticket.controller;
 
-import com.example.demo.domain.ticket.dto.response.TicketResponseDTO;
+import com.example.demo.domain.ticket.dto.TicketResponseDTO;
 import com.example.demo.domain.ticket.service.OrganizerTicketService;
 import com.example.demo.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;

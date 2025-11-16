@@ -2,7 +2,7 @@ package com.example.demo.domain.ticket.service.impl;
 
 import com.example.demo.domain.resale.enums.ResaleStatus;
 import com.example.demo.domain.resale.repository.ResaleRepository;
-import com.example.demo.domain.ticket.dto.response.TicketResponseDTO;
+import com.example.demo.domain.ticket.dto.TicketResponseDTO;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.ticket.repository.TicketRepository;
 import com.example.demo.domain.ticket.service.OrganizerTicketService;
