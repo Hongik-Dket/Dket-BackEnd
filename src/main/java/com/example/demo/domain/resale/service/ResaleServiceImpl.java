@@ -123,9 +123,9 @@ public class ResaleServiceImpl implements ResaleService {
             throw new CustomException(ErrorStatus.TICKET_INVALID_USER);
         }
 
-//        if (!user.getPublicKey().equals(request.getPublicKey())) {
-//            throw new CustomException(ErrorStatus.SIG_PUBKEY_MISMATCH_USER);
-//        }
+        if (!user.getPublicKey().equals(request.getPublicKey())) {
+            throw new CustomException(ErrorStatus.SIG_PUBKEY_MISMATCH_USER);
+        }
 
         Challenge challenge = challengeRepository.findById(request.getChallengeId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.SIG_CHALLENGE_NOT_FOUND));
@@ -139,9 +139,9 @@ public class ResaleServiceImpl implements ResaleService {
             throw new CustomException(ErrorStatus.SIG_INVALID_CHALLENGE);
         }
 
-//        if (!SecureEnclaveVerifier.verify(challenge.getMessage(), request.getSignature(), user.getPublicKey())) {
-//            throw new CustomException(ErrorStatus.SIG_VERIFY_FAILED);
-//        }
+        if (!SecureEnclaveVerifier.verify(challenge.getMessage(), request.getSignature(), user.getPublicKey())) {
+            throw new CustomException(ErrorStatus.SIG_VERIFY_FAILED);
+        }
 
         resale.verifySignature();
         log.info("UPDATE   resale [{}] signed", resale.getId());
