@@ -150,7 +150,6 @@ public class ResaleServiceImpl implements ResaleService {
     }
 
     @Override
-    @Transactional
     public void listResale(String ownerWalletAddress, BigInteger tokenId) {
         String owner = ownerWalletAddress.toLowerCase();
 
@@ -162,7 +161,7 @@ public class ResaleServiceImpl implements ResaleService {
         if (!resale.isSignatureVerified()) {
             throw new CustomException(ErrorStatus.RESALE_NOT_SIGNED);
         }
-        resale.setTxHash(dketResaleService.listResaleOnChain(resale));
+        dketResaleService.listResaleOnChain(resale);
     }
 
     @Override
@@ -179,7 +178,7 @@ public class ResaleServiceImpl implements ResaleService {
 
         resale.completeListing();
         resaleRepository.save(resale);
-        log.info("UPDATE   resale [{}] listed", resale.getId());
+        log.info("UPDATE   resale [{}] available", resale.getId());
 
         String jobName = "CancelListingJob_" + resaleId;
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
