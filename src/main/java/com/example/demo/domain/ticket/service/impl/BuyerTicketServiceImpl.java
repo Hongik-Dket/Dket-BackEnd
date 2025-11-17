@@ -69,7 +69,7 @@ public class BuyerTicketServiceImpl implements BuyerTicketService {
     }
 
     private String getNftUrl(Ticket ticket) {
-        return Constants.ETHERSCAN_NFT_BASE_URL + contractAddress + "/%s".formatted(ticket.getTokenId());
+        return Constants.ETHERSCAN_NFT_BASE_URL + contractAddress + "/instance/%s".formatted(ticket.getTokenId());
     }
 
 }
