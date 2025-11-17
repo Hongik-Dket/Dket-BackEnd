@@ -15,7 +15,7 @@ public class Constants {
     public static final int PAYMENT_AVAILABLE_BEFORE_CONCERT_START = 2;
 
     // Etherscan NFT base url
-    public static final String ETHERSCAN_NFT_BASE_URL = "https://sepolia.etherscan.io/nft/";
+    public static final String ETHERSCAN_NFT_BASE_URL = "https://eth-sepolia.blockscout.com/token/";
 
     // 리세일 티켓 예약 만료 시간(분 단위)
     public static final int RESALE_RESERVATION_EXPIRATION_MINUTES = 5;
