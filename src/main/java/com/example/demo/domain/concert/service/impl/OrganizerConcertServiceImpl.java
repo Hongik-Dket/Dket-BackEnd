@@ -24,6 +24,7 @@ import com.example.demo.global.infra.scheduling.jobs.concert.OpenApplyJob;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,6 +40,7 @@ import static com.example.demo.domain.concert.converter.ConcertConverter.*;
 import static com.example.demo.domain.metadata.converter.PhotoCardConverter.toPhotoCardInfoDTO;
 import static com.example.demo.global.util.StringUtil.normalize;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -115,6 +117,8 @@ public class OrganizerConcertServiceImpl implements OrganizerConcertService {
 
         schedulingService.scheduleConcertJob(concert, OpenApplyJob.class);
         concert.setTxHash(dketNFTService.recordConcertOnChain(concert, concert.getSessions()));
+
+        log.info("INSERT   concertId={}", concert.getId());
 
         return ResponseDTO.builder()
                 .concertId(concert.getId())

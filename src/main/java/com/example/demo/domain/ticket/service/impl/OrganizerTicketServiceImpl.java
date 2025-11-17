@@ -67,6 +67,7 @@ public class OrganizerTicketServiceImpl implements OrganizerTicketService {
         }
 
         ticket.enter();
+        log.info("UPDATE   ticket [{}] entered", ticket.getId());
     }
 
     @Override
@@ -126,6 +127,7 @@ public class OrganizerTicketServiceImpl implements OrganizerTicketService {
 
         dketNFTService.enterTicketOnChain(ticket, proof, nullifier);
         ticket.enter();
+        log.info("UPDATE   ticket [{}] entered", ticket.getId());
 
         return IdentityTypeDTO.builder()
                 .identityType(ticket.getUser().getIdentityType())

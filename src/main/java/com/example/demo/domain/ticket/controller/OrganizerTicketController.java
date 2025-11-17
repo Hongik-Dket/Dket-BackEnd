@@ -23,8 +23,9 @@ public class OrganizerTicketController {
     @Operation(summary = "공연 입장")
     @PatchMapping("/{ticketId}/enter")
     public ApiResponse<?> enterTicket(@PathVariable("ticketId") Long ticketId) {
-        log.info("PATCH /api/organizer/tickets/{}/enter", ticketId);
+        log.info("REQ   PATCH /api/organizer/tickets/{}/enter", ticketId);
         organizerTicketService.enterTicket(ticketId);
+        log.info("RES   PATCH /api/organizer/tickets/{}/enter", ticketId);
 
         return ApiResponse.onSuccess(_OK, null);
     }
@@ -34,8 +35,10 @@ public class OrganizerTicketController {
     public ApiResponse<TicketResponseDTO> validateTicketWithoutProof(
             @RequestParam("ticketNumber") String ticketNumber
     ) {
-        log.info("GET /api/organizer/tickets?ticketNumber={}", ticketNumber);
-        return ApiResponse.onSuccess(_OK, organizerTicketService.validateTicketWithoutProof(ticketNumber));
+        log.info("REQ   GET /api/organizer/tickets?ticketNumber={}", ticketNumber);
+        TicketResponseDTO response = organizerTicketService.validateTicketWithoutProof(ticketNumber);
+        log.info("RES   GET /api/organizer/tickets?ticketNumber={}", ticketNumber);
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "증명 검증")
@@ -43,7 +46,9 @@ public class OrganizerTicketController {
     public ApiResponse<IdentityTypeDTO> verifyOwnProof(
             @RequestBody ProofRequestDTO request
     ) {
-        log.info("POST /api/organizer/tickets/verify : proofId={}", request.getProofId());
-        return ApiResponse.onSuccess(_OK, organizerTicketService.verifyOwnProofAndEnter(request));
+        log.info("REQ   POST /api/organizer/tickets/verify : proofId={}", request.getProofId());
+        IdentityTypeDTO response = organizerTicketService.verifyOwnProofAndEnter(request);
+        log.info("RES   POST /api/organizer/tickets/verify : proofId={}", request.getProofId());
+        return ApiResponse.onSuccess(_OK, response);
     }
 }

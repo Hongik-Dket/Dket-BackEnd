@@ -31,8 +31,10 @@ public class ResaleController {
             @PathVariable("ticketId") Long ticketId,
             @RequestBody ResaleListingDTO request
     ) {
-        log.info("POST /api/resales/{}", ticketId);
-        return ApiResponse.onSuccess(_OK, resaleService.createResale(ticketId, request));
+        log.info("REQ   POST /api/resales/{}", ticketId);
+        ResaleInfoWithChallengeDTO response = resaleService.createResale(ticketId, request);
+        log.info("RES   POST /api/resales/{}", ticketId);
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "리세일 티켓 판매 서명")
@@ -41,8 +43,9 @@ public class ResaleController {
             @PathVariable("ticketId") Long ticketId,
             @RequestBody SignatureDTO request
             ) {
-        log.info("PATCH /api/resales/{ticketId}/sign", ticketId);
+        log.info("REQ   PATCH /api/resales/{ticketId}/sign", ticketId);
         resaleService.signResale(ticketId, request);
+        log.info("RES   PATCH /api/resales/{ticketId}/sign", ticketId);
 
         return ApiResponse.onSuccess(_OK, null);
     }
@@ -52,8 +55,10 @@ public class ResaleController {
     public ApiResponse<List<ResaleCardDTO>> getSessionResales(
             @RequestParam("sessionId") Long sessionId
     ) {
-        log.info("GET /api/resales?sessionId={}", sessionId);
-        return ApiResponse.onSuccess(_OK, resaleService.getSessionResales(sessionId));
+        log.info("REQ   GET /api/resales?sessionId={}", sessionId);
+        List<ResaleCardDTO> response = resaleService.getSessionResales(sessionId);
+        log.info("RES   GET /api/resales?sessionId={}", sessionId);
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "리세일 예약")
@@ -61,8 +66,10 @@ public class ResaleController {
     public ApiResponse<ResaleDetailDTO> reserveResale(
             @PathVariable("resaleId") Long resaleId
     ) {
-        log.info("PATCH /api/resales/{}/reserve", resaleId);
-        return ApiResponse.onSuccess(_OK, resaleService.reserveResale(resaleId));
+        log.info("REQ   PATCH /api/resales/{}/reserve", resaleId);
+        ResaleDetailDTO response = resaleService.reserveResale(resaleId);
+        log.info("RES   PATCH /api/resales/{}/reserve", resaleId);
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "리세일 예약 취소")
@@ -70,8 +77,9 @@ public class ResaleController {
     public ApiResponse<?> cancelResaleReservation(
             @PathVariable("resaleId") Long resaleId
     ) {
-        log.info("DELETE /api/resales/{}/reserve", resaleId);
+        log.info("REQ   DELETE /api/resales/{}/reserve", resaleId);
         resaleService.cancelResaleReservation(resaleId);
+        log.info("RES   DELETE /api/resales/{}/reserve", resaleId);
 
         return ApiResponse.onSuccess(_OK, null);
     }
@@ -81,7 +89,9 @@ public class ResaleController {
     public ApiResponse<ResaleAuthDTO> authorizeResalePurchase(
             @PathVariable("resaleId") Long resaleId
     ) {
-        log.info("POST /api/resales/{}/purchase", resaleId);
-        return ApiResponse.onSuccess(_OK, resaleService.authorizeResalePurchase(resaleId));
+        log.info("REQ   POST /api/resales/{}/purchase", resaleId);
+        ResaleAuthDTO response = resaleService.authorizeResalePurchase(resaleId);
+        log.info("RES   POST /api/resales/{}/purchase", resaleId);
+        return ApiResponse.onSuccess(_OK, response);
     }
 }

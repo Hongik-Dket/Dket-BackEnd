@@ -25,8 +25,10 @@ public class AuthController {
     public ApiResponse<LoginResponseDTO> signupWithPassport(
             @RequestBody PassportSignupDTO request
             ) {
-        log.info("POST /auth/signup/passport");
-        return ApiResponse.onSuccess(_OK, userService.signupWithPassport(request));
+        log.info("REQ   POST /auth/signup/passport");
+        LoginResponseDTO response = userService.signupWithPassport(request);
+        log.info("RES   POST /auth/signup/passport");
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "메타마스크로 로그인")
@@ -34,8 +36,10 @@ public class AuthController {
     public ApiResponse<LoginResponseDTO> loginWithMetaMask(
             @RequestBody MetaMaskLoginDTO request
     ) {
-        log.info("POST /auth/metamask");
-        return ApiResponse.onSuccess(_OK, userService.loginWithMetaMask(request));
+        log.info("REQ   POST /auth/metamask");
+        LoginResponseDTO response = userService.loginWithMetaMask(request);
+        log.info("RES   POST /auth/metamask");
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "개발용 리프레쉬 토큰 발급")

@@ -5,12 +5,14 @@ import com.example.demo.domain.metadata.entity.PhotoCard;
 import com.example.demo.domain.metadata.service.PhotoCardService;
 import com.example.demo.global.infra.ipfs.PinataService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -31,6 +33,7 @@ public class PhotoCardServiceImpl implements PhotoCardService {
                     .build();
 
             concert.addPhotoCard(photoCard);
+            log.info("INSERT   photoCardId={}", photoCard.getId());
         }
     }
 

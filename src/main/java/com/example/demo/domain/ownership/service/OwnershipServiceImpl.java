@@ -20,6 +20,7 @@ import com.example.demo.global.response.status.ErrorStatus;
 import com.example.demo.global.zkp.poseidon.Poseidon;
 import com.example.demo.global.zkp.poseidon.PoseidonMerkleService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,7 @@ import java.util.List;
 import static com.example.demo.global.base.Constants.OWN_TAG;
 import static com.example.demo.global.util.Hexes.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -148,12 +150,15 @@ public class OwnershipServiceImpl implements OwnershipService {
         aggregate.addItem(ownership);
         ownershipRepository.save(ownership);
 
-
         List<String> leafHexes = ownershipRepository.findOwnerLeafHexesBySessionId(aggregate.getSessionId());
         String poseidonRoot = poseidonMerkleService.rootHex(leafHexes);
 
         aggregate.update(leafHexes.size(), poseidonRoot, blockNo);
         session.setOwnersRoot(hexToBytes(poseidonRoot));
+
+        log.info("INSERT   ownershipId={}, sessionId={}, userId={}, ticketId={}",
+                ownership.getId(), session.getId(), user.getId(), ticket.getId());
+        log.info("UPDATE   ownersRoot={}", poseidonRoot);
 
         dketNFTService.updateOwnersRoot(session);
     }

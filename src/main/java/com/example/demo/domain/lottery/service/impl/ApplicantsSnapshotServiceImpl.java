@@ -12,6 +12,7 @@ import com.example.demo.domain.concert.enums.ConcertStatus;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ import java.util.List;
 import static com.example.demo.global.util.Hexes.toBytesList;
 import static com.example.demo.global.util.Keccak.keccakListHash;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -53,6 +55,8 @@ public class ApplicantsSnapshotServiceImpl implements ApplicantsSnapshotService 
                 .totalCount(0)
                 .build();
         applicantsSnapshotRepository.save(snapshot);
+
+        log.info("INSERT   sessionId={}, applicantsSnapshotId={}", session.getId(), snapshot.getId());
 
         int idx = 0;
         List<String> leaves = new ArrayList<>(applyList.size());

@@ -6,9 +6,11 @@ import com.example.demo.domain.metadata.service.MetadataCommandService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -23,6 +25,7 @@ public class MetadataCommandServiceImpl implements MetadataCommandService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.METADATA_NOT_FOUND));
 
         metadata.setCid(cid);
+        log.info("UPDATE   metadata cid: metadataId={}", metadataId);
     }
 
 }

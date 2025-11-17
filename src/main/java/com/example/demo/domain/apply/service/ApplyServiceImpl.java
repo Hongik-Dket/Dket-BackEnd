@@ -15,6 +15,7 @@ import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import com.example.demo.global.zkp.poseidon.Poseidon;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ import java.util.List;
 import static com.example.demo.global.base.Constants.APPLY_TAG;
 import static com.example.demo.global.util.Hexes.*;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -97,6 +99,8 @@ public class ApplyServiceImpl implements ApplyService {
         applyRepository.save(apply);
         user.addApply(apply);
         session.addApply(apply);
+
+        log.info("INSERT   applyId={}, sessionId={}, userId={}", apply.getId(), session.getId(), user.getId());
 
         return ApplyResponseDTO.builder()
                 .applyId(apply.getId())

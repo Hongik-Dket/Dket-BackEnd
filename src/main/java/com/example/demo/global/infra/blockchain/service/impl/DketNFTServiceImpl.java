@@ -83,6 +83,7 @@ public class DketNFTServiceImpl implements DketNFTService {
                     sessionIds,
                     startAts
             ).send();
+            log.info("send DketNFT.createConcert: concertId={}", concert.getId());
 
             return tx.getTransactionHash();
         } catch (Exception e) {
@@ -105,6 +106,7 @@ public class DketNFTServiceImpl implements DketNFTService {
                     BigInteger.valueOf(session.getId()),
                     metadataUris
             ).send();
+            log.info("send DketNFT.mintSessionTicket: sessionId={}", session.getId());
         } catch (Exception e) {
             log.error("Session [{}] mintSessionTicket 실패", session.getId(), e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
@@ -119,6 +121,7 @@ public class DketNFTServiceImpl implements DketNFTService {
                     hexToBytes(snapshot.getListHash()),
                     BigInteger.valueOf(Integer.toUnsignedLong(snapshot.getTotalCount()))
             ).send();
+            log.info("send DketNFT.setApplicantsListCommitment: sessionId={}", session.getId());
         } catch (Exception e) {
             log.error("Session [{}] setApplicantsListCommitment 실패", session.getId(), e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
@@ -133,6 +136,7 @@ public class DketNFTServiceImpl implements DketNFTService {
                     BigInteger.valueOf(Integer.toUnsignedLong(count)),
                     leaves
             ).send();
+            log.info("send DketNFT.drawWinners: sessionId={}", session.getId());
         } catch (Exception e) {
             log.error("Session [{}] drawWinners 실패", session.getId(), e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
@@ -146,6 +150,8 @@ public class DketNFTServiceImpl implements DketNFTService {
                     BigInteger.valueOf(session.getId()),
                     session.getWinnersRoot()
             ).send();
+            log.info("send DketNFT.finalizeWinnersRoot: sessionId={}, winnersRoot={}",
+                    session.getId(), session.getWinnersRoot());
         } catch (Exception e) {
             log.error("Session [{}] finalizeWinnersRoot 실패", session.getId(), e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
@@ -156,6 +162,7 @@ public class DketNFTServiceImpl implements DketNFTService {
     public void setDrawnOnChain(Session session) {
         try {
             dketNFT.setDrawn(BigInteger.valueOf(session.getId())).send();
+            log.info("send DketNFT.setDrawn: sessionId={}", session.getId());
         } catch (Exception e) {
             log.error("Session [{}] setDrawn 실패", session.getId(), e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
@@ -166,6 +173,7 @@ public class DketNFTServiceImpl implements DketNFTService {
     public void openPublicSaleOnChain(Concert concert) {
         try {
             dketNFT.openPublicSale(BigInteger.valueOf(concert.getId())).send();
+            log.info("send DketNFT.openPublicSale: concertId={}", concert.getId());
         } catch (Exception e) {
             log.error("Concert [{}] 온체인 선착순 판매 전환 실패", concert.getId(), e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
@@ -179,6 +187,8 @@ public class DketNFTServiceImpl implements DketNFTService {
                     BigInteger.valueOf(session.getId()),
                     session.getOwnersRoot()
             ).send();
+            log.info("send DketNFT.updateOwnersRoot: sessionId={}, ownersRoot={}",
+                    session.getId(), session.getOwnersRoot());
         } catch (Exception e) {
             log.error("Session [{}] updateOwnersRoot 실패", session.getId(), e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
@@ -194,6 +204,7 @@ public class DketNFTServiceImpl implements DketNFTService {
                     proof,
                     nullifier
             ).send();
+            log.info("send DketNFT.enter: ticketId={}", ticket.getId());
         } catch (Exception e) {
             log.error("Ticket [{}] 입장 실패", ticket.getId(), e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
