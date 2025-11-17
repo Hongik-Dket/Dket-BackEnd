@@ -26,7 +26,9 @@ public class ApplyController {
             @PathVariable Long concertId,
             @PathVariable Long sessionId
     ) {
-        log.info("POST /api/buyer/concerts/{}/sessions/{}/apply", concertId, sessionId);
-        return ApiResponse.onSuccess(_OK, applyService.applyToSession(concertId, sessionId));
+        log.info("REQ   POST /api/buyer/concerts/{}/sessions/{}/apply", concertId, sessionId);
+        ApplyResponseDTO response =  applyService.applyToSession(concertId, sessionId);
+        log.info("RES   POST /api/buyer/concerts/{}/sessions/{}/apply", concertId, sessionId);
+        return ApiResponse.onSuccess(_OK, response);
     }
 }

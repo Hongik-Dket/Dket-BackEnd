@@ -32,6 +32,7 @@ import com.example.demo.global.zkp.signature.service.SecureEnclaveVerifier;
 import jakarta.persistence.LockTimeoutException;
 import jakarta.persistence.PessimisticLockException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -47,6 +48,7 @@ import java.util.List;
 import static com.example.demo.domain.resale.converter.ResaleConverter.*;
 import static com.example.demo.global.base.Constants.PAYMENT_AVAILABLE_BEFORE_CONCERT_START;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -83,6 +85,8 @@ public class ResaleServiceImpl implements ResaleService {
 
         Resale resale = toResale(ticket, user, priceKrw, priceWei);
         resaleRepository.save(resale);
+        log.info("INSERT   resaleId={}, sessionId={}, ticketId={}, userId={}",
+                resale.getId(), resale.getSession().getId(), ticketId, user.getId());
 
         schedulingService.scheduleResaleJob(resale, CancelListingJob.class);
 
@@ -140,7 +144,9 @@ public class ResaleServiceImpl implements ResaleService {
         }
 
         resale.verifySignature();
+        log.info("UPDATE   resale [{}] signed", resale.getId());
         challenge.setUsed();
+        log.info("UPDATE   challenge [{}] used", challenge.getId());
     }
 
     @Override
@@ -173,6 +179,7 @@ public class ResaleServiceImpl implements ResaleService {
 
         resale.completeListing();
         resaleRepository.save(resale);
+        log.info("UPDATE   resale [{}] listed", resale.getId());
 
         String jobName = "CancelListingJob_" + resaleId;
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
@@ -214,6 +221,8 @@ public class ResaleServiceImpl implements ResaleService {
         resaleRepository.save(resale);
         schedulingService.scheduleResaleJob(resale, CancelReservationJob.class);
 
+        log.info("UPDATE   resale [{}] reserved, userId={}", resale.getId(), user.getId());
+
         return toResaleDetailDTO(resale);
     }
 
@@ -235,6 +244,7 @@ public class ResaleServiceImpl implements ResaleService {
         }
         resale.cancelReservation();
         resaleRepository.save(resale);
+        log.info("UPDATE   resale [{}] cancelled", resale.getId());
 
         String jobName = "CancelReservationJob_" + resaleId;
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
@@ -261,6 +271,7 @@ public class ResaleServiceImpl implements ResaleService {
 
         resale.prepare();
         resaleRepository.save(resale);
+        log.info("UPDATE   resale [{}] prepared", resale.getId());
 
         String jobName = "CancelReservationJob_" + resaleId;
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
@@ -299,6 +310,9 @@ public class ResaleServiceImpl implements ResaleService {
 
         resale.sell();
         resale.getTicket().resellTo(resale.getBuyer());
+
+        log.info("UPDATE   resale [{}] sold", resale.getId());
+        log.info("UPDATE   ticket [{}] transferred", resale.getTicket().getId());
     }
 
     private void validateResaleListing(Long sellerId, Ticket ticket, int priceKrw) {

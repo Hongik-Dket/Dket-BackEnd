@@ -28,36 +28,46 @@ public class BuyerHomeController {
     @Operation(summary = "구매자 - 홈 화면 조회")
     @GetMapping("")
     public ApiResponse<BuyerHomeResponseDTO> getBuyerHome() {
-        log.info("GET /api/buyer/home");
-        return ApiResponse.onSuccess(_OK, buyerHomeService.getHomeForBuyer());
+        log.info("REQ   GET /api/buyer/home");
+        BuyerHomeResponseDTO response = buyerHomeService.getHomeForBuyer();
+        log.info("RES GET  /api/buyer/home");
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "구매자 - 인기 공연 조회")
     @GetMapping("/popular")
     public ApiResponse<ConcertCardListDTO> getPopularConcerts() {
-        log.info("GET /api/buyer/home/popular");
-        return ApiResponse.onSuccess(_OK, buyerHomeService.getPopularConcertsForBuyer());
+        log.info("REQ   GET /api/buyer/home/popular");
+        ConcertCardListDTO response = buyerHomeService.getPopularConcertsForBuyer();
+        log.info("RES   GET /api/buyer/home/popular");
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "구매자 - 응모한 공연 조회")
     @GetMapping("/applied")
     public ApiResponse<ConcertCardListDTO> getAppliedConcerts() {
-        log.info("GET /api/buyer/home/applied");
-        return ApiResponse.onSuccess(_OK, buyerHomeService.getAppliedConcertsForBuyer());
+        log.info("REQ   GET /api/buyer/home/applied");
+        ConcertCardListDTO response = buyerHomeService.getAppliedConcertsForBuyer();
+        log.info("RES   GET /api/buyer/home/applied");
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "구매자 - 구매한 공연 조회")
     @GetMapping("/purchased")
     public ApiResponse<ConcertCardListDTO> getPurchasedConcerts() {
-        log.info("GET /api/buyer/home/purchased");
-        return ApiResponse.onSuccess(_OK, buyerHomeService.getPurchasedConcertsForBuyer());
+        log.info("REQ   GET /api/buyer/home/purchased");
+        ConcertCardListDTO response = buyerHomeService.getPurchasedConcertsForBuyer();
+        log.info("RES   GET /api/buyer/home/purchased");
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "구매자 - 전체 공연 조회")
     @GetMapping("/entire")
     public ApiResponse<ConcertCardListDTO> getEntireConcerts() {
-        log.info("GET /api/buyer/home/entire");
-        return ApiResponse.onSuccess(_OK, buyerHomeService.getEntireConcertsForBuyer());
+        log.info("REQ   GET /api/buyer/home/entire");
+        ConcertCardListDTO response = buyerHomeService.getEntireConcertsForBuyer();
+        log.info("RES   GET /api/buyer/home/entire");
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "구매자 - 검색")
@@ -65,7 +75,9 @@ public class BuyerHomeController {
     public ApiResponse<List<ConcertCardDTO>> searchConcerts(
             @RequestParam("keyword") String keyword
     ) {
-        log.info("GET /api/buyer/home/search?keyword={}", keyword);
-        return ApiResponse.onSuccess(_OK, buyerHomeService.searchConcert(keyword));
+        log.info("REQ   GET /api/buyer/home/search?keyword={}", keyword);
+        List<ConcertCardDTO> response = buyerHomeService.searchConcert(keyword);
+        log.info("RES   GET /api/buyer/home/search?keyword={}", keyword);
+        return ApiResponse.onSuccess(_OK, response);
     }
 }

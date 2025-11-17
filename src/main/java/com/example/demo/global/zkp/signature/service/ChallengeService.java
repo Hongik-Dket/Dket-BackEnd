@@ -4,6 +4,7 @@ import com.example.demo.global.zkp.signature.entity.Challenge;
 import com.example.demo.global.zkp.signature.enums.ChallengePurpose;
 import com.example.demo.global.zkp.signature.repository.ChallengeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,7 @@ import java.util.UUID;
 import static com.example.demo.global.base.Constants.CHALLENGE_EXPIRATION_MINUTES;
 import static com.example.demo.global.util.Hexes.random32BytesHex;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -38,6 +40,7 @@ public class ChallengeService {
 
         challenge.setMessage(buildChallengeMessage(challenge));
         challengeRepository.save(challenge);
+        log.info("INSERT   challenge={}", challenge.getMessage());
 
         return challenge;
     }
@@ -70,6 +73,7 @@ public class ChallengeService {
 
         challenge.setMessage(buildChallengeMessageForResale(challenge));
         challengeRepository.save(challenge);
+        log.info("INSERT   challenge={}", challenge.getMessage());
 
         return challenge;
     }

@@ -89,6 +89,8 @@ public class MetadataServiceImpl implements MetadataService {
                 .map(Metadata::getId)
                 .collect(Collectors.toList());
 
+        log.info("INSERT   metadata: metadataIds={}", metadataIds);
+
         return metadataIds;
     }
 
@@ -195,7 +197,7 @@ public class MetadataServiceImpl implements MetadataService {
         try {
             return objectMapper.writeValueAsString(metadataJson);
         } catch (JsonProcessingException e) {
-            log.error("JSON 변환 실패: {}", e.getMessage(), e);
+            log.error("metadata [{}] JSON 변환 실패: {}", metadata.getId(), e.getMessage(), e);
             throw new CustomException(ErrorStatus.METADATA_JSON_CONVERT_FAILED);
         }
     }

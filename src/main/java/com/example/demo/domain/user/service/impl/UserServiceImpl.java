@@ -16,6 +16,7 @@ import com.example.demo.global.security.JwtProvider;
 import com.example.demo.global.security.dto.request.PassportSignupDTO;
 import com.example.demo.global.zkp.ic.IcService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import static com.example.demo.domain.user.converter.UserConverter.toPassportInf
 import static com.example.demo.global.util.StringUtil.normalize;
 import static com.example.demo.global.zkp.ic.IcService.newSalt16;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -73,9 +75,11 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         userRepository.save(user);
+        log.info("INSERT   userId={}", user.getId());
 
         PassportIdentity passportIdentity = toPassportInfo(user, request);
         passportIdentityRepository.save(passportIdentity);
+        log.info("INSERT   passportIdentity={}", passportIdentity);
 
         String token = jwtProvider.generateToken(user.getId());
         return LoginResponseDTO.builder()
@@ -113,6 +117,7 @@ public class UserServiceImpl implements UserService {
         }
 
         user.completeSignup(walletAddress, publicKey);
+        log.info("UPDATE   user [{}] : walletAddress={}, publicKey={}", user.getId(), walletAddress, publicKey);
 
         LocalDate birth = user.getBirth();
         byte[] salt16 = newSalt16();
@@ -133,6 +138,7 @@ public class UserServiceImpl implements UserService {
         }
 
         user.createIc(ic);
+        log.info("UPDATE   user [{}] IC", user.getId());
     }
 
     @Override

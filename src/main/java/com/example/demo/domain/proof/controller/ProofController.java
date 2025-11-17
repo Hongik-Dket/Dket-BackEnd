@@ -26,8 +26,10 @@ public class ProofController {
     public ApiResponse<ProofDTO> issueWinProof(
             @RequestBody ProofAuthDTO request
     ) {
-        log.info("POST /api/proofs/win");
-        return ApiResponse.onSuccess(_OK, proofService.issueWinProof(request));
+        log.info("REQ   POST /api/proofs/win");
+        ProofDTO response = proofService.issueWinProof(request);
+        log.info("RES POST /api/proofs/win");
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "소유 증명 서명 챌린지 발급")
@@ -35,8 +37,10 @@ public class ProofController {
     public ApiResponse<ChallengeDTO> issueChallengeForOwn(
             @RequestParam Long ticketId
     ) {
-        log.info("GET /api/proofs/own?ticketId={}", ticketId);
-        return ApiResponse.onSuccess(_OK, proofService.issueChallenge(ticketId));
+        log.info("REQ   GET /api/proofs/own?ticketId={}", ticketId);
+        ChallengeDTO response = proofService.issueChallenge(ticketId);
+        log.info("RES GET /api/proofs/own?ticketId={}", ticketId);
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "소유 증명 생성")
@@ -44,8 +48,10 @@ public class ProofController {
     public ApiResponse<ProofQrCodeDTO> issueOwnProof(
             @RequestBody ProofAuthDTO request
     ) {
-        log.info("POST /api/proofs/own");
-        return ApiResponse.onSuccess(_OK, proofService.issueOwnProof(request));
+        log.info("REQ   POST /api/proofs/own");
+        ProofQrCodeDTO response = proofService.issueOwnProof(request);
+        log.info("RES   POST /api/proofs/own");
+        return ApiResponse.onSuccess(_OK, response);
     }
 
 }

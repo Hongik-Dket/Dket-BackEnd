@@ -32,8 +32,9 @@ public class UserController {
     public ApiResponse<?> connectMetaMaskWallet(
             @RequestBody MetaMaskLoginDTO request
     ) {
-        log.info("POST /api/user/signup/metamask/complete");
+        log.info("REQ   POST /api/user/signup/metamask/complete");
         userService.connectWallet(request);
+        log.info("RES   POST /api/user/signup/metamask/complete");
 
         return ApiResponse.onSuccess(_OK, null);
     }
@@ -47,29 +48,37 @@ public class UserController {
     @Operation(summary = "여권 정보 확인하기")
     @GetMapping("/passport")
     public ApiResponse<PassportInfoDTO> getPassportInfo() {
-        log.info("GET /api/user/passport");
-        return ApiResponse.onSuccess(_OK, userService.getPassportInfo());
+        log.info("REQ   GET /api/user/passport");
+        PassportInfoDTO response = userService.getPassportInfo();
+        log.info("RES   GET /api/user/passport");
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "지갑 정보 조회하기")
     @GetMapping("/wallet")
     public ApiResponse<WalletDTO> getWallet() {
-        log.info("GET /api/user/wallet");
-        return ApiResponse.onSuccess(_OK, mypageService.getWalletInfo());
+        log.info("REQ   GET /api/user/wallet");
+        WalletDTO response = mypageService.getWalletInfo();
+        log.info("RES   GET /api/user/wallet");
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "내 티켓 목록 조회하기")
     @GetMapping("/tickets")
     public ApiResponse<List<TicketCardDTO>> getTickets() {
-        log.info("GET /api/user/tickets");
-        return ApiResponse.onSuccess(_OK, mypageService.getMyTickets());
+        log.info("REQ   GET /api/user/tickets");
+        List<TicketCardDTO> response = mypageService.getMyTickets();
+        log.info("RES   GET /api/user/tickets");
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "내 포토카드 목록 조회하기")
     @GetMapping("/photocards")
     public ApiResponse<List<PhotoCardDTO>> getPhotoCards() {
-        log.info("GET /api/user/photocards");
-        return ApiResponse.onSuccess(_OK, mypageService.getMyPhotoCards());
+        log.info("REQ   GET /api/user/photocards");
+        List<PhotoCardDTO> response = mypageService.getMyPhotoCards();
+        log.info("RES   GET /api/user/photocards");
+        return ApiResponse.onSuccess(_OK, response);
     }
 
 }

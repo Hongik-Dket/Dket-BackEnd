@@ -23,8 +23,10 @@ public class BuyerTicketController {
     public ApiResponse<TicketDetailDTO> getTicket(
             @PathVariable("ticketId") Long ticketId
     ) {
-        log.info("GET /api/buyer/tickets/{}", ticketId);
-        return ApiResponse.onSuccess(_OK, buyerTicketService.getTicketDetail(ticketId));
+        log.info("REQ   GET /api/buyer/tickets/{}", ticketId);
+        TicketDetailDTO response = buyerTicketService.getTicketDetail(ticketId);
+        log.info("RES   GET /api/buyer/tickets/{}", ticketId);
+        return ApiResponse.onSuccess(_OK, response);
     }
 
 }

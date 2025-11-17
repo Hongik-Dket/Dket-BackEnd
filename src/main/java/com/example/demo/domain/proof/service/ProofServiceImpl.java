@@ -74,6 +74,8 @@ public class ProofServiceImpl implements ProofService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.SNAPSHOT_ITEM_NOT_FOUND));
 
         if (!user.getPublicKey().equals(request.getPublicKey())) {
+            log.error("Invalid public key: userId={}, user.publicKey={}, request.publicKey={}",
+                    user.getId(), user.getPublicKey(), request.getPublicKey());
             throw new CustomException(ErrorStatus.SIG_PUBKEY_MISMATCH_USER);
         }
 
@@ -114,6 +116,7 @@ public class ProofServiceImpl implements ProofService {
         );
 
         challenge.setUsed();
+        log.info("UPDATE   challenge [{}] used", challenge.getId());
 
         return ProofDTO.builder()
                 .proof(proof.getProof())
@@ -158,6 +161,8 @@ public class ProofServiceImpl implements ProofService {
         }
 
         if (!user.getPublicKey().equals(request.getPublicKey())) {
+            log.error("Invalid public key: userId={}, user.publicKey={}, request.publicKey={}",
+                    user.getId(), user.getPublicKey(), request.getPublicKey());
             throw new CustomException(ErrorStatus.SIG_PUBKEY_MISMATCH_USER);
         }
 
@@ -204,6 +209,7 @@ public class ProofServiceImpl implements ProofService {
         );
 
         challenge.setUsed();
+        log.info("UPDATE   challenge [{}] used", challenge.getId());
 
         String json;
         try {
@@ -222,6 +228,7 @@ public class ProofServiceImpl implements ProofService {
                 .nullifier(proof.getPublicSignals().get(2))
                 .build();
         ownProofRepository.save(ownProof);
+        log.info("INSERT   ownProofId={}", ownProof.getId());
 
         log.info("Creating QR Code image... : session [{}], user [{}], ticket [{}]",
                 session.getId(), user.getId(), ticket.getId());

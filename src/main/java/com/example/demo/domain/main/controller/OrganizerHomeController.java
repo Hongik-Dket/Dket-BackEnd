@@ -24,28 +24,36 @@ public class OrganizerHomeController {
     @Operation(summary = "개최자 - 홈 화면 조회")
     @GetMapping("")
     public ApiResponse<OrganizerHomeResponseDTO> getOrganizerHome() {
-        log.info("GET /api/organizer/home");
-        return ApiResponse.onSuccess(_OK, organizerHomeService.getHomeForOrganizer());
+        log.info("REQ   GET /api/organizer/home");
+        OrganizerHomeResponseDTO response = organizerHomeService.getHomeForOrganizer();
+        log.info("RES   GET /api/organizer/home");
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "개최자 - 오늘 공연 조회")
     @GetMapping("/today")
     public ApiResponse<ConcertCardListDTO> getTodayConcertsOrganizer() {
-        log.info("GET /api/organizer/home/today");
-        return ApiResponse.onSuccess(_OK, organizerHomeService.getTodayConcertsForOrganizer());
+        log.info("REQ   GET /api/organizer/home/today");
+        ConcertCardListDTO response = organizerHomeService.getTodayConcertsForOrganizer();
+        log.info("RES   GET /api/organizer/home/today");
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "개최자 - 최근 응모 마감 공연 조회")
     @GetMapping("/closed")
     public ApiResponse<ConcertCardListDTO> getClosedConcertsOrganizer() {
-        log.info("GET /api/organizer/home/closed");
-        return ApiResponse.onSuccess(_OK, organizerHomeService.getClosedConcertsForOrganizer());
+        log.info("REQ   GET /api/organizer/home/closed");
+        ConcertCardListDTO response = organizerHomeService.getClosedConcertsForOrganizer();
+        log.info("RES   GET /api/organizer/home/closed");
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "개최자 - 개최한 전체 공연 조회")
     @GetMapping("/all")
     public ApiResponse<ConcertCardListDTO> getAllConcertsOrganizer() {
-        log.info("GET /api/organizer/home/all");
-        return ApiResponse.onSuccess(_OK, organizerHomeService.getAllConcertsForOrganizer());
+        log.info("REQ   GET /api/organizer/home/all");
+        ConcertCardListDTO response = organizerHomeService.getAllConcertsForOrganizer();
+        log.info("RES   GET /api/organizer/home/all");
+        return ApiResponse.onSuccess(_OK, response);
     }
 }

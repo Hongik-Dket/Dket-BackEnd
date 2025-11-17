@@ -14,6 +14,7 @@ import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -57,12 +59,15 @@ public class TicketServiceImpl implements TicketService {
 
             metadata.getSession().addTicket(ticket);
         }
+        log.info("INSERT   tickets: tokenIds={}", tokenIdList);
 
         Session session = metadataList.get(0).getSession();
         session.setIsMinted();
+        log.info("UPDATE   session [{}] isMinted", session.getId());
 
         if (session.isDrawn()) {
             session.setIsBuyable(true);
+            log.info("UPDATE   session [{}] isBuyable", session.getId());
         }
     }
 
@@ -79,6 +84,7 @@ public class TicketServiceImpl implements TicketService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.TICKET_NOT_FOUND));
 
         ticket.paidBy(user);
+        log.info("UPDATE   ticket [{}] paid by user [{}]", ticket.getId(), user.getId());
 
         applyRepository.findBySessionIdAndUserId(sessionId, user.getId())
                 .ifPresent(apply -> apply.setApplyStatus(ApplyStatus.PAID));

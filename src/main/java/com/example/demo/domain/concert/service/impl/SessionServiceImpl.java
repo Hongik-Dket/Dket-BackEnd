@@ -20,11 +20,13 @@ import com.example.demo.global.zkp.signature.entity.Challenge;
 import com.example.demo.global.zkp.signature.enums.ChallengePurpose;
 import com.example.demo.global.zkp.signature.service.ChallengeService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -50,6 +52,8 @@ public class SessionServiceImpl implements SessionService {
 
             sessionRepository.save(session);
             schedulingService.scheduleSessionJob(session, ClosePaymentJob.class);
+
+            log.info("INSERT   concertId={}, sessionId={}", concert.getId(), session.getId());
         }
     }
 

@@ -31,16 +31,20 @@ public class OrganizerConcertController {
     @Operation(summary = "개최자 - 공연 상세 조회")
     @GetMapping("/{concertId}")
     public ApiResponse<OrganizerConcertDetailDTO> getConcertDetailForOrganizer(@PathVariable Long concertId) {
-        log.info("GET /api/organizer/concerts/{}/concert", concertId);
-        return ApiResponse.onSuccess(_OK, organizerConcertService.getConcertDetailForOrganizer(concertId));
+        log.info("REQ   GET /api/organizer/concerts/{}/concert", concertId);
+        OrganizerConcertDetailDTO response = organizerConcertService.getConcertDetailForOrganizer(concertId);
+        log.info("RES   GET /api/organizer/concerts/{}/concert", concertId);
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "개최자 - 회차 상세 조회")
     @GetMapping("/{concertId}/{sessionId}")
     public ApiResponse<OrganizerSessionInfoDTO> getSessionInfoForOrganizer(
             @PathVariable Long concertId, @PathVariable Long sessionId) {
-        log.info("GET /api/organizer/concerts/{}/{}}", concertId, sessionId);
-        return ApiResponse.onSuccess(_OK, organizerConcertService.getSessionInfoForOrganizer(concertId, sessionId));
+        log.info("REQ   GET /api/organizer/concerts/{}/{}", concertId, sessionId);
+        OrganizerSessionInfoDTO response = organizerConcertService.getSessionInfoForOrganizer(concertId, sessionId);
+        log.info("RES   GET /api/organizer/concerts/{}/{}", concertId, sessionId);
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "개최자 - 공연 개최하기",
@@ -53,8 +57,10 @@ public class OrganizerConcertController {
             @RequestPart(name = "poster") MultipartFile poster,
             @RequestPart(name = "photocardList") List<MultipartFile> photoCardList
     ) {
-        log.info("POST /api/organizer/concerts");
-        return ApiResponse.onSuccess(_OK, organizerConcertService.uploadConcert(request, banner, poster, photoCardList));
+        log.info("REQ   POST /api/organizer/concerts");
+        ResponseDTO response = organizerConcertService.uploadConcert(request, banner, poster, photoCardList);
+        log.info("RES   POST /api/organizer/concerts");
+        return ApiResponse.onSuccess(_OK, response);
     }
 
 }

@@ -19,6 +19,7 @@ import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
 import com.example.demo.global.zkp.poseidon.PoseidonMerkleService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ import java.util.List;
 
 import static com.example.demo.global.util.Hexes.hexToBytes;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -130,6 +132,8 @@ public class LotteryServiceImpl implements LotteryService {
         aggregate.update(winnerLeafHexes.size(), poseidonRoot, blockNumber);
         winnersAggregateRepository.save(aggregate);
 
+        log.info("UPDATE   winnersRoot={}", poseidonRoot);
+
         int winners = aggregate.getWinnersCount();
         if (applies == winners || session.getConcert().getCapacity() == winners) {
             List<Long> winnerIdList = applyRepository.findIdsBySessionIdAndApplyStatus(sessionId, ApplyStatus.SELECTED);
@@ -139,8 +143,11 @@ public class LotteryServiceImpl implements LotteryService {
             byte[] root = hexToBytes(poseidonRoot);
 
             session.setIsDrawn(root);
+            log.info("UPDATE   session [{}] isDrawn", session.getId());
+
             if (session.isMinted()) {
                 session.setIsBuyable(true);
+                log.info("UPDATE   session [{}] isBuyable", session.getId());
             }
 
             dketNFTService.finalizeWinnersRoot(session);
@@ -154,9 +161,11 @@ public class LotteryServiceImpl implements LotteryService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
 
         session.setIsDrawn();
+        log.info("UPDATE   session [{}] isDrawn", session.getId());
 
         if (session.isMinted()) {
             session.setIsBuyable(true);
+            log.info("UPDATE   session [{}] isBuyable", session.getId());
         }
     }
 }

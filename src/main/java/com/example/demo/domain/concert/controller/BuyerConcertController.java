@@ -27,14 +27,18 @@ public class BuyerConcertController {
     @Operation(summary = "구매자 - 공연 상세 조회")
     @GetMapping("/{concertId}")
     public ApiResponse<BuyerConcertDetailDTO> getConcertDetailForBuyer(@PathVariable Long concertId) {
-        log.info("GET /api/buyer/concerts/{}", concertId);
-        return ApiResponse.onSuccess(_OK, buyerConcertService.getConcertDetailForBuyer(concertId));
+        log.info("REQ   GET /api/buyer/concerts/{}", concertId);
+        BuyerConcertDetailDTO response = buyerConcertService.getConcertDetailForBuyer(concertId);
+        log.info("RES   GET /api/buyer/concerts/{}", concertId);
+        return ApiResponse.onSuccess(_OK, response);
     }
 
     @Operation(summary = "티켓 가격 확인")
     @GetMapping("/{sessionId}/price")
     public ApiResponse<PriceWeiAndChallengeDTO> getPriceWeiAndChallenge(@PathVariable("sessionId") Long sessionId) {
-        log.info("GET /api/buyer/concerts/{}/price", sessionId);
-        return ApiResponse.onSuccess(_OK, sessionService.getPriceWeiAndChallenge(sessionId));
+        log.info("REQ   GET /api/buyer/concerts/{}/price", sessionId);
+        PriceWeiAndChallengeDTO response = sessionService.getPriceWeiAndChallenge(sessionId);
+        log.info("RES   GET /api/buyer/concerts/{}/price", sessionId);
+        return ApiResponse.onSuccess(_OK, response);
     }
 }

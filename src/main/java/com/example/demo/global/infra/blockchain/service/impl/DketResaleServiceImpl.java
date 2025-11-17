@@ -52,6 +52,7 @@ public class DketResaleServiceImpl implements DketResaleService {
                     resale.getSeller().getWalletAddress(),
                     resale.getPriceWei()
             ).send();
+            log.info("send DketResale.listResale: resaleId={}", resale.getId());
 
             return tx.getTransactionHash();
         } catch (Exception e) {
@@ -67,9 +68,8 @@ public class DketResaleServiceImpl implements DketResaleService {
                 .toList();
 
         try {
-            var tx = dketResale.cancelResaleBatch(
-                    ids
-            ).send();
+            dketResale.cancelResaleBatch(ids).send();
+            log.info("send DketResale.cancelResaleBatch: resaleIds={}", resaleIds);
         } catch (Exception e) {
             log.error("cancelResaleBatch 실패 : resaleIds = {}", resaleIds, e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
