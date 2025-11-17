@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface DketResaleService {
 
-    String listResaleOnChain(Resale resale);
+    void listResaleOnChain(Resale resale);
 
     void cancelResaleBatch(List<Long> resaleIds);
 
