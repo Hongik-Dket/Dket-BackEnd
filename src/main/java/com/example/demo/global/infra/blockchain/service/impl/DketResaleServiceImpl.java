@@ -43,22 +43,21 @@ public class DketResaleServiceImpl implements DketResaleService {
     }
 
     @Override
-    public String listResaleOnChain(Resale resale){
+    public void listResaleOnChain(Resale resale){
+        log.info("Sending DketResale.listResale: resaleId={}", resale.getId());
         try {
-            var tx = dketResale.listResale(
+            dketResale.listResale(
                     BigInteger.valueOf(resale.getId()),
                     resale.getTicket().getTokenId(),
                     BigInteger.valueOf(resale.getSession().getId()),
                     resale.getSeller().getWalletAddress(),
                     resale.getPriceWei()
             ).send();
-            log.info("send DketResale.listResale: resaleId={}", resale.getId());
-
-            return tx.getTransactionHash();
         } catch (Exception e) {
             log.error("Resale [{}] 온체인 기록 실패", resale.getId(), e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
         }
+        log.info("Completed DketResale.listResale: resaleId={}", resale.getId());
     }
 
     @Override
@@ -67,12 +66,13 @@ public class DketResaleServiceImpl implements DketResaleService {
                 .map(BigInteger::valueOf)
                 .toList();
 
+        log.info("Sending DketResale.cancelResaleBatch: resaleIds={}", resaleIds);
         try {
             dketResale.cancelResaleBatch(ids).send();
-            log.info("send DketResale.cancelResaleBatch: resaleIds={}", resaleIds);
         } catch (Exception e) {
             log.error("cancelResaleBatch 실패 : resaleIds = {}", resaleIds, e);
             throw new CustomException(ErrorStatus.BLOCKCHAIN_TRANSACTION_FAILED);
         }
+        log.info("Completed DketResale.cancelResaleBatch: resaleIds={}", resaleIds);
     }
 }

@@ -30,7 +30,7 @@ public class BuyerHomeController {
     public ApiResponse<BuyerHomeResponseDTO> getBuyerHome() {
         log.info("REQ   GET /api/buyer/home");
         BuyerHomeResponseDTO response = buyerHomeService.getHomeForBuyer();
-        log.info("RES GET  /api/buyer/home");
+        log.info("RES   GET /api/buyer/home");
         return ApiResponse.onSuccess(_OK, response);
     }
 
