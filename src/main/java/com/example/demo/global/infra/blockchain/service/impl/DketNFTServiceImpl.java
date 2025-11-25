@@ -9,15 +9,10 @@ import com.example.demo.global.infra.blockchain.contracts.DketNFT;
 import com.example.demo.global.infra.blockchain.service.DketNFTService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.web3j.crypto.Credentials;
-import org.web3j.protocol.Web3j;
-import org.web3j.tx.gas.DefaultGasProvider;
 
 import java.math.BigInteger;
 import java.time.LocalTime;
@@ -33,25 +28,9 @@ import static com.example.demo.global.util.Hexes.hexToBytes;
 @Transactional(readOnly = true)
 public class DketNFTServiceImpl implements DketNFTService {
 
-    private final Web3j web3j;
-    private final Credentials credentials;
-
     private final SessionRepository sessionRepository;
 
-    @Value("${web3.nft-contract-address}")
-    private String nftContractAddress;
-
-    private DketNFT dketNFT;
-
-    @PostConstruct
-    public void init() {
-        dketNFT = DketNFT.load(
-                nftContractAddress,
-                web3j,
-                credentials,
-                new DefaultGasProvider()
-        );
-    }
+    private final DketNFT dketNFT;
 
     @Override
     public String recordConcertOnChain(Concert concert, List<Session> sessionList) {

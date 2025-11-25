@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tx.RawTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
@@ -33,6 +34,11 @@ public class Web3jConfig {
     @Bean
     public Credentials credentials() {
         return Credentials.create(privateKey);
+    }
+
+    @Bean
+    public RawTransactionManager txManager(Web3j web3j, Credentials credentials) {
+        return new RawTransactionManager(web3j, credentials, chainId);
     }
 
     @Bean
