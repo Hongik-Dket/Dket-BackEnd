@@ -39,22 +39,13 @@ public class DketNFTListenService {
     private final ResaleService resaleService;
     private final OwnershipService ownershipService;
 
-    @Value("${web3.nft-contract-address}")
-    private String nftContractAddress;
-
     @Value("${web3.resale-contract-address}")
     private String resaleContractAddress;
 
-    private DketNFT dketNFT;
+    private final DketNFT dketNFT;
 
     @PostConstruct
     public void init() {
-        dketNFT = DketNFT.load(
-                nftContractAddress,
-                web3j,
-                credentials,
-                new DefaultGasProvider()
-        );
 
         listenToRandomFulfilled();
         listenToSessionMinted();

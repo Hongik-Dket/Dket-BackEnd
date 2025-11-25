@@ -5,15 +5,10 @@ import com.example.demo.global.infra.blockchain.contracts.DketResale;
 import com.example.demo.global.infra.blockchain.service.DketResaleService;
 import com.example.demo.global.response.exception.CustomException;
 import com.example.demo.global.response.status.ErrorStatus;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.web3j.crypto.Credentials;
-import org.web3j.protocol.Web3j;
-import org.web3j.tx.gas.DefaultGasProvider;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -24,23 +19,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class DketResaleServiceImpl implements DketResaleService {
 
-    private final Web3j web3j;
-    private final Credentials credentials;
-
-    @Value("${web3.resale-contract-address}")
-    private String contractAddress;
-
-    private DketResale dketResale;
-
-    @PostConstruct
-    public void init() {
-        dketResale = DketResale.load(
-                contractAddress,
-                web3j,
-                credentials,
-                new DefaultGasProvider()
-        );
-    }
+    private final DketResale dketResale;
 
     @Override
     public void listResaleOnChain(Resale resale){
