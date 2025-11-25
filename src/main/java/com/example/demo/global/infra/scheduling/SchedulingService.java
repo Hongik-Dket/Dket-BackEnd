@@ -110,7 +110,7 @@ public class SchedulingService {
             case "OpenPublicJob":
                 triggerTime = concert.getApplyEnd().withHour(0).withMinute(0).withSecond(0).withNano(0)
 //                        .plusDays(Constants.PAYMENT_DEADLINE);
-                        .plusHours(10);
+                        .plusDays(1).minusHours(1);
                 break;
             case "StartConcertJob":
                 triggerTime = LocalDateTime.of(concert.getStartDate(), LocalTime.of(0, 0));
