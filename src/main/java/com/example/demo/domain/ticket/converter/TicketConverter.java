@@ -27,6 +27,7 @@ public class TicketConverter {
                 .price(ticket.getSession().getConcert().getPriceKrw())
                 .isResaleListed(isResaleListed)
                 .photoCardUrl(ticket.getMetadata().getPhotoCard().getUrl())
+                .sessionId(ticket.getSession().getId())
                 .build();
     }
 
