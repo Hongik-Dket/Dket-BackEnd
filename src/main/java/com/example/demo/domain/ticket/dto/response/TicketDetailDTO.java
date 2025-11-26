@@ -26,5 +26,6 @@ public class TicketDetailDTO {
     private int price;
     private Boolean isResaleListed;
     private String photoCardUrl;
+    private Long sessionId;
     
 }
