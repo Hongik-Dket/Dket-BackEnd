@@ -8,7 +8,6 @@ import com.example.demo.domain.user.service.MypageService;
 import com.example.demo.domain.user.service.UserService;
 import com.example.demo.global.response.ApiResponse;
 import com.example.demo.domain.user.dto.request.MetaMaskLoginDTO;
-import com.example.demo.domain.user.dto.response.UserInfoDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,12 +36,6 @@ public class UserController {
         log.info("RES   POST /api/user/signup/metamask/complete");
 
         return ApiResponse.onSuccess(_OK, null);
-    }
-
-    @Operation(summary = "현재 로그인한 사용자 확인하기")
-    @GetMapping("/user-info")
-    public ApiResponse<UserInfoDTO> getUserInfo() {
-        return ApiResponse.onSuccess(_OK, userService.getUserInfo());
     }
 
     @Operation(summary = "여권 정보 확인하기")

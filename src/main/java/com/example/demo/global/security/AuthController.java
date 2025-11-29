@@ -42,11 +42,4 @@ public class AuthController {
         return ApiResponse.onSuccess(_OK, response);
     }
 
-    @Operation(summary = "개발용 리프레쉬 토큰 발급")
-    @GetMapping("/refresh")
-    public ApiResponse<LoginResponseDTO> refreshToken(
-            @RequestParam("userId") Long userId
-    ) {
-        return ApiResponse.onSuccess(_OK, userService.refreshToken(userId));
-    }
 }

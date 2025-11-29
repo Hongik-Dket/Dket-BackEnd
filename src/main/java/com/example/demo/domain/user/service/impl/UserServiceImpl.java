@@ -5,7 +5,6 @@ import com.example.demo.domain.user.entity.PassportIdentity;
 import com.example.demo.domain.user.enums.IdentityType;
 import com.example.demo.domain.user.repository.PassportIdentityRepository;
 import com.example.demo.domain.user.dto.request.MetaMaskLoginDTO;
-import com.example.demo.domain.user.dto.response.UserInfoDTO;
 import com.example.demo.global.security.dto.response.LoginResponseDTO;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
@@ -174,21 +173,4 @@ public class UserServiceImpl implements UserService {
         return toPassportInfoDTO(passport);
     }
 
-    @Override
-    public UserInfoDTO getUserInfo() {
-        return UserInfoDTO.builder()
-                .id(getCurrentUser().getId())
-                .build();
-    }
-
-    @Override
-    public LoginResponseDTO refreshToken(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
-
-        String token = jwtProvider.refreshToken(user.getId());
-        return LoginResponseDTO.builder()
-                .token(token)
-                .build();
-    }
 }
