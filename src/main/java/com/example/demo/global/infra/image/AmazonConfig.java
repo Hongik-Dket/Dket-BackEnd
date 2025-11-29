@@ -52,14 +52,4 @@ public class AmazonConfig {
         return new AWSStaticCredentialsProvider(awsCredentials);
     }
 
-    //KeyName 추출 메서드
-    public String extractKeyFromUrl(String publicUrl) {
-        if (publicUrl.startsWith(BUCKET_DOMAIN)) {
-            return publicUrl.substring(BUCKET_DOMAIN.length());
-        } else {
-            //Todo: 수정
-            throw new IllegalArgumentException("Invalid URL: " + publicUrl);
-        }
-    }
-
 }

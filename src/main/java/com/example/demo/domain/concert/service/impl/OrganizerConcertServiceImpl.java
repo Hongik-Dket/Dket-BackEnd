@@ -99,8 +99,7 @@ public class OrganizerConcertServiceImpl implements OrganizerConcertService {
             ConcertUploadDTO request, MultipartFile banner, MultipartFile poster, List<MultipartFile> photocardList) {
         User user = userService.getCurrentUser();
 
-        // Todo: 시연 영상용 더미데이터 사용 위함. 이후 주석 해제 필요
-//        validateSchedule(request);
+        validateSchedule(request);
 
         String bannerUrl = s3UploadService.saveFile(banner);
         String posterUrl = s3UploadService.saveFile(poster);
