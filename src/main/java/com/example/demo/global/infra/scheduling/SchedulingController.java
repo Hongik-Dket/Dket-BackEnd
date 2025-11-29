@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.example.demo.global.response.status.SuccessStatus._OK;
 
+// 배포 서버 관리용
 @RestController
 @RequestMapping("/api/scheduling")
 @RequiredArgsConstructor
