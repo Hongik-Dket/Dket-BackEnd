@@ -31,8 +31,11 @@ import com.example.demo.global.zkp.proof.ProverService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -60,6 +63,7 @@ public class ProofServiceImpl implements ProofService {
     private final ChallengeService challengeService;
     private final OwnProofRepository ownProofRepository;
     private final ObjectMapper objectMapper;
+    private final TransactionTemplate transactionTemplate;
 
     @Override
     @Transactional
@@ -143,7 +147,7 @@ public class ProofServiceImpl implements ProofService {
 
     @Override
     @Transactional
-    public ProofQrCodeDTO issueOwnProof(ProofAuthDTO request) {
+    public ProofQrCodeDTO getOwnProof(ProofAuthDTO request) {
         Session session = sessionRepository.findById(request.getSessionId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.SESSION_NOT_FOUND));
 
@@ -179,56 +183,15 @@ public class ProofServiceImpl implements ProofService {
             throw new CustomException(ErrorStatus.SIG_INVALID_CHALLENGE);
         }
 
-        Ownership ownership = ownershipRepository.findBySessionIdAndUserId(session.getId(), user.getId())
-                .orElseThrow(() -> new CustomException(ErrorStatus.OWN_NOT_FOUND));
-
         if (!SecureEnclaveVerifier.verify(challenge.getMessage(), request.getSignature(), user.getPublicKey())) {
             throw new CustomException(ErrorStatus.SIG_VERIFY_FAILED);
         }
 
-        List<Ownership> ownerships = ownershipRepository.findAllByOwnersAggregateIdOrderByOrdIndexAsc(
-                ownership.getOwnersAggregate().getId());
-
-        int idx = -1;
-        for (int i = 0; i < ownerships.size(); i++) {
-            if (ownerships.get(i).equals(ownership)) {
-                idx = i;
-                break;
-            }
-        }
-        if (idx < 0) {
-            throw new CustomException(ErrorStatus.ZKP_NOT_AN_OWNER);
-        }
-
-        log.info("Starting ProverService.proveOwn... : session [{}], user [{}], ticket [{}]",
-                session.getId(), user.getId(), ticket.getId());
-        ProverService.Proof proof = proverService.proveOwn(
-                session.getId(),
-                idx,
-                user.getIcCommitment()
-        );
-
         challenge.setUsed();
         log.info("UPDATE   challenge [{}] used", challenge.getId());
 
-        String json;
-        try {
-            json = objectMapper.writeValueAsString(proof.getProof());
-        } catch (Exception e) {
-            log.error("Failed to serialize proof : session[{}], user[{}], ticket[{}]",
-                    session.getId(), user.getId(), ticket.getId(), e);
-            throw new CustomException(ErrorStatus.JSON_CONVERT_FAILED);
-        }
-
-        OwnProof ownProof = OwnProof.builder()
-                .id(UUID.randomUUID().toString())
-                .sessionId(session.getId())
-                .ticketId(ticket.getId())
-                .proofJson(json)
-                .nullifier(proof.getPublicSignals().get(2))
-                .build();
-        ownProofRepository.save(ownProof);
-        log.info("INSERT   ownProofId={}", ownProof.getId());
+        OwnProof ownProof = ownProofRepository.findByTicketId(ticket.getId())
+                .orElseThrow(() -> new CustomException(ErrorStatus.PROOF_NOT_FOUND));
 
         log.info("Creating QR Code image... : session [{}], user [{}], ticket [{}]",
                 session.getId(), user.getId(), ticket.getId());
@@ -239,5 +202,81 @@ public class ProofServiceImpl implements ProofService {
                 .identityType(user.getIdentityType())
                 .build();
     }
+
+    @Override
+    @Async("zkpTaskExecutor")
+    public void issueOwnProof(Long ticketId) {
+        var proofContext = transactionTemplate.execute(status -> {
+            Ticket ticket = ticketRepository.findById(ticketId)
+                    .orElseThrow(() -> new CustomException(ErrorStatus.TICKET_NOT_FOUND));
+
+            Session session = ticket.getSession();
+            User user = ticket.getUser();
+
+            Ownership ownership = ownershipRepository.findBySessionIdAndUserId(session.getId(), user.getId())
+                    .orElseThrow(() -> new CustomException(ErrorStatus.OWN_NOT_FOUND));
+
+            List<Ownership> ownerships = ownershipRepository.findAllByOwnersAggregateIdOrderByOrdIndexAsc(
+                    ownership.getOwnersAggregate().getId());
+
+            int idx = -1;
+            for (int i = 0; i < ownerships.size(); i++) {
+                if (ownerships.get(i).equals(ownership)) {
+                    idx = i;
+                    break;
+                }
+            }
+            if (idx < 0) {
+                throw new CustomException(ErrorStatus.ZKP_NOT_AN_OWNER);
+            }
+
+            return new ProofGenerationContext(
+                    session.getId(),
+                    user.getId(),
+                    idx,
+                    user.getIcCommitment()
+            );
+        });
+
+        Long sessionId = proofContext.sessionId;
+        Long userId = proofContext.userId;
+
+        log.info("Starting ProverService.proveOwn... : session [{}], user [{}], ticket [{}]",
+                sessionId, userId, ticketId);
+        ProverService.Proof proof = proverService.proveOwn(
+                sessionId,
+                proofContext.idx,
+                proofContext.icCommitment
+        );
+
+        TransactionTemplate writeTransaction = new TransactionTemplate(transactionTemplate.getTransactionManager());
+        writeTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        writeTransaction.setReadOnly(false);
+
+        writeTransaction.executeWithoutResult(status -> {
+            String json;
+            try {
+                json = objectMapper.writeValueAsString(proof.getProof());
+            } catch (Exception e) {
+                log.error("Failed to serialize proof : session[{}], user[{}], ticket[{}]",
+                        sessionId, userId, ticketId, e);
+                throw new CustomException(ErrorStatus.JSON_CONVERT_FAILED);
+            }
+
+            OwnProof ownProof = OwnProof.builder()
+                    .id(UUID.randomUUID().toString())
+                    .sessionId(sessionId)
+                    .ticketId(ticketId)
+                    .proofJson(json)
+                    .nullifier(proof.getPublicSignals().get(2))
+                    .build();
+
+            ownProofRepository.save(ownProof);
+            log.info("INSERT   ownProofId={}", ownProof.getId());
+        });
+
+    }
+
+    record ProofGenerationContext(Long sessionId, Long userId, int idx, String icCommitment) {}
 
 }

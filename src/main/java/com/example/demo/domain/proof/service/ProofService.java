@@ -11,6 +11,8 @@ public interface ProofService {
 
     ChallengeDTO issueChallenge(Long ticketId);
 
-    ProofQrCodeDTO issueOwnProof(ProofAuthDTO request);
+    ProofQrCodeDTO getOwnProof(ProofAuthDTO request);
+
+    void issueOwnProof(Long ticketId);
 
 }

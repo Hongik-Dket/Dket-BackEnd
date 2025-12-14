@@ -5,7 +5,6 @@ import com.example.demo.domain.resale.enums.ResaleStatus;
 import com.example.demo.domain.ticket.entity.Ticket;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.global.base.BaseEntity;
-import com.example.demo.global.base.Constants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +13,9 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+
+import static com.example.demo.global.base.Constants.ONCHAIN_TIMEOUT;
+import static com.example.demo.global.base.Constants.RESALE_RESERVATION_EXPIRATION_MINUTES;
 
 @Entity
 @Getter
@@ -81,7 +83,7 @@ public class Resale extends BaseEntity {
     public void setReservation(User user) {
         this.resaleStatus = ResaleStatus.RESERVED;
         this.reservedBy = user;
-        this.reservationExpiresAt = LocalDateTime.now().plusMinutes(Constants.RESALE_RESERVATION_EXPIRATION_MINUTES);
+        this.reservationExpiresAt = LocalDateTime.now().plusMinutes(RESALE_RESERVATION_EXPIRATION_MINUTES);
     }
 
     public void cancelReservation() {
@@ -93,13 +95,17 @@ public class Resale extends BaseEntity {
     }
 
     public void prepare() {
-        this.reservationExpiresAt = this.reservationExpiresAt.plusMinutes(Constants.ONCHAIN_TIMEOUT);
+        this.reservationExpiresAt = this.reservationExpiresAt.plusMinutes(ONCHAIN_TIMEOUT);
         this.resaleStatus = ResaleStatus.PENDING;
     }
 
     public void sell() {
         this.resaleStatus = ResaleStatus.SOLD;
         this.buyer = this.reservedBy;
+    }
+
+    public void cancel() {
+        this.resaleStatus = ResaleStatus.CANCELED;
     }
 
 }

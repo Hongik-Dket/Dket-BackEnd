@@ -26,7 +26,7 @@ public class StartConcertJob implements Job {
     public void execute(JobExecutionContext context) {
         Long concertId = context.getJobDetail().getJobDataMap().getLong("concertId");
 
-        log.info("startApplyJob: concert [{}]", concertId);
+        log.info("startConcertJob: concert [{}]", concertId);
 
         Concert concert = concertRepository.findById(concertId)
                 .orElseThrow(()->new CustomException(ErrorStatus.CONCERT_NOT_FOUND));

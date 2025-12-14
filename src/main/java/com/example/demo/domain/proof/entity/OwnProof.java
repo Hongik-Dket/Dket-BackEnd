@@ -21,6 +21,8 @@ public class OwnProof extends BaseEntity {
     private String id;
 
     private Long sessionId;
+
+    @Column(unique = true)
     private Long ticketId;
 
     @Lob
