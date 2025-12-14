@@ -49,7 +49,7 @@ public class ProofController {
             @RequestBody ProofAuthDTO request
     ) {
         log.info("REQ   POST /api/proofs/own");
-        ProofQrCodeDTO response = proofService.issueOwnProof(request);
+        ProofQrCodeDTO response = proofService.getOwnProof(request);
         log.info("RES   POST /api/proofs/own");
         return ApiResponse.onSuccess(_OK, response);
     }

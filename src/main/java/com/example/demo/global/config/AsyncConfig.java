@@ -22,4 +22,16 @@ public class AsyncConfig {
         executor.initialize();
         return executor;
     }
+
+    @Bean(name = "zkpTaskExecutor")
+    public Executor zkpTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        int processors = Runtime.getRuntime().availableProcessors();
+        executor.setCorePoolSize(processors);
+        executor.setMaxPoolSize(processors);
+        executor.setQueueCapacity(100);
+        executor.setThreadNamePrefix("ZKPAsync-");
+        executor.initialize();
+        return executor;
+    }
 }

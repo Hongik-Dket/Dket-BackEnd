@@ -8,7 +8,6 @@ import com.example.demo.domain.concert.repository.SessionRepository;
 import com.example.demo.domain.resale.entity.Resale;
 import com.example.demo.domain.resale.enums.ResaleStatus;
 import com.example.demo.domain.resale.repository.ResaleRepository;
-import com.example.demo.global.base.Constants;
 import com.example.demo.global.infra.scheduling.dto.SchedulingResponseDTO;
 import com.example.demo.global.infra.scheduling.jobs.concert.*;
 import com.example.demo.global.infra.scheduling.jobs.resale.CancelListingJob;
@@ -26,6 +25,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.*;
+
+import static com.example.demo.global.base.Constants.*;
 
 @Slf4j
 @Service
@@ -109,7 +110,7 @@ public class SchedulingService {
                 break;
             case "OpenPublicJob":
                 triggerTime = concert.getApplyEnd().withHour(0).withMinute(0).withSecond(0).withNano(0)
-                        .plusDays(Constants.PAYMENT_DEADLINE);
+                        .plusDays(PAYMENT_DEADLINE);
                 break;
             case "StartConcertJob":
                 triggerTime = LocalDateTime.of(concert.getStartDate(), LocalTime.of(0, 0));
@@ -129,10 +130,15 @@ public class SchedulingService {
         String jobName = jobClass.getSimpleName();
         LocalDateTime triggerTime = null;
 
+        LocalDateTime entry = LocalDateTime.of(session.getDate(), session.getConcert().getStartTime())
+                .minusHours(PAYMENT_AVAILABLE_BEFORE_CONCERT_START);
+
         switch (jobName) {
             case "ClosePaymentJob":
-                triggerTime = LocalDateTime.of(session.getDate(), session.getConcert().getStartTime())
-                        .minusHours(Constants.PAYMENT_AVAILABLE_BEFORE_CONCERT_START);
+                triggerTime = entry;
+                break;
+            case "CreateProofJob":
+                triggerTime = entry.plusMinutes(ONCHAIN_TIMEOUT);
                 break;
             default:
                 throw new CustomException(ErrorStatus.INVALID_JOB_CLASS);
@@ -148,7 +154,7 @@ public class SchedulingService {
 
         switch (jobName) {
             case "CancelListingJob":
-                triggerTime = LocalDateTime.now().plusMinutes(Constants.ONCHAIN_TIMEOUT);
+                triggerTime = LocalDateTime.now().plusMinutes(ONCHAIN_TIMEOUT);
                 break;
             case "CancelReservationJob":
                 triggerTime = resale.getReservationExpiresAt();

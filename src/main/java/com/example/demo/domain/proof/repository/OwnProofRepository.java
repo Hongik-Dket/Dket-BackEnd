@@ -12,4 +12,6 @@ public interface OwnProofRepository extends JpaRepository<OwnProof, Long> {
     Optional<OwnProof> findById(String id);
 
     boolean existsByTicketId(Long ticketId);
+
+    Optional<OwnProof> findByTicketId(Long ticketId);
 }
